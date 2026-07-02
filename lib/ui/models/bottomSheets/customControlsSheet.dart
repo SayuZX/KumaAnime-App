@@ -195,7 +195,6 @@ class CustomControls_BottomSheetState extends State<CustomControlsBottomSheet> {
                     Text(
                       currentSources[index].server,
                       style: TextStyle(
-                        fontFamily: "NotoSans",
                         fontSize: 17,
                         color: appTheme.accentColor,
                       ),
@@ -204,7 +203,6 @@ class CustomControls_BottomSheetState extends State<CustomControlsBottomSheet> {
                       Text(
                         " • backup",
                         style: TextStyle(
-                          fontFamily: "NotoSans",
                           fontSize: 14,
                           color: Colors.grey[500],
                         ),
@@ -215,7 +213,7 @@ class CustomControls_BottomSheetState extends State<CustomControlsBottomSheet> {
                   padding: EdgeInsets.only(top: 5),
                   child: Text(
                     currentSources[index].quality,
-                    style: TextStyle(color: Colors.white, fontFamily: "Rubik"),
+                    style: TextStyle(color: Colors.white, ),
                   ),
                 ),
               ],
