@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:kumaanime/core/anime/downloader/downloaderHelper.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +40,7 @@ class _LogScreenState extends State<LogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -48,7 +50,7 @@ class _LogScreenState extends State<LogScreen> {
               color: appTheme.textMainColor,
             )),
         title: Text(
-          "Logs",
+          loc.logTitle,
           style: TextStyle(color: appTheme.textMainColor),
         ),
         actionsPadding: EdgeInsets.only(right: 14),
@@ -75,9 +77,9 @@ class _LogScreenState extends State<LogScreen> {
               await File(dir.path + "/${l.tag}.txt").writeAsString(l.logNotifier.value.join("\n"), mode: FileMode.append);
              }
 
-             floatingSnackBar("Logs saved to your downloads folder!");
+             floatingSnackBar(loc.logSavedToDownloads);
             },
-            tooltip: "Save logs",
+            tooltip: loc.logSaveTooltip,
           ),
         ],
         backgroundColor: appTheme.backgroundColor,
@@ -125,7 +127,7 @@ class _LogScreenState extends State<LogScreen> {
                             })
                         : Center(
                             child: Text(
-                              "No Logs On This Yet!",
+                              loc.logNoLogsYet,
                               style: _logsTextStyle(),
                             ),
                           );
