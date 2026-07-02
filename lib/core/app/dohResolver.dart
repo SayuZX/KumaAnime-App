@@ -6,15 +6,36 @@ class DohResolver {
   static const Duration _ttl = Duration(minutes: 10);
   static final RegExp _ipv4 = RegExp(r'^\d{1,3}(\.\d{1,3}){3}$');
 
+  static const Map<String, String> providers = {
+    'cloudflare': 'https://1.1.1.1/dns-query',
+    'google': 'https://8.8.8.8/resolve',
+    'quad9': 'https://9.9.9.9/dns-query',
+    'adguard': 'https://94.140.14.14/dns-query',
+    'opendns': 'https://208.67.222.222/dns-query',
+    'dnssb': 'https://185.222.222.222/dns-query',
+  };
+
   static bool _isIp(String host) => _ipv4.hasMatch(host) || host.contains(':');
 
-  static Future<String?> resolve(String host) async {
+  static List<String> _endpointsFor(String provider) {
+    if (provider == 'auto') {
+      return const ['https://1.1.1.1/dns-query', 'https://8.8.8.8/resolve', 'https://9.9.9.9/dns-query'];
+    }
+    final endpoint = providers[provider];
+    return endpoint != null ? [endpoint] : const ['https://1.1.1.1/dns-query'];
+  }
+
+  static Future<String?> resolve(String host, {String provider = 'auto'}) async {
     if (host.isEmpty || _isIp(host)) return host;
 
     final cached = _cache[host];
     if (cached != null && DateTime.now().isBefore(cached.expiry)) return cached.ip;
 
-    final ip = await _query('https://1.1.1.1/dns-query', host) ?? await _query('https://8.8.8.8/resolve', host);
+    String? ip;
+    for (final endpoint in _endpointsFor(provider)) {
+      ip = await _query(endpoint, host);
+      if (ip != null) break;
+    }
     if (ip != null) _cache[host] = _DnsCacheEntry(ip, DateTime.now().add(_ttl));
     return ip;
   }
