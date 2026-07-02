@@ -323,7 +323,10 @@ class _KumaAnimeState extends State<KumaAnime> {
             theme: ThemeData(
                 useMaterial3: true,
                 brightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
-                textTheme: Theme.of(context).textTheme.apply(bodyColor: appTheme.textMainColor, fontFamily: "NotoSans"),
+                fontFamily: currentUserSettings?.fontFamily ?? "NotoSans",
+                textTheme: Theme.of(context)
+                    .textTheme
+                    .apply(bodyColor: appTheme.textMainColor, fontFamily: currentUserSettings?.fontFamily ?? "NotoSans"),
                 scaffoldBackgroundColor: appTheme.backgroundColor,
                 bottomSheetTheme: BottomSheetThemeData(backgroundColor: appTheme.modalSheetBackgroundColor),
                 colorScheme: ColorScheme.fromSeed(
@@ -331,6 +334,13 @@ class _KumaAnimeState extends State<KumaAnime> {
                   seedColor: (currentUserSettings?.materialTheme ?? false) ? scheme.accentColor : appTheme.accentColor,
                 ),
                 iconTheme: IconThemeData(color: appTheme.textMainColor)),
+            builder: (context, child) {
+              final scale = (currentUserSettings?.textScale ?? 1.0).clamp(0.8, 1.4);
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              );
+            },
             home: ChangeNotifierProvider(
               create: (context) => MainNavProvider(),
               child: Platform.isWindows || Platform.isLinux ? AppWrapper(firstPage: MainNavigator()) : MainNavigator(),
