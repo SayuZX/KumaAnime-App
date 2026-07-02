@@ -1,20 +1,16 @@
 import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/data/watching.dart';
 import 'package:kumaanime/ui/models/bottomSheets/commentSection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/enums.dart';
-import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/core/database/types.dart';
-import 'package:kumaanime/ui/models/bottomSheets/manualSearchSheet.dart';
 import 'package:kumaanime/ui/models/bottomSheets/mediaListStatus.dart';
 import 'package:kumaanime/ui/models/bottomSheets/serverSelectionSheet.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
-import 'package:kumaanime/ui/models/sources.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/pages/info.dart';
@@ -312,96 +308,9 @@ class _InfoMobileState extends State<InfoMobile> {
     );
   }
 
-  IconData viewModeIcon() {
-    switch (provider.viewMode) {
-      case 0:
-        return Icons.grid_view_rounded;
-      case 1:
-        return Icons.view_module_rounded;
-      case 2:
-        return Icons.view_list_rounded;
-      default:
-        throw Exception("Unknown Index For Icon");
-    }
-  }
-
-  GridView viewModeWidget() {
-    switch (provider.viewMode) {
-      case 0:
-        return _episodes();
-      case 1:
-        return _episodesGrid();
-      case 2:
-        return _episodeTiles();
-      default:
-        throw Exception("Unknown Index For Icon");
-    }
-  }
-
   Column _watchItems(BuildContext context) {
     return Column(
       children: [
-        Container(
-          margin: EdgeInsets.only(top: 30),
-          child: DropdownMenu(
-            initialSelection: provider.selectedSource,
-            dropdownMenuEntries: getSourceDropdownList(),
-            // menuHeight: 75,
-            width: 300,
-            textStyle: TextStyle(
-              color: appTheme.textMainColor,
-              ),
-            trailingIcon: Icon(
-              Icons.arrow_drop_down,
-              color: appTheme.textMainColor,
-            ),
-            selectedTrailingIcon: Icon(
-              Icons.arrow_drop_up,
-              color: appTheme.textMainColor,
-            ),
-            menuStyle: MenuStyle(
-              // surfaceTintColor: WidgetStatePropertyAll(backgroundSubColor),
-              backgroundColor: WidgetStatePropertyAll(appTheme.backgroundColor),
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  side: BorderSide(color: appTheme.textMainColor),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            onSelected: (value) {
-              provider.selectedSource = value;
-              setState(() {
-                provider.getEpisodes();
-              });
-            },
-            inputDecorationTheme: InputDecorationTheme(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
-                  color: appTheme.textMainColor,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              contentPadding: EdgeInsets.only(left: 20, right: 20),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
-                  color: appTheme.textMainColor,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            label: Text(
-              "source",
-              style: TextStyle(
-                  color: appTheme.textMainColor, fontSize: 20, overflow: TextOverflow.ellipsis),
-            ),
-          ),
-        ),
-        _searchStatus(),
-        _manualSearch(context),
-        if (provider.foundName != null && provider.epLinks.length > 0) _continueButton(),
         Container(
           margin: EdgeInsets.only(
               top: 25,
@@ -414,89 +323,19 @@ class _InfoMobileState extends State<InfoMobile> {
               Container(
                 height: 45,
                 margin: EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.only(left: 20, right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Episodes",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            ),
-                        )),
-                    if (provider.foundName != null)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            onTap: () => provider.preferDubs = !provider.preferDubs,
-                            child: Container(
-                              margin: EdgeInsets.all(2),
-                              width: 40,
-                              height: 25,
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                              decoration:
-                                  BoxDecoration(borderRadius: BorderRadius.circular(6), color: appTheme.textMainColor),
-                              child: Text(provider.preferDubs ? "dub" : "sub",
-                                  style: TextStyle(color: appTheme.backgroundColor, fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                          if (kDebugMode)
-                            IconButton(
-                              tooltip: "Batch download",
-                              onPressed: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    showDragHandle: true,
-                                    builder: (context) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(left: 8, right: 8),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Batch Download",
-                                              style: TextStyle(
-                                                color: appTheme.textMainColor,
-                                                fontSize: 23,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Row(),
-                                          ],
-                                        ),
-                                      );
-                                    });
-                              },
-                              icon: Icon(
-                                Icons.file_download_outlined,
-                              ),
-                              color: appTheme.textMainColor,
-                              iconSize: 28,
-                            ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: IconButton(
-                              tooltip:
-                                  "switch to ${UserPreferencesModal.getViewModeEnum((provider.viewMode + 1) % provider.viewModeIndexLength).name} view",
-                              onPressed: () {
-                                setState(() {
-                                  provider.viewMode = (provider.viewMode + 1) % provider.viewModeIndexLength;
-                                });
-                              },
-                              icon: Icon(
-                                viewModeIcon(),
-                              ),
-                              color: appTheme.textMainColor,
-                              iconSize: 28,
-                            ),
-                          ),
-                        ],
+                    Text(
+                      "Episodes",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: appTheme.textMainColor,
                       ),
+                    ),
+                    if (provider.foundName != null && provider.epLinks.isNotEmpty) _dubToggle(),
                   ],
                 ),
               ),
@@ -523,24 +362,15 @@ class _InfoMobileState extends State<InfoMobile> {
                         ),
                       ),
                     )
-                  : provider.foundName != null
-                      ? Column(
-                          children: [
-                            _pages(),
-                            AnimatedSwitcher(
-                              duration: Duration(milliseconds: 400),
-                              child: viewModeWidget(),
-                            ),
-                          ],
-                        )
-                      : Container(
+                  : (provider.foundName == null || provider.epLinks.isEmpty)
+                      ? Container(
                           width: 350,
                           height: 100,
                           child: Center(
                             child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                           ),
-                        ),
-              // ),
+                        )
+                      : _episodeChipGrid(context),
             ],
           ),
         ),
@@ -548,650 +378,73 @@ class _InfoMobileState extends State<InfoMobile> {
     );
   }
 
-  Container _manualSearch(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: 20, top: 15),
-      alignment: Alignment.centerRight,
-      child: InkWell(
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            showDragHandle: true,
-            backgroundColor: appTheme.modalSheetBackgroundColor,
-            builder: (context) => ManualSearchSheet(
-              searchString: provider.data.title['english'] ?? provider.data.title['romaji'] ?? '',
-              source: provider.selectedSource.identifier,
-              anilistId: provider.id.toString(),
-            ),
-          ).then((result) async {
-            if (result == null) return;
-            setState(() {
-              provider.epSearcherror = false;
-              provider.foundName = null;
-            });
-            final links =
-                await SourceManager.instance.getAnimeEpisodes(provider.selectedSource.identifier, result['alias']);
-            if (mounted)
-              setState(() {
-                provider.paginate(links);
-                provider.foundName = result['name'];
-              });
-          });
-        },
-        child: Text(
-          "Manual Search",
-          style: TextStyle(
-            color: Colors.transparent,
-            decoration: TextDecoration.underline,
-            decorationColor: appTheme.textMainColor,
-            decorationStyle: TextDecorationStyle.solid,
-            decorationThickness: 2,
-            fontWeight: FontWeight.bold,
-            shadows: [Shadow(color: appTheme.textMainColor, offset: Offset(0, -2))],
-          ),
-        ),
+  Widget _dubToggle() {
+    return InkWell(
+      onTap: () => provider.preferDubs = !provider.preferDubs,
+      child: Container(
+        margin: EdgeInsets.all(2),
+        width: 40,
+        height: 25,
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: appTheme.textMainColor),
+        child: Text(provider.preferDubs ? "dub" : "sub",
+            style: TextStyle(color: appTheme.backgroundColor, fontWeight: FontWeight.bold)),
       ),
     );
   }
 
-  Container _pages() {
-    return provider.visibleEpList[provider.currentPageIndex].isEmpty
-        ? Container(
-            margin: EdgeInsets.only(top: 40, bottom: 40),
-            child: Center(
-              child: Text(
-                "Oops. no items here!",
-                style: TextStyle(),
-              ),
-            ),
-          )
-        : Container(
-            height: 35,
-            margin: EdgeInsets.only(bottom: 10, top: 10),
-            padding: EdgeInsets.only(left: 10, right: 10),
-            child: ListView.builder(
-              itemCount: provider.visibleEpList.length,
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    clipBehavior: Clip.hardEdge,
-                    decoration: BoxDecoration(
-                      color: provider.currentPageIndex == index ? appTheme.accentColor : appTheme.backgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            provider.currentPageIndex = index;
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "${(index * 24) + 1} - ${(index * 24) + 24 > provider.epLinks.length ? provider.epLinks.length : (index * 24) + 24}",
-                            style: TextStyle(
-                              color: provider.currentPageIndex == index ? appTheme.onAccent : appTheme.textMainColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-  }
-
-  Container _continueButton() {
-    return Container(
-      width: 325,
-      margin: EdgeInsets.only(
-        top: 25,
-        left: 20,
-        right: 20,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: appTheme.accentColor),
-        image: DecorationImage(
-          image: provider.data.banner != null ? NetworkImage(provider.data.banner!) : NetworkImage(provider.data.cover),
-          fit: BoxFit.cover,
-          opacity: 0.46,
-        ),
-      ),
-      child: InkWell(
-        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        focusColor: appTheme.textSubColor,
-        onLongPress: () {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  actions: [
-                    TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("No")),
-                    TextButton(
-                      onPressed: () {
-                        provider.clearLastWatchDuration();
-                        Navigator.pop(context);
-                      },
-                      child: Text("Yes"),
-                      style: TextButton.styleFrom(
-                          backgroundColor: appTheme.accentColor, foregroundColor: appTheme.onAccent),
-                    )
-                  ],
-                  content: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      "Clear watch progress for this episode?",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                );
-              });
-        },
-        onTap: () async {
-          showModalBottomSheet(
-            isScrollControlled: true,
-            showDragHandle: true,
-            backgroundColor: appTheme.modalSheetBackgroundColor,
-            context: context,
-            builder: (BuildContext context) {
-              return ServerSelectionBottomSheet(
-                provider: provider,
-                episodeIndex: provider.watched,
-                type: ServerSheetType.watch,
-              );
-            },
-          ).then((val) {
-            if (val == true) {
-              provider.refreshListStatus("CURRENT", provider.watched);
-            }
-          });
-        },
-        child: Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 325,
-                height: 80,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${provider.started ? 'Continue' : 'Start'} from:',
-                        style: TextStyle(
-                          color: appTheme.textMainColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        'Episode ${provider.watched < provider.epLinks.length ? provider.watched + 1 : provider.watched}',
-                        style: TextStyle(
-                          color: appTheme.textMainColor,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (provider.lastWatchedDurationMap?[
-                      provider.watched < provider.epLinks.length ? provider.watched + 1 : provider.watched] !=
-                  null)
-                Container(
-                  width: 285 *
-                      (() {
-                        final raw = provider.lastWatchedDurationMap?[
-                                provider.watched < provider.epLinks.length ? provider.watched + 1 : provider.watched] ??
-                            0;
-                        final val = (raw is num) ? raw.toDouble() : double.tryParse(raw.toString()) ?? 0.0;
-                        if (val.isNaN || val.isInfinite) return 0.0;
-                        return (val / 100).clamp(0.0, 1.0);
-                      })(),
-                  height: 1.8,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: appTheme.textMainColor,
-                  ),
-                )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container _searchStatus() {
-    String text = "searching: ${provider.data.title['english'] ?? provider.data.title['romaji'] ?? ''}";
-    if (provider.foundName != null) {
-      text = "found: ${provider.foundName}";
-    } else if (provider.epSearcherror) {
-      text = "couldnt't find any matches";
-    }
-    return Container(
-      width: 300,
-      margin: EdgeInsets.only(top: 5),
-      padding: EdgeInsets.only(left: 8, right: 8),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: appTheme.textMainColor,
-          fontWeight: FontWeight.bold,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-
-  GridView _episodeTiles() {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 5 : 10,
-      ),
-      shrinkWrap: true,
-      itemCount: provider.visibleEpList[provider.currentPageIndex].length,
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(10),
-      itemBuilder: (context, index) => GestureDetector(
-        onLongPress: () {
-          showModalBottomSheet(
-              showDragHandle: true,
-              context: context,
-              builder: (ctx) => Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: MediaQuery.paddingOf(ctx).bottom),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 16,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            "Select Action",
-                            style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: List.generate(
-                            ServerSheetType.values.length,
-                            (ind) => Expanded(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: appTheme.accentColor,
-                                      foregroundColor: appTheme.backgroundColor,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                  onPressed: () async {
-                                    Navigator.of(ctx).pop();
-                                    if (!provider.selectedSource.supportDownloads &&
-                                        ServerSheetType.values[ind] == ServerSheetType.download) {
-                                      floatingSnackBar("This source doesn't support downloading yet!");
-                                      return;
-                                    }
-                                    showModalBottomSheet(
-                                      showDragHandle: true,
-                                      isScrollControlled: true,
-                                      context: context,
-                                      backgroundColor: appTheme.modalSheetBackgroundColor,
-                                      builder: (BuildContext context) {
-                                        return ServerSelectionBottomSheet(
-                                          provider: provider,
-                                          episodeIndex: provider.visibleEpList[provider.currentPageIndex][index]
-                                              ['realIndex'],
-                                          type: ServerSheetType.values[ind],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
-                                    child: Text(
-                                      ServerSheetType.values[ind].name,
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox.shrink()
-                      ],
-                    ),
-                  ));
-        },
-        onTap: () {
-          showModalBottomSheet(
-              showDragHandle: true,
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: appTheme.modalSheetBackgroundColor,
-              builder: (context) {
-                return ServerSelectionBottomSheet(
-                  provider: provider,
-                  episodeIndex: provider.visibleEpList[provider.currentPageIndex][index]['realIndex'],
-                  type: ServerSheetType.watch,
-                );
-              }).then((val) {
-            if (val == true) {
-              provider.refreshListStatus("CURRENT", provider.watched);
-            }
-          });
-        },
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: appTheme.backgroundColor,
-          ),
-          padding: EdgeInsets.all(7),
-          margin: EdgeInsets.all(3),
-          alignment: Alignment.center,
-          child: Text(
-            "${index + 1}",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-        ),
-      ),
-    );
-  }
-
-  GridView _episodesGrid() {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 5,
-        childAspectRatio: MediaQuery.of(context).orientation == Orientation.portrait ? 1 / 1.3 : 1 / 1.4,
-        mainAxisSpacing: 15,
-        crossAxisSpacing: 15,
-      ),
-      itemCount: provider.visibleEpList[provider.currentPageIndex].length,
-      padding: EdgeInsets.all(15),
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) => Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: appTheme.backgroundColor,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
+  Widget _episodeChipGrid(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: List.generate(provider.epLinks.length, (index) {
+          final number = index + 1;
+          final isWatched = number <= provider.watched;
+          final isLast = number == provider.watched;
+          final bg = isLast
+              ? appTheme.accentColor
+              : (isWatched ? appTheme.accentColor.withValues(alpha: 0.16) : appTheme.backgroundColor);
+          final fg = isLast ? appTheme.onAccent : (isWatched ? appTheme.accentColor : appTheme.textMainColor);
+          return GestureDetector(
             onTap: () {
               showModalBottomSheet(
-                  showDragHandle: true,
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: appTheme.modalSheetBackgroundColor,
-                  builder: (context) {
-                    return ServerSelectionBottomSheet(
-                      provider: provider,
-                      episodeIndex: provider.visibleEpList[provider.currentPageIndex][index]['realIndex'],
-                      type: ServerSheetType.watch,
-                    );
-                  }).then((val) {
-                if (val == true) {
-                  provider.refreshListStatus("CURRENT", provider.watched);
-                }
+                showDragHandle: true,
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: appTheme.modalSheetBackgroundColor,
+                builder: (context) {
+                  return ServerSelectionBottomSheet(
+                    provider: provider,
+                    episodeIndex: index,
+                    type: ServerSheetType.watch,
+                  );
+                },
+              ).then((val) {
+                if (val == true) provider.refreshListStatus("CURRENT", provider.watched);
               });
             },
-            // child: Container(
-            // padding: EdgeInsets.all(10),
-
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Opacity(
-                  opacity: provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1 > provider.watched
-                      ? 1.0
-                      : 0.5,
-                  child: Container(
-                    height: 140,
-                    width: 175,
-                    margin: EdgeInsets.only(bottom: 15),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(
-                            provider.data.cover,
-                          ),
-                          fit: BoxFit.cover),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (provider.selectedSource.supportDownloads)
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(15)),
-                                color: appTheme.accentColor.withValues(alpha: 0.8)),
-                            child: IconButton(
-                              onPressed: () async {
-                                showModalBottomSheet(
-                                  showDragHandle: true,
-                                  isScrollControlled: true,
-                                  context: context,
-                                  backgroundColor: appTheme.modalSheetBackgroundColor,
-                                  builder: (BuildContext context) {
-                                    return ServerSelectionBottomSheet(
-                                      provider: provider,
-                                      episodeIndex: provider.visibleEpList[provider.currentPageIndex][index]
-                                          ['realIndex'],
-                                      type: ServerSheetType.download,
-                                    );
-                                  },
-                                );
-                              },
-                              icon: Icon(
-                                Icons.download_rounded,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Text(
-                    "Episode ${provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1}",
-                    style: TextStyle(
-                      color:
-                          provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1 > provider.watched
-                              ? appTheme.textMainColor
-                              : appTheme.textSubColor,
-                      fontSize: 17,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// The episode horizontal tiles
-  GridView _episodes() {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: MediaQuery.orientationOf(context) == Orientation.portrait ? 1 : 2,
-          childAspectRatio: 3.2,
-          mainAxisSpacing: 0,
-          mainAxisExtent: 110),
-      padding: EdgeInsets.only(top: 0, bottom: 15),
-      itemCount: provider.visibleEpList[provider.currentPageIndex].length,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        return Stack(
-          children: [
-            Container(
-              clipBehavior: Clip.hardEdge,
-              height: 110,
-              margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: (provider.visibleEpList[provider.currentPageIndex][index]['epLink'].isFiller ?? false)
-                    ? appTheme.accentColor.withAlpha(40)
-                    : appTheme.backgroundColor,
-              ),
+            child: Container(
+              width: 52,
+              height: 52,
               alignment: Alignment.center,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                        showDragHandle: true,
-                        isScrollControlled: true,
-                        context: context,
-                        backgroundColor: appTheme.modalSheetBackgroundColor,
-                        builder: (context) {
-                          return ServerSelectionBottomSheet(
-                            provider: provider,
-                            episodeIndex: provider.visibleEpList[provider.currentPageIndex][index]['realIndex'],
-                            type: ServerSheetType.watch,
-                          );
-                        });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Stack(
-                      children: [
-                        Opacity(
-                          opacity: provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1 >
-                                  provider.watched
-                              ? 1.0
-                              : 0.5,
-                          child: ShaderMask(
-                            blendMode: BlendMode.dstIn,
-                            shaderCallback: (bounds) => LinearGradient(
-                              colors: [appTheme.backgroundColor, Colors.transparent],
-                              stops: [0.6, 0.99],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ).createShader(bounds),
-                            child: Image.network(
-                              provider.visibleEpList[provider.currentPageIndex][index]['epLink'].thumbnail ??
-                                  provider.data.cover,
-                              fit: BoxFit.cover,
-                              width: 165,
-                              height: 110,
-                              errorBuilder: (context, error, stackTrace) {
-                                // Use the cover image incase of an error!
-                                return Image.network(
-                                  provider.data.cover,
-                                  fit: BoxFit.cover,
-                                  width: 165,
-                                  height: 110,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 140,
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Episode ${provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1}",
-                                  style: TextStyle(
-                                    color: provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1 >
-                                            provider.watched
-                                        ? appTheme.textMainColor
-                                        : appTheme.textSubColor,
-                                    fontSize: 18,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                if (provider.visibleEpList[provider.currentPageIndex][index]['epLink'].isFiller ??
-                                    false)
-                                  Text(
-                                    "filler",
-                                    style: TextStyle(color: appTheme.textSubColor),
-                                  ),
-                              ],
-                            ),
-                            if (provider.selectedSource.supportDownloads)
-                              Container(
-                                child: IconButton(
-                                  onPressed: () async {
-                                    showModalBottomSheet(
-                                      showDragHandle: true,
-                                      context: context,
-                                      backgroundColor: appTheme.modalSheetBackgroundColor,
-                                      isScrollControlled: true,
-                                      builder: (BuildContext context) {
-                                        return ServerSelectionBottomSheet(
-                                          provider: provider,
-                                          episodeIndex: provider.visibleEpList[provider.currentPageIndex][index]
-                                              ['realIndex'],
-                                          type: ServerSheetType.download,
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.download_rounded,
-                                    color: appTheme.textMainColor,
-                                  ),
-                                ),
-                              )
-                            else
-                              Container()
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(12),
+                border: (isWatched && !isLast)
+                    ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.55), width: 1.5)
+                    : null,
+              ),
+              child: Text(
+                "$number",
+                style: TextStyle(color: fg, fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
-            if (provider.watched > provider.visibleEpList[provider.currentPageIndex][index]['realIndex'])
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, right: 25),
-                  child: ImageIcon(
-                    AssetImage('lib/assets/images/check.png'),
-                    color: appTheme.textMainColor,
-                    size: 18,
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
+          );
+        }),
+      ),
     );
   }
 
