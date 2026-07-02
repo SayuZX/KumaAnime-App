@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:animestream/core/app/env.dart';
-import 'package:animestream/core/database/simkl/login.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/app/env.dart';
+import 'package:kumaanime/core/database/simkl/login.dart';
+import 'package:kumaanime/core/database/types.dart';
 import 'package:http/http.dart';
 
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/simkl/types.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/simkl/types.dart';
 
 class SimklMutation extends DatabaseMutation {
   @override
@@ -121,7 +121,7 @@ class SimklMutation extends DatabaseMutation {
     return {
       'Content-Type': "application/json",
       'Authorization': "Bearer $token",
-      'simkl-api-key': AnimeStreamEnvironment.simklClientId,
+      'simkl-api-key': KumaAnimeEnvironment.simklClientId,
     };
   }
 
