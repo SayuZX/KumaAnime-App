@@ -115,33 +115,27 @@ class _DiscoverState extends State<Discover> {
                   )
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 30),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 25,
-                  runSpacing: 15,
+              Container(
+                height: 44,
+                margin: EdgeInsets.only(top: 22, bottom: 4),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    _bannerButton(
+                    _navChip(
+                      icon: Icons.newspaper_rounded,
                       label: "News",
-                      imageAsset: 'lib/assets/images/chisato.jpeg',
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => News()));
-                      },
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => News())),
                     ),
-                    _bannerButton(
+                    _navChip(
+                      icon: Icons.category_rounded,
                       label: "Genres",
-                      imageAsset: 'lib/assets/images/mitsuha.jpg',
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => GenresPage()));
-                      },
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => GenresPage())),
                     ),
-                    _bannerButton(
+                    _navChip(
+                      icon: Icons.subtitles_rounded,
                       label: AppLocalizations.of(context).subIndo,
-                      imageAsset: 'lib/assets/images/chisato_AI.jpg',
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubIndoPage()));
-                      },
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubIndoPage())),
                     ),
                   ],
                 ),
@@ -166,30 +160,31 @@ class _DiscoverState extends State<Discover> {
     );
   }
 
-  Widget _bannerButton({required String label, required String imageAsset, required void Function() onTap}) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: onTap,
-      child: Container(
-        height: 75,
-        width: 150,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          image: DecorationImage(
-            image: AssetImage(imageAsset),
-            fit: BoxFit.cover,
-            opacity: 0.4,
-          ),
-          border: Border.all(color: appTheme.accentColor),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: appTheme.textMainColor,
-              fontFamily: "NotoSans",
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+  Widget _navChip({required IconData icon, required String label, required void Function() onTap}) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: Material(
+        color: appTheme.backgroundSubColor,
+        borderRadius: BorderRadius.circular(22),
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(icon, size: 18, color: appTheme.accentColor),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: appTheme.textMainColor,
+                    fontFamily: "NotoSans",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
