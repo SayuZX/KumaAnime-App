@@ -205,8 +205,10 @@ class _HomeState extends State<Home> {
                     child: GridView.builder(
                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: Platform.isAndroid ? 140 : 180,
-                        mainAxisExtent: Platform.isAndroid ? 220 : 265,
+                        maxCrossAxisExtent:
+                            (Platform.isAndroid ? 140.0 : 180.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+                        mainAxisExtent:
+                            (Platform.isAndroid ? 220.0 : 265.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
                         // crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 3 : 6,
                         childAspectRatio: 120 / 220,
                         mainAxisSpacing: 10,
@@ -389,8 +391,10 @@ class _HomeState extends State<Home> {
                               child: GridView.builder(
                                 padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: Platform.isAndroid ? 140 : 180,
-                                  mainAxisExtent: Platform.isAndroid ? 220 : 260,
+                                  maxCrossAxisExtent: (Platform.isAndroid ? 140.0 : 180.0) *
+                                      (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+                                  mainAxisExtent: (Platform.isAndroid ? 220.0 : 260.0) *
+                                      (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
                                   // crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 3 : 6,
                                   childAspectRatio: 120 / 220,
                                   mainAxisSpacing: 10,
