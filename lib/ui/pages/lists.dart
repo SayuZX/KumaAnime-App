@@ -10,6 +10,7 @@ import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/widgets/navRail.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class AnimeLists extends StatefulWidget {
@@ -185,6 +186,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: Padding(
@@ -211,7 +213,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                           Container(
                             padding: EdgeInsets.only(left: 10, right: 20),
                             child: Text(
-                              "${storedUserData?.name}'s List",
+                              loc.listsUserList(storedUserData?.name ?? ''),
                               style: TextStyle(
                                 color: appTheme.textMainColor,
                                 fontWeight: FontWeight.bold,
@@ -224,12 +226,12 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                       PopupMenuButton(
                         color: appTheme.backgroundColor,
                         surfaceTintColor: Colors.white,
-                        tooltip: "sort",
+                        tooltip: loc.listsSortTooltip,
                         itemBuilder: (context) {
                           return [
-                            sortOptionButton("A-Z", SortType.AtoZ),
-                            sortOptionButton("Top rated", SortType.TopRated),
-                            sortOptionButton("Recent", SortType.RecentlyUpdated),
+                            sortOptionButton(loc.listsSortAtoZ, SortType.AtoZ),
+                            sortOptionButton(loc.listsSortTopRated, SortType.TopRated),
+                            sortOptionButton(loc.listsSortRecent, SortType.RecentlyUpdated),
                           ];
                         },
                         icon: Icon(
@@ -259,7 +261,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             height: 50,
                             child: Text(
-                              "Watching (${watchingList.length})",
+                              loc.listsWatching(watchingList.length),
                               style: _textStyle(),
                             ),
                           ),
@@ -267,7 +269,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             height: 50,
                             child: Text(
-                              "Planning (${plannedList.length})",
+                              loc.listsPlanning(plannedList.length),
                               style: _textStyle(),
                             ),
                           ),
@@ -275,7 +277,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             height: 50,
                             child: Text(
-                              "Dropped (${droppedList.length})",
+                              loc.listsDropped(droppedList.length),
                               style: _textStyle(),
                             ),
                           ),
@@ -283,7 +285,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             height: 50,
                             child: Text(
-                              "Completed (${completedList.length})",
+                              loc.listsCompleted(completedList.length),
                               style: _textStyle(),
                             ),
                           ),
@@ -298,10 +300,10 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                           KumaAnimeNavRail(
                               shouldExpand: true,
                               destinations: [
-                                const KumaAnimeNavDestination(icon: Icons.movie, label: "Watching"),
-                                const KumaAnimeNavDestination(icon: Icons.calendar_month, label: "Planned"),
-                                const KumaAnimeNavDestination(icon: Icons.highlight_off_outlined, label: "Dropped"),
-                                const KumaAnimeNavDestination(icon: Icons.task_alt_rounded, label: "Completed")
+                                KumaAnimeNavDestination(icon: Icons.movie, label: loc.listsNavWatching),
+                                KumaAnimeNavDestination(icon: Icons.calendar_month, label: loc.listsNavPlanned),
+                                KumaAnimeNavDestination(icon: Icons.highlight_off_outlined, label: loc.listsNavDropped),
+                                KumaAnimeNavDestination(icon: Icons.task_alt_rounded, label: loc.listsNavCompleted)
                               ],
                               controller: railController,
                               initialIndex: 0),
@@ -309,7 +311,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                             //this wouldnt be shown! ik
                             ? Center(
                                 child: Text(
-                                  "Such a void!",
+                                  loc.listsEmpty,
                                   style: TextStyle(
                                     color: appTheme.textSubColor,
                                     fontSize: 14,
