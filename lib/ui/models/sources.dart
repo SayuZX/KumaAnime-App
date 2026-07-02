@@ -1,16 +1,16 @@
-import 'package:animestream/core/anime/providers/anikoto.dart';
-import 'package:animestream/core/anime/providers/animegg.dart';
-import 'package:animestream/core/anime/providers/animeonsen.dart';
-import 'package:animestream/core/anime/providers/animepahe.dart';
-import 'package:animestream/core/anime/providers/anizone.dart';
-import 'package:animestream/core/anime/providers/gojo.dart';
-import 'package:animestream/core/anime/providers/anidb.dart';
-import 'package:animestream/core/anime/providers/animeProvider.dart';
-import 'package:animestream/core/anime/providers/providerDetails.dart';
-import 'package:animestream/core/anime/providers/providerManager.dart';
-import 'package:animestream/core/anime/providers/providerPlugin.dart';
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/anime/providers/anikoto.dart';
+import 'package:kumaanime/core/anime/providers/animegg.dart';
+import 'package:kumaanime/core/anime/providers/animeonsen.dart';
+import 'package:kumaanime/core/anime/providers/animepahe.dart';
+import 'package:kumaanime/core/anime/providers/anizone.dart';
+import 'package:kumaanime/core/anime/providers/gojo.dart';
+import 'package:kumaanime/core/anime/providers/anidb.dart';
+import 'package:kumaanime/core/anime/providers/animeProvider.dart';
+import 'package:kumaanime/core/anime/providers/providerDetails.dart';
+import 'package:kumaanime/core/anime/providers/providerManager.dart';
+import 'package:kumaanime/core/anime/providers/providerPlugin.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:flutter/material.dart';
 
 /// This Singleton manages all the sources/providers
