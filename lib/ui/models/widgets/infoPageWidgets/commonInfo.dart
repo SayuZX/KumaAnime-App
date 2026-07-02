@@ -43,7 +43,6 @@ class CommonInfo extends StatelessWidget {
                 child: Text(
                  title,
                   style: TextStyle(
-                    fontFamily: "Rubik",
                     fontWeight: FontWeight.bold,
                     fontSize: title.length > 70 ? 38 : 45,
                   ),
