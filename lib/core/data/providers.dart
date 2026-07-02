@@ -1,5 +1,5 @@
-import 'package:animestream/core/anime/providers/providerDetails.dart';
-import 'package:animestream/core/commons/enums/hiveEnums.dart';
+import 'package:kumaanime/core/anime/providers/providerDetails.dart';
+import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:hive/hive.dart';
 
 class ProvidersPreferences {
