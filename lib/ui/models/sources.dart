@@ -160,7 +160,6 @@ List<DropdownMenuEntry> getSourceDropdownList() {
           textStyle: WidgetStatePropertyAll(
             TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "Rubik",
               fontSize: 18,
             ),
           ),
