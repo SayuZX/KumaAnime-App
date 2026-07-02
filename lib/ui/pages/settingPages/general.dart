@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/settings.dart';
-import 'package:animestream/core/data/types.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/sources.dart';
-import 'package:animestream/ui/models/widgets/clickableItem.dart';
-import 'package:animestream/ui/models/widgets/toggleItem.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/pages/settingPages/plugin.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/settings.dart';
+import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/sources.dart';
+import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
+import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/settingPages/plugin.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -139,7 +139,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                                   style: textStyle(),
                                 ),
                                 Text(
-                                  currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/animestream',
+                                  currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/KumaAnime',
                                   style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12),
                                   overflow: TextOverflow.ellipsis,
                                 ),
