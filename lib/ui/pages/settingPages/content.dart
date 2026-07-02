@@ -6,6 +6,7 @@ import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -43,6 +44,7 @@ class _ContentSettingState extends State<ContentSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final s = currentUserSettings;
     final blocked = s?.blockedGenres ?? [];
     return Scaffold(
@@ -53,20 +55,20 @@ class _ContentSettingState extends State<ContentSetting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              settingPagesTitleHeader(context, "Content & Language"),
+              settingPagesTitleHeader(context, loc.ctContentAndLanguage),
               ClickableItem(
                 onTap: () => _showLanguageSheet(s?.locale ?? 'en'),
-                label: "Language",
+                label: loc.ctLanguage,
                 description: _languageNames[s?.locale] ?? _languageNames['en']!,
                 suffixIcon: Icon(Icons.language_rounded, color: appTheme.textMainColor),
               ),
               ToggleItem(
-                label: "Show adult content",
-                description: "Requires age verification",
+                label: loc.ctShowAdultContent,
+                description: loc.ctRequiresAgeVerification,
                 value: s?.showAdultContent ?? false,
                 onTapFunction: () => _toggleAdult(s?.showAdultContent ?? false),
               ),
-              _sectionLabel("Blocked genres"),
+              _sectionLabel(loc.ctBlockedGenres),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Wrap(
@@ -109,10 +111,10 @@ class _ContentSettingState extends State<ContentSetting> {
                 ),
               ),
               const SizedBox(height: 24),
-              resetCategoryButton(context, "Reset content", () async {
+              resetCategoryButton(context, loc.ctResetContent, () async {
                 await Settings().resetKeys(_keys);
                 if (mounted) setState(() {});
-                floatingSnackBar("Content settings reset");
+                floatingSnackBar(loc.ctContentSettingsReset);
               }),
               const SizedBox(height: 20),
             ],
@@ -131,6 +133,7 @@ class _ContentSettingState extends State<ContentSetting> {
   }
 
   void _toggleAdult(bool current) {
+    final loc = AppLocalizations.of(context);
     if (current) {
       _write(SettingsModal(showAdultContent: false));
       return;
@@ -139,18 +142,18 @@ class _ContentSettingState extends State<ContentSetting> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: appTheme.modalSheetBackgroundColor,
-        title: Text("Age verification", style: TextStyle(color: appTheme.textMainColor)),
-        content: Text("Are you 18 years or older? Enabling this shows adult content.",
+        title: Text(loc.ctAgeVerification, style: TextStyle(color: appTheme.textMainColor)),
+        content: Text(loc.ctAgeVerificationBody,
             style: TextStyle(color: appTheme.textSubColor)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(loc.ctCancel)),
           TextButton(
             onPressed: () {
               _write(SettingsModal(showAdultContent: true));
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: appTheme.accentColor),
-            child: const Text("I am 18+"),
+            child: Text(loc.ctIAm18Plus),
           ),
         ],
       ),
@@ -158,6 +161,7 @@ class _ContentSettingState extends State<ContentSetting> {
   }
 
   void _showLanguageSheet(String current) {
+    final loc = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -170,7 +174,7 @@ class _ContentSettingState extends State<ContentSetting> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 12, left: 8),
-              child: Text("Select Language", style: textStyle().copyWith(fontSize: 22)),
+              child: Text(loc.ctSelectLanguage, style: textStyle().copyWith(fontSize: 22)),
             ),
             ..._languageNames.entries.map((e) => optionTile(
                   label: e.value,
