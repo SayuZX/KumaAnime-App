@@ -45,5 +45,10 @@
   "subIndoEmpty": "Nothing found",
   "subIndoLoadError": "Failed to load. Check your Sub Indo API URL in build config.",
   "retry": "Retry",
-  "loadMore": "Load more"
+  "loadMore": "Load more",
+  "newsTitle": "News",
+  "newsSourceGlobal": "Global",
+  "newsSourceIndo": "Indonesia",
+  "newsLoadError": "Failed to load news.",
+  "readFullArticle": "Read full article"
 }
