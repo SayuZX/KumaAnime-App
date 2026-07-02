@@ -207,7 +207,7 @@ jobs:
           Architecture: amd64
           Maintainer: FrostNova
           Description: A app made to stream and download anime
-           Animestream is a Flutter project made to stream and download Anime.
+           Kuma Anime is a Flutter project made to stream and download Anime.
           Priority: optional
           Section: video
           EOF
@@ -270,7 +270,7 @@ jobs:
           BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
           %description
-          Animestream is a Flutter project made to stream and download Anime.
+          Kuma Anime is a Flutter project made to stream and download Anime.
 
           %install
           rm -rf \$RPM_BUILD_ROOT
