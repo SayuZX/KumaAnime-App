@@ -3,6 +3,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/database/database.dart';
 import 'package:kumaanime/core/database/handler/handler.dart';
 import 'package:kumaanime/core/social/socialService.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -128,6 +129,7 @@ class _TitleDescriptionState extends State<_TitleDescription> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final desc = (_synopsis ?? '').trim();
     final displayTitle = (_apiTitle != null && _apiTitle!.trim().isNotEmpty) ? _apiTitle! : widget.title;
     return GestureDetector(
@@ -145,7 +147,7 @@ class _TitleDescriptionState extends State<_TitleDescription> {
           if (_loading && widget.animeId > 0)
             Padding(
               padding: const EdgeInsets.only(top: 6),
-              child: Text("Memuat deskripsi...", style: TextStyle(color: appTheme.textSubColor, fontSize: 12)),
+              child: Text(loc.wssLoadingDescription, style: TextStyle(color: appTheme.textSubColor, fontSize: 12)),
             )
           else if (desc.isNotEmpty) ...[
             const SizedBox(height: 6),
@@ -161,7 +163,7 @@ class _TitleDescriptionState extends State<_TitleDescription> {
             ),
             const SizedBox(height: 2),
             Text(
-              _expanded ? "Tutup" : "...selengkapnya",
+              _expanded ? loc.wssClose : loc.wssReadMore,
               style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ],
@@ -215,11 +217,13 @@ class _WatchActionsBarState extends State<WatchActionsBar> {
 
   void _share() {
     final link = widget.animeId > 0 ? "\nhttps://anilist.co/anime/${widget.animeId}" : "";
-    SharePlus.instance.share(ShareParams(text: "Nonton ${widget.title} di Kuma Anime$link"));
+    SharePlus.instance
+        .share(ShareParams(text: AppLocalizations.of(context).wssShareText(widget.title, link)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: StreamBuilder<Map<String, int>>(
@@ -231,9 +235,9 @@ class _WatchActionsBarState extends State<WatchActionsBar> {
             children: [
               _voteSegment(likes, dislikes),
               const SizedBox(width: 10),
-              _pill(Icons.share_rounded, "Bagikan", _share),
+              _pill(Icons.share_rounded, loc.wssShare, _share),
               const SizedBox(width: 10),
-              _pill(Icons.download_rounded, "Unduh", widget.onDownload),
+              _pill(Icons.download_rounded, loc.wssDownload, widget.onDownload),
             ],
           );
         },
@@ -337,7 +341,7 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
     } catch (e) {
       Logs.app.log("[SOCIAL] comment write failed: ${e.toString()}");
       _controller.text = text;
-      floatingSnackBar("Komentar gagal terkirim: ${e.toString()}");
+      if (mounted) floatingSnackBar(AppLocalizations.of(context).wssCommentSendFailed(e.toString()));
     }
     if (mounted) setState(() => _sending = false);
   }
@@ -350,7 +354,8 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 4),
-          Text("Komentar", style: TextStyle(color: appTheme.textMainColor, fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context).wssComments,
+              style: TextStyle(color: appTheme.textMainColor, fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           Expanded(child: _list()),
           _input(),
@@ -362,7 +367,9 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
 
   Widget _list() {
     if (!_social.isReady) {
-      return Center(child: Text("Fitur sosial tidak tersedia", style: TextStyle(color: appTheme.textSubColor)));
+      return Center(
+          child: Text(AppLocalizations.of(context).wssSocialUnavailable,
+              style: TextStyle(color: appTheme.textSubColor)));
     }
     return StreamBuilder<List<SocialComment>>(
       stream: _commentsStream,
@@ -373,7 +380,7 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
         final comments = snapshot.data ?? [];
         if (comments.isEmpty) {
           return Center(
-            child: Text("Belum ada komentar. Jadilah yang pertama!",
+            child: Text(AppLocalizations.of(context).wssNoComments,
                 style: TextStyle(color: appTheme.textSubColor, fontSize: 14)),
           );
         }
@@ -417,7 +424,7 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
               Row(
                 children: [
                   Text(
-                    mine ? "${comment.nickname} (kamu)" : comment.nickname,
+                    mine ? AppLocalizations.of(context).wssCommentAuthorYou(comment.nickname) : comment.nickname,
                     style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.bold),
                   ),
                   if (comment.createdAt != null) ...[
@@ -437,12 +444,13 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
   }
 
   String _relativeTime(DateTime time) {
+    final loc = AppLocalizations.of(context);
     final diff = DateTime.now().difference(time);
-    if (diff.inSeconds < 60) return "baru saja";
-    if (diff.inMinutes < 60) return "${diff.inMinutes}m";
-    if (diff.inHours < 24) return "${diff.inHours}j";
-    if (diff.inDays < 7) return "${diff.inDays}h";
-    return "${(diff.inDays / 7).floor()}mgg";
+    if (diff.inSeconds < 60) return loc.wssJustNow;
+    if (diff.inMinutes < 60) return loc.wssMinutesShort(diff.inMinutes);
+    if (diff.inHours < 24) return loc.wssHoursShort(diff.inHours);
+    if (diff.inDays < 7) return loc.wssDaysShort(diff.inDays);
+    return loc.wssWeeksShort((diff.inDays / 7).floor());
   }
 
   Widget _input() {
@@ -457,7 +465,7 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
             style: TextStyle(color: appTheme.textMainColor),
             onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             decoration: InputDecoration(
-              hintText: "Tulis komentar...",
+              hintText: AppLocalizations.of(context).wssCommentHint,
               hintStyle: TextStyle(color: appTheme.textSubColor, fontSize: 14),
               filled: true,
               fillColor: appTheme.backgroundSubColor,
