@@ -1,4 +1,4 @@
-import 'package:animestream/core/anime/downloader/types.dart';
+import 'package:kumaanime/core/anime/downloader/types.dart';
 import 'package:flutter/material.dart';
 
 extension ColorExtensions on Color {
