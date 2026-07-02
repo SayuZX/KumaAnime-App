@@ -1,4 +1,4 @@
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 
 class Sakura implements ThemeItem {
@@ -9,7 +9,7 @@ class Sakura implements ThemeItem {
   bool get dev => false;
 
   @override
-  AnimeStreamTheme get lightVariant => AnimeStreamTheme(
+  KumaAnimeTheme get lightVariant => KumaAnimeTheme(
         accentColor: Color(0xFFF06292),
         backgroundColor: Color(0xFFFFF8F8),
         backgroundSubColor: Color(0xFFFCE4EC),
@@ -23,7 +23,7 @@ class Sakura implements ThemeItem {
   String get name => "Sakura";
 
   @override
-  AnimeStreamTheme get theme => AnimeStreamTheme(
+  KumaAnimeTheme get theme => KumaAnimeTheme(
         accentColor: Color(0xFFFF8FAB),
         backgroundColor: Color(0xFF1A1A1A),
         backgroundSubColor: Color(0xFF332A2D),
