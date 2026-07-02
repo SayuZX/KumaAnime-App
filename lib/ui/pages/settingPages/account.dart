@@ -347,7 +347,6 @@ class _AccountSettingState extends State<AccountSetting> {
               "Log In",
               style: TextStyle(
                 color: appTheme.accentColor,
-                fontFamily: "NotoSans",
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -358,7 +357,6 @@ class _AccountSettingState extends State<AccountSetting> {
               "The Animes watched is being saved in local storage.",
               style: TextStyle(
                 color: appTheme.textSubColor,
-                fontFamily: "NunitoSans",
                 fontSize: 12,
               ),
             ),
@@ -417,7 +415,7 @@ class _AccountSettingState extends State<AccountSetting> {
                         padding: const EdgeInsets.only(bottom: 5),
                         child: Text(
                           usermodal?.name ?? "UNKNOWN_GUY_69",
-                          style: TextStyle(fontFamily: "Poppins", fontSize: 20),
+                          style: TextStyle(fontSize: 20),
                         ),
                       ),
                       ElevatedButton(
@@ -435,7 +433,6 @@ class _AccountSettingState extends State<AccountSetting> {
                           "Logout",
                           style: TextStyle(
                             color: Colors.white,
-                            fontFamily: "NotoSans",
                             fontWeight: FontWeight.bold,
                           ),
                         ),
