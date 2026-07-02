@@ -1,4 +1,4 @@
-import 'package:animestream/core/commons/enums/hiveEnums.dart';
+import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Used for storage of keys from providers. nothing else
