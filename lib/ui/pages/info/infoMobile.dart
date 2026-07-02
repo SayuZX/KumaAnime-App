@@ -480,9 +480,7 @@ class _InfoMobileState extends State<InfoMobile> {
                           width: 350,
                           height: 100,
                           child: Center(
-                            child: CircularProgressIndicator(
-                              color: appTheme.accentColor,
-                            ),
+                            child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                           ),
                         ),
               // ),
