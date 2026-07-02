@@ -1,4 +1,4 @@
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 
 class NeonRed implements ThemeItem {
@@ -9,7 +9,7 @@ class NeonRed implements ThemeItem {
   bool get dev => false;
 
   @override
-  AnimeStreamTheme get lightVariant => AnimeStreamTheme(
+  KumaAnimeTheme get lightVariant => KumaAnimeTheme(
         accentColor: Color(0xffff4d4d),
         backgroundColor: Color(0xfffdf5f6),
         modalSheetBackgroundColor: Color(0xffffffff),
@@ -23,7 +23,7 @@ class NeonRed implements ThemeItem {
   String get name => "Neon Red";
 
   @override
-  AnimeStreamTheme get theme => AnimeStreamTheme(
+  KumaAnimeTheme get theme => KumaAnimeTheme(
         accentColor: Color(0xffff2e2e),
         backgroundColor: Color(0xff17191f),
         modalSheetBackgroundColor: Color(0xff20242b),
