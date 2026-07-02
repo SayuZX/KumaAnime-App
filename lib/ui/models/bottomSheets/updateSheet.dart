@@ -172,8 +172,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
                                 style: TextStyle(
                                   color: appTheme.onAccent,
                                   fontSize: 15,
-                                  fontFamily: "NunitoSans",
-                                ),
+                                  ),
                               )),
                         ],
                       ),
@@ -274,7 +273,6 @@ class _UpdateSheetState extends State<UpdateSheet> {
   TextStyle style({bool bold = false}) {
     return TextStyle(
       color: appTheme.textMainColor,
-      fontFamily: "NotoSans",
       fontWeight: bold ? FontWeight.bold : null,
     );
   }
