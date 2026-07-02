@@ -1,6 +1,6 @@
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/simkl/simkl.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/simkl/simkl.dart';
+import 'package:kumaanime/core/database/types.dart';
 
 class SimklException implements Exception {
   final String message;
