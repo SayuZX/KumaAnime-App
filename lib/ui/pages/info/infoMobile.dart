@@ -1580,35 +1580,36 @@ class _InfoMobileState extends State<InfoMobile> {
         ),
         Container(
           margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          padding: const EdgeInsets.all(8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                iconSize: 27,
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
+              Material(
+                color: Colors.black.withValues(alpha: 0.45),
+                shape: const CircleBorder(),
+                clipBehavior: Clip.hardEdge,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24),
                 ),
-                style: IconButton.styleFrom(backgroundColor: Color.fromARGB(69, 0, 0, 0)),
               ),
-              IconButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                      context: context,
-                      useSafeArea: true,
-                      builder: (context) {
-                        return Commentsection(mediaId: provider.id, userId: storedUserData?.id);
-                      });
-                },
-                iconSize: 27,
-                icon: Icon(
-                  Icons.comment_rounded,
-                  color: Colors.white,
+              Material(
+                color: Colors.black.withValues(alpha: 0.45),
+                shape: const CircleBorder(),
+                clipBehavior: Clip.hardEdge,
+                child: IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                        context: context,
+                        useSafeArea: true,
+                        builder: (context) {
+                          return Commentsection(mediaId: provider.id, userId: storedUserData?.id);
+                        });
+                  },
+                  icon: const Icon(Icons.comment_rounded, color: Colors.white, size: 24),
                 ),
-                style: IconButton.styleFrom(backgroundColor: Color.fromARGB(69, 0, 0, 0)),
               ),
             ],
           ),
