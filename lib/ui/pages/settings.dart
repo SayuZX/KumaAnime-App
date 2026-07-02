@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/pages/settingPages/account.dart';
 import 'package:kumaanime/ui/pages/settingPages/appInfo.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
@@ -29,22 +30,33 @@ class SettingItem {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final List<SettingItem> settingItems = [
-    SettingItem(
-        icon: Icons.account_circle, label: "Account", description: "Personal stuff", navigateTo: AccountSetting()),
-    SettingItem(icon: Icons.brush_rounded, label: "UI", description: "Colors n Visuals", navigateTo: ThemeSetting()),
-    SettingItem(
-        icon: Icons.play_circle_fill_rounded,
-        label: "Player",
-        description: "Tailor your playback",
-        navigateTo: PlayerSetting()),
-    SettingItem(icon: Icons.tune_rounded, label: "General", description: "Basic tweaks", navigateTo: GeneralSetting()),
-    SettingItem(
-        icon: Icons.info_outline_rounded, label: "App Info", description: "The App stuff", navigateTo: AppInfoSetting())
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final settingItems = [
+      SettingItem(
+          icon: Icons.account_circle,
+          label: loc.settingsAccount,
+          description: loc.settingsAccountDesc,
+          navigateTo: AccountSetting()),
+      SettingItem(
+          icon: Icons.brush_rounded, label: loc.settingsUi, description: loc.settingsUiDesc, navigateTo: ThemeSetting()),
+      SettingItem(
+          icon: Icons.play_circle_fill_rounded,
+          label: loc.settingsPlayer,
+          description: loc.settingsPlayerDesc,
+          navigateTo: PlayerSetting()),
+      SettingItem(
+          icon: Icons.tune_rounded,
+          label: loc.settingsGeneral,
+          description: loc.settingsGeneralDesc,
+          navigateTo: GeneralSetting()),
+      SettingItem(
+          icon: Icons.info_outline_rounded,
+          label: loc.settingsAppInfo,
+          description: loc.settingsAppInfoDesc,
+          navigateTo: AppInfoSetting())
+    ];
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       appBar: settingPagesAppBar(context),
@@ -57,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Container(
                 padding: EdgeInsets.only(top: 40, left: 20, bottom: 40),
                 child: Text(
-                  "Settings",
+                  loc.settingsTitle,
                   style: TextStyle(fontFamily: "Rubik", fontSize: 40, color: appTheme.textMainColor),
                 ),
               ),
