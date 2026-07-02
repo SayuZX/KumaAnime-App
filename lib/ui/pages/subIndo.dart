@@ -401,8 +401,8 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
           padding: EdgeInsets.only(top: 16, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
           sliver: SliverGrid.builder(
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: desktop ? 165 : 125,
-              mainAxisExtent: desktop ? 300 : 240,
+              maxCrossAxisExtent: (desktop ? 165.0 : 125.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+              mainAxisExtent: (desktop ? 300.0 : 240.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
               crossAxisSpacing: 12,
               mainAxisSpacing: 16,
             ),
