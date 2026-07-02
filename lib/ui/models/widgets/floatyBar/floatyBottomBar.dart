@@ -117,7 +117,7 @@ class _FloatyBottomBarState extends State<FloatyBottomBar> {
                     right: hasRightGap ? widget.detachGap / 2 : 0,
                   ),
                   decoration: BoxDecoration(
-                    color: (isActive ? appTheme.accentColor : widget.accentColor.withAlpha(80)),
+                    color: (isActive ? appTheme.accentColor : Colors.transparent),
                     borderRadius: BorderRadius.only(
                       topLeft: (!isActive && leftNeighborIsActive)
                           ? activeFacingCornerRadius
@@ -151,7 +151,7 @@ class _FloatyBottomBarState extends State<FloatyBottomBar> {
                         Icon(
                           widget.items[i].icon,
                           size: 24,
-                          color: isActive ? appTheme.onAccent : appTheme.textMainColor,
+                          color: isActive ? appTheme.onAccent : appTheme.textSubColor,
                         ),
                       AnimatedSize(
                         duration: widget.animationDuration,
