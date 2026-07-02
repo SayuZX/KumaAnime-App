@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/enums.dart';
 import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/bottomSheets/mediaListStatus.dart';
 import 'package:kumaanime/ui/models/bottomSheets/serverSelectionSheet.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
@@ -34,13 +35,15 @@ class _InfoMobileState extends State<InfoMobile> {
   // just a small helper function to get the title based on preference!
   String getTitle(Map<String, String?> titles) {
     final normalTitle = titles['english'] ?? titles['romaji'] ?? '';
-    final customizedTitle = useNativeTitle ? titles['native'] ?? normalTitle : normalTitle;
+    final customizedTitle =
+        useNativeTitle ? titles['native'] ?? normalTitle : normalTitle;
     return customizedTitle;
   }
 
   @override
   Widget build(BuildContext context) {
     provider = context.watch<InfoProvider>();
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: provider.infoLoadError
@@ -54,11 +57,14 @@ class _InfoMobileState extends State<InfoMobile> {
                     scale: 7.5,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 15, left: 30, right: 30, bottom: 15),
-                    child: const Text(
-                      'oops! something went wrong',
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.only(
+                        top: 15, left: 30, right: 30, bottom: 15),
+                    child: Text(
+                      loc.imError,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -70,8 +76,10 @@ class _InfoMobileState extends State<InfoMobile> {
                         backgroundColor: appTheme.accentColor,
                       ),
                       child: Text(
-                        "Go Back",
-                        style: TextStyle(color: appTheme.backgroundColor, fontWeight: FontWeight.bold),
+                        loc.imGoBack,
+                        style: TextStyle(
+                            color: appTheme.backgroundColor,
+                            fontWeight: FontWeight.bold),
                       )),
                 ],
               ),
@@ -85,7 +93,9 @@ class _InfoMobileState extends State<InfoMobile> {
                         _headerBlock(context),
                         AnimatedSwitcher(
                           duration: Duration(milliseconds: 200),
-                          child: infoPage ? _infoItems(context) : _watchItems(context),
+                          child: infoPage
+                              ? _infoItems(context)
+                              : _watchItems(context),
                         ),
                       ],
                     ),
@@ -100,9 +110,11 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   Widget _headerBlock(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final data = provider.data;
     final native = data.title['native'];
-    final showNative = native != null && native.isNotEmpty && native != getTitle(data.title);
+    final showNative =
+        native != null && native.isNotEmpty && native != getTitle(data.title);
     return Padding(
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).padding.left + 20,
@@ -137,7 +149,7 @@ class _InfoMobileState extends State<InfoMobile> {
           _actionRow(context),
           if ((data.synopsis ?? '').isNotEmpty) ...[
             const SizedBox(height: 24),
-            _sectionHeading("Sinopsis"),
+            _sectionHeading(loc.imSynopsis),
             const SizedBox(height: 8),
             _synopsisBlock(data.synopsis!),
           ],
@@ -147,6 +159,7 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   Widget _metaRow() {
+    final loc = AppLocalizations.of(context);
     final data = provider.data;
     final items = <Widget>[];
     void add(IconData icon, String? value, {Color? iconColor}) {
@@ -156,20 +169,28 @@ class _InfoMobileState extends State<InfoMobile> {
         children: [
           Icon(icon, size: 15, color: iconColor ?? appTheme.textSubColor),
           const SizedBox(width: 4),
-          Text(value, style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
+          Text(value,
+              style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
         ],
       ));
     }
 
     final dur = data.duration.toString();
-    add(Icons.star_rounded, data.rating != null ? "${data.rating}" : null, iconColor: const Color(0xFFF5C518));
+    add(Icons.star_rounded, data.rating != null ? "${data.rating}" : null,
+        iconColor: const Color(0xFFF5C518));
     add(Icons.live_tv_rounded, data.type);
-    add(Icons.podcasts_rounded, data.status != null ? _capitalize(data.status!.replaceAll('_', ' ')) : null);
-    add(Icons.timer_outlined, (dur.isEmpty || dur == 'null') ? null : "$dur min");
+    add(
+        Icons.podcasts_rounded,
+        data.status != null
+            ? _capitalize(data.status!.replaceAll('_', ' '))
+            : null);
+    add(Icons.timer_outlined,
+        (dur.isEmpty || dur == 'null') ? null : loc.imDurationMinutes(dur));
     return Wrap(spacing: 16, runSpacing: 8, children: items);
   }
 
-  String _capitalize(String s) => s.isEmpty ? s : "${s[0].toUpperCase()}${s.substring(1).toLowerCase()}";
+  String _capitalize(String s) =>
+      s.isEmpty ? s : "${s[0].toUpperCase()}${s.substring(1).toLowerCase()}";
 
   Widget _genreChipsRow() {
     return Wrap(
@@ -177,15 +198,21 @@ class _InfoMobileState extends State<InfoMobile> {
       runSpacing: 8,
       children: provider.data.genres
           .map((g) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(20)),
-                child: Text(g, style: TextStyle(color: appTheme.textMainColor, fontSize: 12)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                    color: appTheme.backgroundSubColor,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Text(g,
+                    style:
+                        TextStyle(color: appTheme.textMainColor, fontSize: 12)),
               ))
           .toList(),
     );
   }
 
   Widget _actionRow(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
@@ -197,11 +224,13 @@ class _InfoMobileState extends State<InfoMobile> {
               backgroundColor: appTheme.accentColor,
               foregroundColor: appTheme.onAccent,
               padding: const EdgeInsets.symmetric(vertical: 15),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
-            icon: Icon(infoPage ? Icons.play_arrow_rounded : Icons.info_rounded, size: 24),
+            icon: Icon(infoPage ? Icons.play_arrow_rounded : Icons.info_rounded,
+                size: 24),
             label: Text(
-              infoPage ? "Tonton Sekarang" : "Info",
+              infoPage ? loc.imWatchNow : loc.imInfo,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
@@ -215,12 +244,14 @@ class _InfoMobileState extends State<InfoMobile> {
               backgroundColor: appTheme.backgroundColor,
               showDragHandle: true,
               isScrollControlled: true,
-              builder: (context) => MediaListStatusBottomSheet(provider: provider),
+              builder: (context) =>
+                  MediaListStatusBottomSheet(provider: provider),
             ),
           ),
         ] else if (provider.started) ...[
           const SizedBox(width: 10),
-          _outlineCircle(Icons.delete_outline_rounded, () => _confirmRemove(context)),
+          _outlineCircle(
+              Icons.delete_outline_rounded, () => _confirmRemove(context)),
         ],
       ],
     );
@@ -242,11 +273,14 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   void _confirmRemove(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("No")),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(loc.imNo)),
           TextButton(
             onPressed: () async {
               await removeWatching(provider.id);
@@ -254,17 +288,26 @@ class _InfoMobileState extends State<InfoMobile> {
               await provider.getWatched(refreshLastWatchDuration: true);
               Navigator.pop(context);
             },
-            style: TextButton.styleFrom(backgroundColor: appTheme.accentColor, foregroundColor: appTheme.onAccent),
-            child: Text("Yes"),
+            style: TextButton.styleFrom(
+                backgroundColor: appTheme.accentColor,
+                foregroundColor: appTheme.onAccent),
+            child: Text(loc.imYes),
           ),
         ],
         content: Padding(
           padding: const EdgeInsets.all(10),
           child: Text.rich(
-            TextSpan(text: "Remove \"", style: TextStyle(fontSize: 15), children: [
-              TextSpan(text: getTitle(provider.data.title), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-              TextSpan(text: "\" from your watch history?", style: TextStyle(fontSize: 15)),
-            ]),
+            TextSpan(
+                text: loc.imRemovePrefix,
+                style: TextStyle(fontSize: 15),
+                children: [
+                  TextSpan(
+                      text: getTitle(provider.data.title),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text: loc.imRemoveSuffix, style: TextStyle(fontSize: 15)),
+                ]),
           ),
         ),
       ),
@@ -272,6 +315,7 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   Widget _synopsisBlock(String synopsis) {
+    final loc = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -279,11 +323,14 @@ class _InfoMobileState extends State<InfoMobile> {
           duration: const Duration(milliseconds: 200),
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: _synopsisExpanded ? double.infinity : 90),
+            constraints: BoxConstraints(
+                maxHeight: _synopsisExpanded ? double.infinity : 90),
             child: Text(
               synopsis,
-              overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
-              style: TextStyle(color: appTheme.textSubColor, fontSize: 14, height: 1.5),
+              overflow:
+                  _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
+              style: TextStyle(
+                  color: appTheme.textSubColor, fontSize: 14, height: 1.5),
             ),
           ),
         ),
@@ -292,8 +339,9 @@ class _InfoMobileState extends State<InfoMobile> {
           child: Padding(
             padding: const EdgeInsets.only(top: 6),
             child: Text(
-              _synopsisExpanded ? "Tutup" : "Selengkapnya",
-              style: TextStyle(color: appTheme.accentColor, fontWeight: FontWeight.bold),
+              _synopsisExpanded ? loc.imShowLess : loc.imShowMore,
+              style: TextStyle(
+                  color: appTheme.accentColor, fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -304,11 +352,15 @@ class _InfoMobileState extends State<InfoMobile> {
   Widget _sectionHeading(String title) {
     return Text(
       title,
-      style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold),
+      style: TextStyle(
+          color: appTheme.textMainColor,
+          fontSize: 20,
+          fontWeight: FontWeight.bold),
     );
   }
 
   Column _watchItems(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         Container(
@@ -317,7 +369,9 @@ class _InfoMobileState extends State<InfoMobile> {
               left: 20 + MediaQuery.of(context).padding.left,
               right: 20 + MediaQuery.of(context).padding.right),
           padding: EdgeInsets.only(top: 15, bottom: 20),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: appTheme.backgroundSubColor),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: appTheme.backgroundSubColor),
           child: Column(
             children: [
               Container(
@@ -328,14 +382,16 @@ class _InfoMobileState extends State<InfoMobile> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Episodes",
+                      loc.imEpisodes,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: appTheme.textMainColor,
                       ),
                     ),
-                    if (provider.foundName != null && provider.epLinks.isNotEmpty) _dubToggle(),
+                    if (provider.foundName != null &&
+                        provider.epLinks.isNotEmpty)
+                      _dubToggle(),
                   ],
                 ),
               ),
@@ -352,11 +408,11 @@ class _InfoMobileState extends State<InfoMobile> {
                               scale: 7.5,
                             ),
                             Text(
-                              "Couldnt get any results :(",
+                              loc.imNoResults,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
-                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -367,7 +423,8 @@ class _InfoMobileState extends State<InfoMobile> {
                           width: 350,
                           height: 100,
                           child: Center(
-                            child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
+                            child: KumaAnimeLoading(
+                                color: appTheme.accentColor, size: 40),
                           ),
                         )
                       : _episodeChipGrid(context),
@@ -379,6 +436,7 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   Widget _dubToggle() {
+    final loc = AppLocalizations.of(context);
     return InkWell(
       onTap: () => provider.preferDubs = !provider.preferDubs,
       child: Container(
@@ -387,9 +445,12 @@ class _InfoMobileState extends State<InfoMobile> {
         height: 25,
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: appTheme.textMainColor),
-        child: Text(provider.preferDubs ? "dub" : "sub",
-            style: TextStyle(color: appTheme.backgroundColor, fontWeight: FontWeight.bold)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            color: appTheme.textMainColor),
+        child: Text(provider.preferDubs ? loc.imDub : loc.imSub,
+            style: TextStyle(
+                color: appTheme.backgroundColor, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -406,8 +467,12 @@ class _InfoMobileState extends State<InfoMobile> {
           final isLast = number == provider.watched;
           final bg = isLast
               ? appTheme.accentColor
-              : (isWatched ? appTheme.accentColor.withValues(alpha: 0.16) : appTheme.backgroundColor);
-          final fg = isLast ? appTheme.onAccent : (isWatched ? appTheme.accentColor : appTheme.textMainColor);
+              : (isWatched
+                  ? appTheme.accentColor.withValues(alpha: 0.16)
+                  : appTheme.backgroundColor);
+          final fg = isLast
+              ? appTheme.onAccent
+              : (isWatched ? appTheme.accentColor : appTheme.textMainColor);
           return GestureDetector(
             onTap: () {
               showModalBottomSheet(
@@ -423,7 +488,8 @@ class _InfoMobileState extends State<InfoMobile> {
                   );
                 },
               ).then((val) {
-                if (val == true) provider.refreshListStatus("CURRENT", provider.watched);
+                if (val == true)
+                  provider.refreshListStatus("CURRENT", provider.watched);
               });
             },
             child: Container(
@@ -434,12 +500,15 @@ class _InfoMobileState extends State<InfoMobile> {
                 color: bg,
                 borderRadius: BorderRadius.circular(12),
                 border: (isWatched && !isLast)
-                    ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.55), width: 1.5)
+                    ? Border.all(
+                        color: appTheme.accentColor.withValues(alpha: 0.55),
+                        width: 1.5)
                     : null,
               ),
               child: Text(
                 "$number",
-                style: TextStyle(color: fg, fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                    color: fg, fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           );
@@ -449,6 +518,7 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   Container _infoItems(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       child: Column(
         children: [
@@ -457,29 +527,34 @@ class _InfoMobileState extends State<InfoMobile> {
             child: Column(
               children: [
                 _buildInfoItems(
-                  _infoLeft('Type'),
+                  _infoLeft(loc.imType),
                   _infoRight(provider.data.type.toLowerCase()),
                 ),
                 _buildInfoItems(
-                  _infoLeft('Status'),
-                  _infoRight('${provider.data.status ?? '??'}'.toLowerCase().replaceAll("_", ' ')),
+                  _infoLeft(loc.imStatus),
+                  _infoRight('${provider.data.status ?? '??'}'
+                      .toLowerCase()
+                      .replaceAll("_", ' ')),
                 ),
                 _buildInfoItems(
-                  _infoLeft('Rating'),
+                  _infoLeft(loc.imRating),
                   _infoRight('${provider.data.rating ?? '??'}/10'),
                 ),
                 _buildInfoItems(
-                  _infoLeft('Episodes'),
+                  _infoLeft(loc.imEpisodes),
                   _infoRight('${provider.data.episodes ?? '??'}'),
                 ),
                 _buildInfoItems(
-                  _infoLeft('Duration'),
+                  _infoLeft(loc.imDuration),
                   _infoRight('${provider.data.duration}'),
                 ),
-                _buildInfoItems(_infoLeft("Start Date"), _infoRight("${provider.data.aired['start']}")),
+                _buildInfoItems(_infoLeft(loc.imStartDate),
+                    _infoRight("${provider.data.aired['start']}")),
                 _buildInfoItems(
-                  _infoLeft('Studios'),
-                  _infoRight(provider.data.studios.isEmpty ? '??' : provider.data.studios[0] ?? '??'),
+                  _infoLeft(loc.imStudios),
+                  _infoRight(provider.data.studios.isEmpty
+                      ? '??'
+                      : provider.data.studios[0] ?? '??'),
                 ),
               ],
             ),
@@ -490,7 +565,7 @@ class _InfoMobileState extends State<InfoMobile> {
               padding: EdgeInsets.only(left: 15, right: 15),
               child: Column(
                 children: [
-                  _categoryTitle('Tags'),
+                  _categoryTitle(loc.imTags),
                   SizedBox(
                     height: 45,
                     child: ListView.builder(
@@ -501,8 +576,9 @@ class _InfoMobileState extends State<InfoMobile> {
                           alignment: Alignment.center,
                           margin: EdgeInsets.all(5),
                           padding: EdgeInsets.only(left: 15, right: 15),
-                          decoration:
-                              BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(5)),
+                          decoration: BoxDecoration(
+                              color: appTheme.backgroundSubColor,
+                              borderRadius: BorderRadius.circular(5)),
                           child: Text(
                             provider.data.tags![index],
                             style: TextStyle(
@@ -521,7 +597,7 @@ class _InfoMobileState extends State<InfoMobile> {
             margin: EdgeInsets.only(top: 30),
             child: Column(
               children: [
-                _categoryTitle('Characters'),
+                _categoryTitle(loc.imCharacters),
                 SizedBox(
                   height: 260,
                   child: ListView.builder(
@@ -547,7 +623,7 @@ class _InfoMobileState extends State<InfoMobile> {
             margin: EdgeInsets.only(top: 20),
             child: Column(
               children: [
-                _categoryTitle('Related'),
+                _categoryTitle(loc.imRelated),
                 _buildRecAndRel(provider.data.related, false, context),
               ],
             ),
@@ -556,7 +632,7 @@ class _InfoMobileState extends State<InfoMobile> {
             margin: EdgeInsets.only(top: 20),
             child: Column(
               children: [
-                _categoryTitle('Recommended'),
+                _categoryTitle(loc.imRecommended),
                 _buildRecAndRel(provider.data.recommended, true, context),
               ],
             ),
@@ -580,14 +656,16 @@ class _InfoMobileState extends State<InfoMobile> {
     );
   }
 
-  SizedBox _buildRecAndRel(List<DatabaseRelatedRecommendation> data, bool recommended, BuildContext context) {
+  SizedBox _buildRecAndRel(List<DatabaseRelatedRecommendation> data,
+      bool recommended, BuildContext context) {
+    final loc = AppLocalizations.of(context);
     if (data.isEmpty)
       return SizedBox(
         height: 240,
         child: Center(
-          child: const Text(
-            'Nothing to see here!',
-            style: TextStyle(
+          child: Text(
+            loc.imNothingHere,
+            style: const TextStyle(
               fontSize: 18,
               color: const Color.fromARGB(255, 255, 255, 255),
             ),
@@ -604,7 +682,7 @@ class _InfoMobileState extends State<InfoMobile> {
           return GestureDetector(
             onTap: () {
               if (item.type.toLowerCase() != "anime") {
-                return floatingSnackBar('Mangas/Novels arent supported');
+                return floatingSnackBar(loc.imMangaNotSupported);
               }
 
               //only navigate if the list is being built by characterCard method.
@@ -621,7 +699,8 @@ class _InfoMobileState extends State<InfoMobile> {
             child: Container(
                 width: 130,
                 child: recommended
-                    ? Cards.animeCard(item.id, getTitle(item.title), item.cover, rating: item.rating)
+                    ? Cards.animeCard(item.id, getTitle(item.title), item.cover,
+                        rating: item.rating)
                     : Cards.characterCard(
                         getTitle(item.title),
                         recommended ? item.type : item.relationType!,
@@ -677,11 +756,14 @@ class _InfoMobileState extends State<InfoMobile> {
   }
 
   Stack _stack() {
+    final loc = AppLocalizations.of(context);
     return Stack(
       children: [
         GestureDetector(
           onLongPress: () {
-            final img = provider.data.banner != null ? provider.data.banner! : provider.data.cover;
+            final img = provider.data.banner != null
+                ? provider.data.banner!
+                : provider.data.cover;
             showModalBottomSheet(
               context: context,
               showDragHandle: true,
@@ -693,8 +775,11 @@ class _InfoMobileState extends State<InfoMobile> {
                     child: Column(
                       children: [
                         Text(
-                          "${provider.data.title['english'] ?? provider.data.title['romaji']} - Banner",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          loc.imBannerTitle(provider.data.title['english'] ??
+                              provider.data.title['romaji'] ??
+                              ''),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                         Image.network(
                           img,
@@ -709,12 +794,14 @@ class _InfoMobileState extends State<InfoMobile> {
                               try {
                                 await DownloadManager().addDownloadTask(
                                     img,
-                                    (provider.data.title['english'] ?? provider.data.title['romaji'] ?? "anime") +
+                                    (provider.data.title['english'] ??
+                                            provider.data.title['romaji'] ??
+                                            "anime") +
                                         "_Banner");
-                                floatingSnackBar("Succesfully saved to your downloads folder!");
+                                floatingSnackBar(loc.imBannerSaved);
                                 Navigator.of(context).pop();
                               } catch (err) {
-                                floatingSnackBar("Couldnt save the image!");
+                                floatingSnackBar(loc.imBannerSaveError);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -726,7 +813,7 @@ class _InfoMobileState extends State<InfoMobile> {
                               ),
                             ),
                             child: Text(
-                              "save",
+                              loc.imSave,
                               style: TextStyle(
                                   color: appTheme.onAccent,
                                   fontWeight: FontWeight.bold,
@@ -752,7 +839,9 @@ class _InfoMobileState extends State<InfoMobile> {
               height: 300,
               width: double.infinity,
               child: Image.network(
-                provider.data.banner != null ? provider.data.banner! : provider.data.cover,
+                provider.data.banner != null
+                    ? provider.data.banner!
+                    : provider.data.cover,
                 fit: BoxFit.cover,
                 opacity: AlwaysStoppedAnimation(0.8),
                 frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
@@ -782,7 +871,8 @@ class _InfoMobileState extends State<InfoMobile> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24),
+                  icon: const Icon(Icons.arrow_back_rounded,
+                      color: Colors.white, size: 24),
                 ),
               ),
               Material(
@@ -795,10 +885,12 @@ class _InfoMobileState extends State<InfoMobile> {
                         context: context,
                         useSafeArea: true,
                         builder: (context) {
-                          return Commentsection(mediaId: provider.id, userId: storedUserData?.id);
+                          return Commentsection(
+                              mediaId: provider.id, userId: storedUserData?.id);
                         });
                   },
-                  icon: const Icon(Icons.comment_rounded, color: Colors.white, size: 24),
+                  icon: const Icon(Icons.comment_rounded,
+                      color: Colors.white, size: 24),
                 ),
               ),
             ],
