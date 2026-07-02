@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:animestream/core/anime/providers/animeProvider.dart';
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/values.dart';
-import 'package:animestream/core/commons/enums.dart';
+import 'package:kumaanime/core/anime/providers/animeProvider.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/values.dart';
+import 'package:kumaanime/core/commons/enums.dart';
 import 'package:http/http.dart';
 
 //use anilist for searching
