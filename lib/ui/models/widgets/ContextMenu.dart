@@ -149,7 +149,7 @@ class ContextMenuItem extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8),
           child: Text(
             label,
-            style: TextStyle(fontFamily: "NotoSans", fontSize: 16, color: Colors.white),
+            style: TextStyle(fontSize: 16, color: Colors.white),
           ),
         ),
       ],
