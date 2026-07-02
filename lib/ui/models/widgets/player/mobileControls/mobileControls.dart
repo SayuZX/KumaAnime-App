@@ -12,6 +12,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/enums.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
 class MobileControls extends StatefulWidget {
   const MobileControls({
@@ -102,6 +103,7 @@ class _MobileControlsState extends State<MobileControls> {
   Widget build(BuildContext context) {
     dataProvider = context.watch<PlayerDataProvider>();
     provider = context.watch<PlayerProvider>();
+    final loc = AppLocalizations.of(context);
     return KeyboardListener(
       focusNode: _fn,
       autofocus: true,
@@ -150,7 +152,7 @@ class _MobileControlsState extends State<MobileControls> {
                                   Row(
                                     children: [
                                       if (megaSkipDuration != null && (currentUserSettings?.enableMegaSkip ?? true))
-                                        megaSkipButton(),
+                                        megaSkipButton(loc),
                                       _fullscreenButton(isMini),
                                     ],
                                   ),
@@ -231,7 +233,7 @@ class _MobileControlsState extends State<MobileControls> {
     );
   }
 
-  ElevatedButton megaSkipButton() {
+  ElevatedButton megaSkipButton(AppLocalizations loc) {
     int posInSec = (provider.controller.position! / 1000).toInt();
     final isAtOp = dataProvider.state.opSkip != null &&
         posInSec >= dataProvider.state.opSkip!.start &&
@@ -263,10 +265,10 @@ class _MobileControlsState extends State<MobileControls> {
               padding: const EdgeInsets.only(right: 5),
               child: Text(
                 isAtOp
-                    ? "Skip Op"
+                    ? loc.mcSkipOp
                     : isAtEd
-                        ? "Skip Ed"
-                        : "+$megaSkipDuration",
+                        ? loc.mcSkipEd
+                        : loc.mcMegaSkipSeconds(megaSkipDuration ?? 0),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -303,6 +305,7 @@ class _MobileControlsState extends State<MobileControls> {
   }
 
   Container centerControls(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       alignment: Alignment.center,
       child: Row(
@@ -318,7 +321,7 @@ class _MobileControlsState extends State<MobileControls> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () async {
-                  if (dataProvider.state.currentEpIndex == 0) return floatingSnackBar("Already on the first episode");
+                  if (dataProvider.state.currentEpIndex == 0) return floatingSnackBar(loc.mcAlreadyFirstEpisode);
                   showSheet(
                     context,
                     CustomControlsBottomSheet(
@@ -423,7 +426,7 @@ class _MobileControlsState extends State<MobileControls> {
                 onTap: () async {
                   //get next episode sources!
                   if (dataProvider.state.currentEpIndex + 1 == dataProvider.epLinks.length)
-                    return floatingSnackBar("You are already in the final episode!");
+                    return floatingSnackBar(loc.mcAlreadyFinalEpisode);
                   if (dataProvider.state.preloadedSources.isNotEmpty) {
                     print("from preload");
                     provider.playPreloadedEpisode(dataProvider);
