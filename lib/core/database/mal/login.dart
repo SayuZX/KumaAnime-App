@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/mal/mal.dart';
-import 'package:animestream/core/database/mal/types.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/mal/mal.dart';
+import 'package:kumaanime/core/database/mal/types.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart';
@@ -22,7 +22,7 @@ class MALLogin extends DatabaseLogin {
 
     await storeSecureVal(SecureStorageKey.malChallengeVerifier, verifier);
 
-    final redirect = "auth.animestream://callback";
+    final redirect = "auth.kumaanime://callback";
     final state = generateState();
 
     final loginUrl =
