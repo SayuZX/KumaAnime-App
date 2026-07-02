@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/bottomSheets/watchSocialSheet.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/player/controls.dart';
@@ -84,22 +86,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
 
   void setWatchMode() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    SystemChrome.setPreferredOrientations(_preferredWatchOrientations());
-  }
-
-  List<DeviceOrientation> _preferredWatchOrientations() {
-    switch (currentUserSettings?.playerOrientation ?? 'auto') {
-      case 'portrait':
-        return [DeviceOrientation.portraitUp];
-      case 'landscape':
-        return [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight];
-      default:
-        return [
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ];
-    }
+    SystemChrome.setPreferredOrientations(watchPreferredOrientations());
   }
 
   void _initialize() async {
@@ -461,6 +448,9 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     final playerProvider = context.watch<PlayerProvider>();
     final playerDataProvider = context.watch<PlayerDataProvider>();
 
+    final youtubeLayout = _useYoutubeLayout(MediaQuery.orientationOf(context));
+    _applySystemUiForLayout(youtubeLayout);
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
@@ -483,10 +473,11 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
         // playerDataProvider.clearDiscordPresence();
       },
       child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
-          child: GestureOverlay(
+        backgroundColor: youtubeLayout ? appTheme.backgroundColor : Colors.black,
+        body: _layoutBody(
+          youtubeLayout,
+          playerDataProvider,
+          GestureOverlay(
             isDesktop: isDesktop,
             controlsLocked: playerDataProvider.state.controlsLocked,
             enableHoldToSpeedUp: currentUserSettings?.enableHoldToSpeedUp ?? true,
@@ -628,6 +619,66 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  bool _lastYoutubeLayout = false;
+
+  bool _useYoutubeLayout(Orientation orientation) {
+    switch (currentUserSettings?.playerOrientation ?? 'auto') {
+      case 'landscape':
+        return false;
+      case 'portrait':
+        return true;
+      default:
+        return orientation == Orientation.portrait;
+    }
+  }
+
+  void _applySystemUiForLayout(bool youtube) {
+    if (youtube == _lastYoutubeLayout && isInitiated) return;
+    _lastYoutubeLayout = youtube;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      SystemChrome.setEnabledSystemUIMode(youtube ? SystemUiMode.edgeToEdge : SystemUiMode.immersiveSticky);
+    });
+  }
+
+  Widget _layoutBody(bool youtube, PlayerDataProvider dataProvider, Widget player) {
+    if (!youtube) {
+      return Padding(
+        padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
+        child: player,
+      );
+    }
+    return SafeArea(
+      child: Column(
+        children: [
+          Container(
+            color: Colors.black,
+            child: AspectRatio(aspectRatio: 16 / 9, child: player),
+          ),
+          Expanded(
+            child: WatchSocialPanel(
+              animeId: dataProvider.showId,
+              title: dataProvider.showTitle,
+              onDownload: _downloadCurrent,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _downloadCurrent() {
+    final dp = context.read<PlayerDataProvider>();
+    final stream = dp.state.currentStream;
+    DownloadManager().addDownloadTask(
+      stream.url,
+      "${dp.showTitle} - Ep ${dp.state.currentEpIndex + 1}",
+      subtitleUrl: stream.subtitle,
+      customHeaders: stream.customHeaders ?? const {},
+    );
+    floatingSnackBar("Mengunduh episode ke folder unduhan");
   }
 
   Widget _buildVolumeBrightnessIndicators() {
