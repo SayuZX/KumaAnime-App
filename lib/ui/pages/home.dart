@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/screenType.dart';
@@ -91,6 +92,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SmartRefresher(
@@ -114,7 +116,7 @@ class _HomeState extends State<Home> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      buildHeader("Home", context, afterNavigation: () {
+                      buildHeader(loc.homeHome, context, afterNavigation: () {
                         if (mounted) setState(() {});
                       }),
                       AnimatedSwitcher(
@@ -136,13 +138,13 @@ class _HomeState extends State<Home> {
                               )
                             : null,
                       ),
-                      _titleAndList("Continue Watching", widget.mainNavProvider.recentlyWatched,
+                      _titleAndList(loc.homeContinueWatching, widget.mainNavProvider.recentlyWatched,
                           showRefreshIndication: refreshing),
                       divider(),
-                      _titleAndList("Aired This Season", widget.mainNavProvider.currentlyAiring),
+                      _titleAndList(loc.homeAiredThisSeason, widget.mainNavProvider.currentlyAiring),
                       if (widget.mainNavProvider.loggedIn) ...[
                         divider(),
-                        _titleAndList("From Your Planned", widget.mainNavProvider.plannedList),
+                        _titleAndList(loc.homeFromYourPlanned, widget.mainNavProvider.plannedList),
                       ],
                       footSpace(),
                     ],
@@ -162,6 +164,7 @@ class _HomeState extends State<Home> {
   }
 
   AnimatedContainer _rightPanel() {
+    final loc = AppLocalizations.of(context);
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
       decoration: BoxDecoration(
@@ -193,7 +196,7 @@ class _HomeState extends State<Home> {
                     Padding(
                       padding: const EdgeInsets.only(right: 12),
                       child: Text(
-                        selectedList!.title ?? "Which list might this be?",
+                        selectedList!.title ?? loc.homeUnknownList,
                         style: TextStyle(fontSize: 20, color: appTheme.textMainColor),
                       ),
                     ),
@@ -240,6 +243,7 @@ class _HomeState extends State<Home> {
   }
 
   _listButton() {
+    final loc = AppLocalizations.of(context);
     return Expanded(
       flex: 4,
       child: Container(
@@ -266,7 +270,7 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Text(
-                    "Lists",
+                    loc.homeLists,
                     style: TextStyle(
                       color: appTheme.textMainColor,
                       fontSize: 16,
@@ -343,6 +347,7 @@ class _HomeState extends State<Home> {
   }
 
   Column _titleAndList(String title, AnimeListData<HomePageList> list, {bool showRefreshIndication = false}) {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         Row(
@@ -439,7 +444,7 @@ class _HomeState extends State<Home> {
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text(
-                            "Aww... Something's wrong!",
+                            loc.homeErrorMessage,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
@@ -489,7 +494,7 @@ class _HomeState extends State<Home> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10.0),
                                   child: Text(
-                                    "Boo! Nothing's here!",
+                                    loc.homeEmptyMessage,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
