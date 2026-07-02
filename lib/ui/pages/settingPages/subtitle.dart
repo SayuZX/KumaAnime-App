@@ -421,7 +421,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
   Center _itemTitle(String title) => Center(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
-          child: Text(title, style: TextStyle(fontSize: 20, fontFamily: "Rubik", fontWeight: FontWeight.bold)),
+          child: Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
       );
 }
