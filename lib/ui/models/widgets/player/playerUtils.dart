@@ -1,8 +1,25 @@
 import 'dart:math';
 
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/utils.dart';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+List<DeviceOrientation> watchPreferredOrientations() {
+  switch (currentUserSettings?.playerOrientation ?? 'auto') {
+    case 'portrait':
+      return const [DeviceOrientation.portraitUp];
+    case 'landscape':
+      return const [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight];
+    default:
+      return const [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ];
+  }
+}
 
 Future<BetterPlayerDataSource> dataSourceConfig(String url, {Map<String, String>? headers = null}) async {
   return BetterPlayerDataSource(
