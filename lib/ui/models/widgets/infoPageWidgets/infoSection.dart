@@ -214,7 +214,7 @@ class InfoSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: "Rubik"),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, ),
           ),
           Container(
             width: unconstrainedWidth ? MediaQuery.sizeOf(context).width / 2 : 400,
