@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class ThemeItem {
   final String name;                      // Theme's name
-  final AnimeStreamTheme theme;           // Dark variant of the theme
-  final AnimeStreamTheme lightVariant;    // Light variant of the theme
+  final KumaAnimeTheme theme;           // Dark variant of the theme
+  final KumaAnimeTheme lightVariant;    // Light variant of the theme
   final int id;                           // Theme ID
 
   final bool dev;                        // Only for the dev versions (α, debug versions...)
@@ -17,7 +17,7 @@ class ThemeItem {
   });
 }
 
-class AnimeStreamTheme {
+class KumaAnimeTheme {
   //core theme
   Color backgroundColor;               //background
   Color accentColor;                   //accent
@@ -27,7 +27,7 @@ class AnimeStreamTheme {
   Color modalSheetBackgroundColor;     //for modal sheet (no issue being same as background)
   Color onAccent; 
 
-  AnimeStreamTheme({
+  KumaAnimeTheme({
     required this.accentColor,
     required this.backgroundColor,
     required this.backgroundSubColor,
