@@ -47,11 +47,18 @@ class SocialService {
   String? _uid;
   String _nickname = "";
   String _avatar = "";
+  DateTime? _createdAt;
+  int _episodesWatched = 0;
+  Set<String> _grantedBadges = {};
 
   bool get isReady => _ready;
   String? get uid => _uid;
   String get nickname => _nickname.isNotEmpty ? _nickname : _defaultNickname();
   String get avatar => _avatar;
+  DateTime? get accountCreatedAt => _createdAt;
+  int get episodesWatched => _episodesWatched;
+  Set<String> get grantedBadges => _grantedBadges;
+  int get accountAgeDays => _createdAt == null ? 0 : DateTime.now().difference(_createdAt!).inDays;
 
   FirebaseFirestore get _db => FirebaseFirestore.instance;
 
@@ -83,18 +90,40 @@ class SocialService {
       final box = await _box();
       _nickname = (box.get(_nicknameKey) as String?) ?? "";
       _avatar = (box.get(_avatarKey) as String?) ?? "";
-      final snap = await _db.collection('social_users').doc(_uid).get();
+      final ref = _db.collection('social_users').doc(_uid);
+      final snap = await ref.get();
       final data = snap.data();
       if (data != null) {
         final remoteName = (data['nickname'] ?? '').toString();
         final remoteAvatar = (data['avatar'] ?? '').toString();
         if (remoteName.isNotEmpty) _nickname = remoteName;
         if (remoteAvatar.isNotEmpty) _avatar = remoteAvatar;
+        _episodesWatched = (data['episodesWatched'] ?? 0) as int;
+        _createdAt = (data['createdAt'] as Timestamp?)?.toDate();
+        final badges = data['badges'];
+        if (badges is List) _grantedBadges = badges.map((e) => e.toString()).toSet();
         await box.put(_nicknameKey, _nickname);
         await box.put(_avatarKey, _avatar);
       }
+      if (_createdAt == null) {
+        _createdAt = FirebaseAuth.instance.currentUser?.metadata.creationTime ?? DateTime.now();
+        await ref.set({'createdAt': Timestamp.fromDate(_createdAt!)}, SetOptions(merge: true));
+      }
     } catch (err) {
       Logs.app.log("[SOCIAL] profile load failed: ${err.toString()}");
+    }
+  }
+
+  Future<void> recordEpisodeWatched() async {
+    if (_uid == null) return;
+    _episodesWatched += 1;
+    try {
+      await _db.collection('social_users').doc(_uid).set(
+        {'episodesWatched': FieldValue.increment(1)},
+        SetOptions(merge: true),
+      );
+    } catch (err) {
+      Logs.app.log("[SOCIAL] record episode failed: ${err.toString()}");
     }
   }
 
