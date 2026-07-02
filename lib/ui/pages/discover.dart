@@ -107,6 +107,7 @@ class _DiscoverState extends State<Discover> {
                             ),
                           ),
                   ),
+                  _heroTextOverlay(),
                   Padding(
                     padding: pagePadding(context).copyWith(left: 0),
                     child: buildHeader("Discover", context, afterNavigation: () => setState(() {})),
@@ -190,6 +191,67 @@ class _DiscoverState extends State<Discover> {
     );
   }
 
+  Widget _heroTextOverlay() {
+    final list = widget.mainNavProvider.trendingList;
+    if (list.isEmpty) return const SizedBox.shrink();
+    final item = list[currentPage % list.length];
+    final titles = item.title;
+    final title = titles['english'] ?? titles['romaji'] ?? '';
+    final preferNative = currentUserSettings?.nativeTitle ?? false;
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 16,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 350),
+        child: Column(
+          key: ValueKey(item.id),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              preferNative ? titles['native'] ?? title : title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: appTheme.textMainColor,
+                fontFamily: 'Rubik',
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                height: 1.1,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.star_rounded, color: const Color(0xFFF5C518), size: 18),
+                const SizedBox(width: 3),
+                Text(
+                  "${item.rating != null ? item.rating! / 10 : '??'}",
+                  style: TextStyle(
+                    color: appTheme.textMainColor,
+                    fontFamily: "Rubik",
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    item.genres.take(3).join(' • '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: appTheme.textSubColor, fontFamily: 'NotoSans', fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   PageView _trendingAnimesPageView() {
     return PageView.builder(
         pageSnapping: true,
@@ -203,9 +265,6 @@ class _DiscoverState extends State<Discover> {
         itemBuilder: (context, index) {
           final trendingList = widget.mainNavProvider.trendingList;
           final moddedIndex = index % trendingList.length;
-          final titles = trendingList[moddedIndex].title;
-          final title = titles['english'] ?? titles['romaji'] ?? '';
-          final preferNative = currentUserSettings?.nativeTitle ?? false;
 
           return GestureDetector(
             onTap: () {
@@ -251,58 +310,6 @@ class _DiscoverState extends State<Discover> {
                         ],
                         stops: const [0.0, 0.28, 0.5, 0.72, 0.88, 1.0],
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 20,
-                    right: 20,
-                    bottom: 16,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          preferNative ? titles['native'] ?? title : title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: appTheme.textMainColor,
-                            fontFamily: 'Rubik',
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            height: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.star_rounded, color: const Color(0xFFF5C518), size: 18),
-                            const SizedBox(width: 3),
-                            Text(
-                              "${trendingList[moddedIndex].rating != null ? trendingList[moddedIndex].rating! / 10 : '??'}",
-                              style: TextStyle(
-                                color: appTheme.textMainColor,
-                                fontFamily: "Rubik",
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                trendingList[moddedIndex].genres.take(3).join(' • '),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: appTheme.textSubColor,
-                                  fontFamily: 'NotoSans',
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   ),
                 ],
