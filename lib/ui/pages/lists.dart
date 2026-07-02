@@ -214,7 +214,6 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                               "${storedUserData?.name}'s List",
                               style: TextStyle(
                                 color: appTheme.textMainColor,
-                                fontFamily: "Rubik",
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -254,8 +253,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                         unselectedLabelColor: appTheme.textSubColor,
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontFamily: "NotoSans",
-                        ),
+                          ),
                         tabs: [
                           Container(
                             alignment: Alignment.center,
@@ -314,7 +312,6 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                                   "Such a void!",
                                   style: TextStyle(
                                     color: appTheme.textSubColor,
-                                    fontFamily: "NunitoSans",
                                     fontSize: 14,
                                   ),
                                 ),
@@ -361,7 +358,6 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
         label,
         style: TextStyle(
           color: appTheme.textMainColor,
-          fontFamily: "NotoSans",
           fontSize: 16,
         ),
       ),
@@ -403,7 +399,6 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
   TextStyle _textStyle() {
     return TextStyle(
       // color: appTheme.textMainColor,
-      fontFamily: "NunitoSans",
       fontWeight: FontWeight.w700,
       fontSize: 17,
     );
