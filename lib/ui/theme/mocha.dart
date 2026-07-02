@@ -1,4 +1,4 @@
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 
 class Mocha implements ThemeItem {
@@ -9,7 +9,7 @@ class Mocha implements ThemeItem {
   bool get dev => false;
 
   @override
-  AnimeStreamTheme get lightVariant => AnimeStreamTheme(
+  KumaAnimeTheme get lightVariant => KumaAnimeTheme(
         accentColor: Color(0xff8C7972),
         backgroundColor: Color(0xffF2F2F2),
         backgroundSubColor: Color.fromARGB(255, 190, 154, 131),
@@ -23,7 +23,7 @@ class Mocha implements ThemeItem {
   String get name => "Mocha";
 
   @override
-  AnimeStreamTheme get theme => AnimeStreamTheme(
+  KumaAnimeTheme get theme => KumaAnimeTheme(
         accentColor: Color(0xff8C7972),
         backgroundColor: Color(0xff261E18),
         backgroundSubColor: Color(0xff59473C),
