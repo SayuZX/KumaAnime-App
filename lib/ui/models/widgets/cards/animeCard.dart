@@ -6,6 +6,7 @@ import 'package:kumaanime/core/database/handler/syncHandler.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/ContextMenu.dart';
 import 'package:kumaanime/ui/pages/info.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -53,6 +54,7 @@ class _AnimeCardState extends State<AnimeCard> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       width: widget.isMobile ? width : width + 5,
       margin: EdgeInsets.only(left: 5, right: 5),
@@ -64,7 +66,7 @@ class _AnimeCardState extends State<AnimeCard> {
         hoverColor: Colors.transparent,
         overlayColor: WidgetStatePropertyAll(Colors.transparent),
         onTap: () {
-          if (!widget.isAnime) return floatingSnackBar("Manga or Novels aren't supported");
+          if (!widget.isAnime) return floatingSnackBar(loc.animeCardMangaNotSupported);
           if (widget.shouldNavigate)
             Navigator.of(context)
                 .push(
@@ -82,29 +84,29 @@ class _AnimeCardState extends State<AnimeCard> {
           menuItems: [
             ContextMenuItem(
               icon: Icons.movie_outlined,
-              label: "Add to Watching",
+              label: loc.animeCardAddToWatching,
               onClick: () {
                 SyncHandler()
                     .mutateAnimeList(id: widget.id, status: MediaStatus.CURRENT)
-                    .then((_) => floatingSnackBar("Added to watching!"));
+                    .then((_) => floatingSnackBar(loc.animeCardAddedToWatching));
               },
             ),
             ContextMenuItem(
               icon: Icons.calendar_today_outlined,
-              label: "Add to Planned",
+              label: loc.animeCardAddToPlanned,
               onClick: () {
                 SyncHandler()
                     .mutateAnimeList(id: widget.id, status: MediaStatus.PLANNING)
-                    .then((_) => floatingSnackBar("Added to planned!"));
+                    .then((_) => floatingSnackBar(loc.animeCardAddedToPlanned));
               },
             ),
             ContextMenuItem(
               icon: Icons.done,
-              label: "Add to Completed",
+              label: loc.animeCardAddToCompleted,
               onClick: () {
                 SyncHandler()
                     .mutateAnimeList(id: widget.id, status: MediaStatus.COMPLETED)
-                    .then((_) => floatingSnackBar("Added to completed!"));
+                    .then((_) => floatingSnackBar(loc.animeCardAddedToCompleted));
               },
             ),
           ],
