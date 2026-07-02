@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:flutter/material.dart';
 
 typedef ContextMenuBuilder = Widget Function(BuildContext context, Offset offset);
