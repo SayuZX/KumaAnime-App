@@ -1,10 +1,10 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/database/anilist/mutations.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/mal/mutations.dart';
-import 'package:animestream/core/database/simkl/mutations.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/database/anilist/mutations.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/mal/mutations.dart';
+import 'package:kumaanime/core/database/simkl/mutations.dart';
+import 'package:kumaanime/core/database/types.dart';
 
 class SyncHandler extends DatabaseMutation {
   @override
