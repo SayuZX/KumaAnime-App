@@ -1,6 +1,7 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/sources.dart';
 import 'package:flutter/material.dart';
 
@@ -87,6 +88,7 @@ class _ManualSearchSheetState extends State<ManualSearchSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: EdgeInsets.only(right: 15, left: 15, top: 10, bottom: MediaQuery.of(context).padding.bottom),
       child: Column(
@@ -103,7 +105,7 @@ class _ManualSearchSheetState extends State<ManualSearchSheet> {
               autocorrect: false,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 20),
-                labelText: "search",
+                labelText: loc.msSearchLabel,
                 labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: searchBarFocusNode.hasFocus ? appTheme.accentColor : appTheme.textMainColor),
@@ -138,7 +140,7 @@ class _ManualSearchSheetState extends State<ManualSearchSheet> {
                   : searchResults.isEmpty
                       ? Center(
                           child: Text(
-                            "No Results!",
+                            loc.msNoResults,
                             style: TextStyle(
                               color: appTheme.textMainColor,
                               fontWeight: FontWeight.bold,
