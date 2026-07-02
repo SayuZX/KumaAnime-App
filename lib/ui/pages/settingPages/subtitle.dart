@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/preferences.dart';
-import 'package:animestream/core/data/types.dart';
-import 'package:animestream/ui/models/widgets/slider.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitleSettings.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitleText.dart';
-import 'package:animestream/ui/models/widgets/toggleItem.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/preferences.dart';
+import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/widgets/slider.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitleText.dart';
+import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
