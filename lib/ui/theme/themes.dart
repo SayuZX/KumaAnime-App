@@ -10,6 +10,7 @@ import 'package:kumaanime/ui/theme/neonGreen.dart';
 import 'package:kumaanime/ui/theme/sakura.dart';
 import 'package:kumaanime/ui/theme/types.dart';
 import 'package:kumaanime/ui/theme/cozyKoala.dart';
+import 'package:kumaanime/ui/theme/kuma.dart';
 import 'package:flutter/material.dart';
 
 /** List of available themes.
@@ -27,6 +28,7 @@ List<ThemeItem> availableThemes = [
   Star(),
   NeonRed(),
   CozyKoala(),
+  Kuma(),
 ];
 // Represents a generic light theme (used only for its values)
 KumaAnimeTheme lightModeValues = KumaAnimeTheme(
