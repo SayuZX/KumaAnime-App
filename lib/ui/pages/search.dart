@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/core/database/handler/handler.dart';
@@ -87,9 +88,7 @@ class _SearchState extends State<Search> {
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(
-                            color: appTheme.accentColor,
-                          ),
+                          KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                           Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
