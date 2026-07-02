@@ -1,0 +1,172 @@
+name: animestream
+description: "A app made to stream and download anime!"
+publish_to: "none" #Dont remove this!
+
+version: 1.4.5-beta6+2
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Network, parsing, cryptographic deps
+  http: ^1.2.0
+  graphql: ^5.1.3
+  
+  html: ^0.15.6
+  encrypt: ^5.0.3
+  js_unpack: ^1.0.4
+  url_launcher: ^6.3.1
+  flutter_web_auth_2: ^4.0.1
+  crypto: ^3.0.6
+
+  # Core utils
+  path_provider: ^2.0.11
+  awesome_notifications: ^0.10.1
+  package_info_plus: ^9.0.0
+  permission_handler: ^12.0.1
+  device_info_plus: ^12.3.0
+  provider: ^6.1.2
+  file_picker: ^10.2.0
+  dynamic_color: ^1.7.0
+  app_links: ^7.0.0
+
+  # Local storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^10.0.0
+  flutter_svg: ^2.1.0
+
+  # Media and player related
+  open_file: ^3.5.10
+  wakelock_plus: ^1.2.10
+
+  # Dont mind... for local dev testing of better_player
+  # better_player:
+  #   path: ../../betterplayer
+
+  better_player:
+    git:
+      url: https://github.com/frostnova721/betterplayer.git
+  # video_player_win: ^3.1.1
+  fvp: 
+    # path: "../../fvp"
+    git:
+      url: "https://github.com/frostnova721/fvp.git"
+
+  # UI
+  pull_to_refresh: ^2.0.0
+  flutter_markdown_plus: ^1.0.7
+  desktop_webview_window: ^0.2.3
+  cached_network_image: ^3.3.1
+  window_manager:
+    git:
+      url: https://github.com/YuiHrsw/window_manager.git
+      path: packages/window_manager
+      ref: windows_fullscreen_fix
+
+  # Misc
+  flutter_native_splash: ^2.4.7
+  screen_brightness: ^2.1.8
+  commentum_client:
+    # path: ../../commentum_client
+    git:
+      url: https://github.com/frostnova721/commentum_client
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+  inno_bundle: ^0.11.2
+
+inno_bundle:
+  id: "59cae0c0-fb9d-11ef-b95e-5f3937b12ea5"
+  publisher: "FrostNova"
+  name: "animestream"
+  languages:
+    - english
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+  color: "#181818"
+  color_dark: "#181818"
+  image: "lib/assets/icons/logo_foreground_splash.png"
+  image_dark: "lib/assets/icons/logo_foreground_splash.png"
+
+  android_12:
+    image: "lib/assets/icons/logo_foreground_splash.png"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "./lib/assets/icons/logo.png"
+  adaptive_icon_background: "./lib/assets/icons/logo_background.png"
+  adaptive_icon_foreground: "./lib/assets/icons/logo_foreground.png"
+  adaptive_icon_monochrome: "./lib/assets/icons/logo_monochrome.png"
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - lib/assets/images/search.png
+    - lib/assets/images/broken_heart.png
+    - lib/assets/images/check.png
+    - lib/assets/images/ghost.png
+    - lib/assets/icons/logo_foreground.png
+    - lib/assets/icons/logo_monochrome.png
+    - lib/assets/images/chisato.jpeg
+    - lib/assets/images/mitsuha.jpg
+    - lib/assets/images/profile_banner.jpg
+    - lib/assets/images/chisato_AI.jpg
+    - lib/assets/images/fluent_max.svg
+    - lib/assets/images/fluent_min.svg
+    - lib/assets/images/fluent_close.svg
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: lib/assets/fonts/Inter-Regular.ttf
+          style: normal
+          weight: 500
+        - asset: lib/assets/fonts/Inter-Bold.ttf
+          weight: 700
+    - family: OpenSans
+      fonts:
+        - asset: lib/assets/fonts/OpenSans-Regular.ttf
+          style: normal
+          weight: 500
+        - asset: lib/assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+    - family: Rubik
+      fonts:
+        - asset: lib/assets/fonts/Rubik-Medium.ttf
+          weight: 500
+        - asset: lib/assets/fonts/Rubik-Bold.ttf
+          weight: 700
+    - family: NunitoSans
+      fonts:
+        - asset: lib/assets/fonts/NunitoSans_10pt-Medium.ttf
+          style: normal
+          weight: 500
+        - asset: lib/assets/fonts/NunitoSans_10pt-Bold.ttf
+          weight: 700
+    - family: NotoSans
+      fonts:
+        - asset: lib/assets/fonts/NotoSans-Regular.ttf
+          style: normal
+          weight: 500
+        - asset: lib/assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+    - family: Poppins
+      fonts:
+        - asset: lib/assets/fonts/Poppins-Bold.ttf

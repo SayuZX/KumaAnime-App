@@ -1,0 +1,171 @@
+import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:commentum_client/commentum_client.dart';
+import 'package:flutter/material.dart';
+
+class CommentItem extends StatefulWidget {
+  final Comment comment;
+  final CommentumClient client;
+  final bool replyMode;
+
+  final Function showLoginDialog;
+  const CommentItem(
+      {super.key, required this.comment, required this.client, required this.showLoginDialog, this.replyMode = false});
+
+  @override
+  State<CommentItem> createState() => _CommentItemState();
+}
+
+class _CommentItemState extends State<CommentItem> {
+  @override
+  void initState() {
+    voteState = widget.comment.userVote ?? 0;
+    score = widget.comment.score;
+    super.initState();
+  }
+
+  String _getFriendlyTimeDifference() {
+    final diff = DateTime.now().difference(widget.comment.updatedAt);
+    if (diff.inDays > 365) return "${diff.inDays ~/ 365} year${diff.inDays ~/ 365 > 1 ? "s" : ''} ago";
+    if (diff.inDays > 30) return "${diff.inDays ~/ 30} month${diff.inDays ~/ 30 > 1 ? "s" : ''} ago";
+    if (diff.inDays > 7) return "${diff.inDays ~/ 7} week${diff.inDays ~/ 7 > 1 ? "s" : ''} ago";
+    if (diff.inDays > 0) return "${diff.inDays} day${diff.inDays > 1 ? "s" : ''} ago";
+    if (diff.inHours > 0) return "${diff.inHours} hour${diff.inHours > 1 ? "s" : ''} ago";
+    if (diff.inMinutes > 0) return "${diff.inMinutes} minute${diff.inMinutes > 1 ? "s" : ''} ago";
+    return "just now";
+  }
+
+  late int voteState; // 1 = upvote, 0 = no vote, -1 = downvote
+  late int score;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 15),
+      // decoration: BoxDecoration(color: appTheme.backgroundColor),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                foregroundImage: widget.comment.avatarUrl != null ? NetworkImage(widget.comment.avatarUrl!) : null,
+                backgroundColor: appTheme.backgroundSubColor.withAlpha(80),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.comment.username,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      _getFriendlyTimeDifference(),
+                      style: TextStyle(fontSize: 12, color: appTheme.textSubColor),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              widget.comment.content,
+              style: const TextStyle(fontSize: 15),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                _buildVoteButton(
+                  icon: Icons.keyboard_arrow_up_rounded,
+                  active: voteState == 1,
+                  onPressed: () {
+                    final prevState = voteState;
+                    final prevScore = score;
+
+                    setState(() {
+                      voteState = voteState == 1 ? 0 : 1;
+                      score += (voteState - prevState);
+                    });
+
+                    widget.comment.upVote(widget.client).catchError((err) {
+                      // do nothing for now atleast
+                      print(err);
+                      setState(() {
+                        voteState = prevState;
+                        score = prevScore;
+                      });
+                    });
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Text("${score}"),
+                ),
+                _buildVoteButton(
+                    icon: Icons.keyboard_arrow_down_rounded,
+                    active: voteState == -1,
+                    onPressed: () {
+                      final prevState = voteState;
+                      final prevScore = score;
+
+                      setState(() {
+                        voteState = voteState == -1 ? 0 : -1;
+                        score += (voteState - prevState);
+                      });
+
+                      widget.comment.downVote(widget.client).catchError((err) {
+                        // do nothing for now atleast
+                        print(err);
+                        setState(() {
+                          voteState = prevState;
+                          score = prevScore;
+                        });
+                      });
+                    }),
+                if (!widget.replyMode) ...[
+                  Spacer(),
+                  Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration:
+                          BoxDecoration(color: appTheme.backgroundColor, borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("${widget.comment.replies.length} "),
+                          Icon(Icons.reply_rounded),
+                        ],
+                      )),
+                ],
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVoteButton({required IconData icon, required bool active, required VoidCallback onPressed}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: InkWell(
+        onTap: () {
+          if (!widget.client.isLoggedIn) {
+            widget.showLoginDialog();
+          }
+          onPressed();
+        },
+        borderRadius: BorderRadius.circular(100),
+        child: Icon(
+          icon,
+          size: 28,
+          color: active ? appTheme.accentColor : appTheme.textSubColor,
+        ),
+      ),
+    );
+  }
+}
