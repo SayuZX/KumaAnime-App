@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/screenType.dart';
 import 'package:flutter/material.dart';
@@ -361,10 +362,7 @@ class _HomeState extends State<Home> {
                 margin: EdgeInsets.only(left: 5),
                 height: 15,
                 width: 15,
-                child: CircularProgressIndicator(
-                  color: appTheme.accentColor,
-                  strokeWidth: 2,
-                ),
+                child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
               ),
             Spacer(),
             IconButton(
@@ -507,9 +505,7 @@ class _HomeState extends State<Home> {
 
                   // Still in loading phase!
                   : Center(
-                      child: CircularProgressIndicator(
-                        color: appTheme.accentColor,
-                      ),
+                      child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                     ),
         )
       ],
