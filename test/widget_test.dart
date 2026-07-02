@@ -8,12 +8,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:animestream/main.dart';
+import 'package:kumaanime/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const AnimeStream());
+    await tester.pumpWidget(const KumaAnime());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
