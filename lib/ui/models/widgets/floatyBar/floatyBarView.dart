@@ -1,4 +1,4 @@
-import 'package:animestream/ui/models/widgets/floatyBar/controller.dart';
+import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
 import 'package:flutter/material.dart';
 
 class FloatyBarView extends StatefulWidget {
