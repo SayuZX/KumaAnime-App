@@ -1,10 +1,10 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/settings.dart';
-import 'package:animestream/core/data/types.dart';
-import 'package:animestream/ui/models/widgets/slider.dart';
-import 'package:animestream/ui/models/widgets/toggleItem.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/pages/settingPages/subtitle.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/settings.dart';
+import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/widgets/slider.dart';
+import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
