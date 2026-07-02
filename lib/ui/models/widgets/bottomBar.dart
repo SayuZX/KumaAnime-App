@@ -10,9 +10,9 @@ class BottomBarItem {
   });
 }
 
-class AnimeStreamBottomBar extends StatefulWidget {
+class KumaAnimeBottomBar extends StatefulWidget {
   final List<BottomBarItem> items;
-  final AnimeStreamBottomBarController controller;
+  final KumaAnimeBottomBarController controller;
   final double width;
   final double height;
   final double bottomPadding;
@@ -20,7 +20,7 @@ class AnimeStreamBottomBar extends StatefulWidget {
   final double borderRadius;
   final Color accentColor;
 
-  const AnimeStreamBottomBar({
+  const KumaAnimeBottomBar({
     super.key,
     required this.items,
     required this.controller,
@@ -33,10 +33,10 @@ class AnimeStreamBottomBar extends StatefulWidget {
   });
 
   @override
-  State<AnimeStreamBottomBar> createState() => _AnimeStreamBottomBarState();
+  State<KumaAnimeBottomBar> createState() => _KumaAnimeBottomBarState();
 }
 
-class _AnimeStreamBottomBarState extends State<AnimeStreamBottomBar> {
+class _KumaAnimeBottomBarState extends State<KumaAnimeBottomBar> {
   @override
   void initState() {
     super.initState();
@@ -147,7 +147,7 @@ class _AnimeStreamBottomBarState extends State<AnimeStreamBottomBar> {
 
 class BottomBarView extends StatefulWidget {
   final List<Widget> children;
-  final AnimeStreamBottomBarController controller;
+  final KumaAnimeBottomBarController controller;
   const BottomBarView({super.key, required this.children, required this.controller});
 
   @override
@@ -210,7 +210,7 @@ class _BottomBarViewState extends State<BottomBarView> {
   }
 }
 
-class AnimeStreamBottomBarController {
+class KumaAnimeBottomBarController {
   final int length;
   final List<int> nonViewIndices;
   final int animDuration;
@@ -224,7 +224,7 @@ class AnimeStreamBottomBarController {
     if (!nonViewIndices.contains(index)) currentIndexNotifier.value = index;
   }
 
-  AnimeStreamBottomBarController({
+  KumaAnimeBottomBarController({
     required this.length,
     this.nonViewIndices = const [],
     this.animDuration = 200,
