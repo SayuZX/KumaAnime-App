@@ -178,7 +178,7 @@ class SettingsModal {
     return SettingsModal(
       megaSkipDuration: map['megaSkipDuration'] ?? 85,
       enableMegaSkip: map['enableMegaSkip'] ?? true,
-      dnsProvider: map['dnsProvider'] ?? 'auto',
+      dnsProvider: map['dnsProvider'] ?? 'off',
       skipDuration: map['skipDuration'] ?? 10,
       showErrors: map['showErrors'] ?? false,
       receivePreReleases: map['receivePreReleases'] ?? false,
