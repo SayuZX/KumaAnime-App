@@ -5,6 +5,7 @@ import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -29,15 +30,17 @@ class _StorageSettingState extends State<StorageSetting> {
   }
 
   Future<void> _clearImageCache() async {
+    final loc = AppLocalizations.of(context);
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
     await CachedNetworkImage.evictFromCache('');
     if (mounted) setState(() {});
-    floatingSnackBar("Image cache cleared");
+    floatingSnackBar(loc.stgImageCacheCleared);
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final s = currentUserSettings;
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
@@ -47,7 +50,7 @@ class _StorageSettingState extends State<StorageSetting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              settingPagesTitleHeader(context, "Storage & Cache"),
+              settingPagesTitleHeader(context, loc.stgStorageCache),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                 padding: const EdgeInsets.all(18),
@@ -58,7 +61,7 @@ class _StorageSettingState extends State<StorageSetting> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("In-memory image cache",
+                    Text(loc.stgInMemoryImageCache,
                         style: TextStyle(color: appTheme.textMainColor, fontSize: 15)),
                     Text(_cacheSize,
                         style: TextStyle(
@@ -68,17 +71,17 @@ class _StorageSettingState extends State<StorageSetting> {
               ),
               ClickableItem(
                 onTap: _clearImageCache,
-                label: "Clear image cache",
-                description: "Free up memory used by thumbnails",
+                label: loc.stgClearImageCache,
+                description: loc.stgClearImageCacheDesc,
                 suffixIcon: Icon(Icons.delete_outline_rounded, color: appTheme.textMainColor),
               ),
               ClickableItem(
                 onTap: _confirmClearAll,
-                label: "Clear all local data",
-                description: "Reset caches and temporary files",
+                label: loc.stgClearAllLocalData,
+                description: loc.stgClearAllLocalDataDesc,
                 suffixIcon: Icon(Icons.cleaning_services_rounded, color: appTheme.textMainColor),
               ),
-              _sectionLabel("Max cache size"),
+              _sectionLabel(loc.stgMaxCacheSize),
               _slider(
                 value: (s?.maxCacheSizeMb ?? 512).toDouble(),
                 min: 128,
@@ -86,15 +89,15 @@ class _StorageSettingState extends State<StorageSetting> {
                 onChanged: (v) => _write(SettingsModal(maxCacheSizeMb: v.round())),
               ),
               ToggleItem(
-                label: "Auto-clear cache on exit",
+                label: loc.stgAutoClearCacheOnExit,
                 value: s?.autoClearCacheOnExit ?? false,
                 onTapFunction: () => _write(SettingsModal(autoClearCacheOnExit: !(s?.autoClearCacheOnExit ?? false))),
               ),
               const SizedBox(height: 20),
-              resetCategoryButton(context, "Reset storage", () async {
+              resetCategoryButton(context, loc.stgResetStorage, () async {
                 await Settings().resetKeys(_keys);
                 if (mounted) setState(() {});
-                floatingSnackBar("Storage settings reset");
+                floatingSnackBar(loc.stgStorageReset);
               }),
               const SizedBox(height: 20),
             ],
@@ -135,22 +138,23 @@ class _StorageSettingState extends State<StorageSetting> {
   }
 
   void _confirmClearAll() {
+    final loc = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: appTheme.modalSheetBackgroundColor,
-        title: Text("Clear all local data", style: TextStyle(color: appTheme.textMainColor)),
-        content: Text("This clears image and temporary caches. Your settings and history stay.",
+        title: Text(loc.stgClearAllLocalData, style: TextStyle(color: appTheme.textMainColor)),
+        content: Text(loc.stgClearAllLocalDataConfirm,
             style: TextStyle(color: appTheme.textSubColor)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(loc.stgCancel)),
           TextButton(
             onPressed: () {
               _clearImageCache();
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: appTheme.accentColor),
-            child: const Text("Clear"),
+            child: Text(loc.stgClear),
           ),
         ],
       ),
