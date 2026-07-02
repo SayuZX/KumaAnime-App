@@ -1,8 +1,8 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/widgets/bottomBar.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
 import 'package:flutter/material.dart';
 
-class AnimeStreamNavDestination {
+class KumaAnimeNavDestination {
   final IconData icon;
   final String label;
   final Color? selectedColor;
@@ -11,7 +11,7 @@ class AnimeStreamNavDestination {
   final Color? unselectedIconColor;
   final VoidCallback? onClick;
 
-  const AnimeStreamNavDestination({
+  const KumaAnimeNavDestination({
     required this.icon,
     required this.label,
     this.selectedColor,
@@ -22,13 +22,13 @@ class AnimeStreamNavDestination {
   });
 }
 
-class AnimeStreamNavRail extends StatefulWidget {
-  final List<AnimeStreamNavDestination> destinations;
-  final AnimeStreamBottomBarController controller;
+class KumaAnimeNavRail extends StatefulWidget {
+  final List<KumaAnimeNavDestination> destinations;
+  final KumaAnimeBottomBarController controller;
   final int initialIndex;
   final bool shouldExpand;
   final bool autoCollapse;
-  const AnimeStreamNavRail({
+  const KumaAnimeNavRail({
     super.key,
     required this.destinations,
     required this.controller,
@@ -38,10 +38,10 @@ class AnimeStreamNavRail extends StatefulWidget {
   });
 
   @override
-  State<AnimeStreamNavRail> createState() => _AnimeStreamNavRailState();
+  State<KumaAnimeNavRail> createState() => _KumaAnimeNavRailState();
 }
 
-class _AnimeStreamNavRailState extends State<AnimeStreamNavRail> {
+class _KumaAnimeNavRailState extends State<KumaAnimeNavRail> {
   @override
   void initState() {
     super.initState();
