@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
@@ -232,7 +233,7 @@ class _SubIndoPageState extends State<SubIndoPage> {
 
   Widget _body(AppLocalizations loc) {
     if (_loading) {
-      return Center(child: CircularProgressIndicator(color: appTheme.accentColor));
+      return Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 40));
     }
 
     if (_error && _items.isEmpty) {
@@ -296,7 +297,7 @@ class _SubIndoPageState extends State<SubIndoPage> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20),
-              child: Center(child: CircularProgressIndicator(color: appTheme.accentColor)),
+              child: Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 40)),
             ),
           ),
       ],
