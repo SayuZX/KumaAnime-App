@@ -1,16 +1,16 @@
-import 'package:animestream/ui/models/bottomSheets/customControlsSheet.dart';
-import 'package:animestream/ui/models/providers/playerDataProvider.dart';
-import 'package:animestream/ui/models/providers/playerProvider.dart';
-import 'package:animestream/ui/models/widgets/player/mobileControls/bottomControls.dart';
-import 'package:animestream/ui/models/widgets/player/mobileControls/topControls.dart';
+import 'package:kumaanime/ui/models/bottomSheets/customControlsSheet.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/models/widgets/player/mobileControls/bottomControls.dart';
+import 'package:kumaanime/ui/models/widgets/player/mobileControls/topControls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/ui/models/snackBar.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 
 class MobileControls extends StatefulWidget {
   const MobileControls({
