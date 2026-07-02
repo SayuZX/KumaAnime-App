@@ -106,12 +106,12 @@ class _MobileControlsState extends State<MobileControls> {
       focusNode: _fn,
       autofocus: true,
       onKeyEvent: _keyListenerEvent,
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          double LRpadding = 30;
-          if (orientation == Orientation.portrait) LRpadding = 10;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isMini = constraints.maxHeight < 260;
+          final double LRpadding = isMini ? 10 : 30;
           return Padding(
-            padding: EdgeInsets.only(top: 15, left: LRpadding, right: LRpadding, bottom: 5),
+            padding: EdgeInsets.only(top: isMini ? 6 : 15, left: LRpadding, right: LRpadding, bottom: 5),
             child: Column(
               children: [
                 Expanded(
@@ -192,7 +192,7 @@ class _MobileControlsState extends State<MobileControls> {
                                 ),
                               ),
                             ),
-                            BottomControls(),
+                            if (!isMini) BottomControls(),
                           ],
                         ),
                       ),
