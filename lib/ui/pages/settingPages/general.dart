@@ -37,7 +37,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
       fasterDownloads = settings.fasterDownloads!;
       useQueuedDownloads = settings.useQueuedDownloads!;
       enableLogging = settings.enableLogging!;
-      secureDns = settings.useSecureDns ?? true;
+      dnsProvider = settings.dnsProvider ?? 'auto';
     });
   }
 
@@ -55,7 +55,18 @@ class _GeneralSettingState extends State<GeneralSetting> {
   bool useQueuedDownloads = false;
   bool enableDiscordPresence = false;
   bool enableLogging = false;
-  bool secureDns = true;
+  String dnsProvider = 'auto';
+
+  static const Map<String, String> _dnsOptions = {
+    'auto': 'Automatic',
+    'cloudflare': 'Cloudflare (1.1.1.1)',
+    'google': 'Google (8.8.8.8)',
+    'quad9': 'Quad9 (9.9.9.9)',
+    'adguard': 'AdGuard (94.140.14.14)',
+    'opendns': 'OpenDNS (208.67.222.222)',
+    'dnssb': 'DNS.SB (185.222.222.222)',
+    'off': 'Off',
+  };
 
   final sources = SourceManager.instance.sources;
 
@@ -187,16 +198,19 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       description: loc.enableLoggingDesc,
                       value: enableLogging,
                     ),
-                    ToggleItem(
-                      label: "Secure DNS",
-                      description: "Resolve domains over DNS-over-HTTPS to bypass ISP blocking",
-                      value: secureDns,
-                      onTapFunction: () {
-                        setState(() {
-                          secureDns = !secureDns;
-                        });
-                        writeSettings(SettingsModal(useSecureDns: secureDns));
+                    ClickableItem(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          showDragHandle: true,
+                          isScrollControlled: true,
+                          backgroundColor: appTheme.modalSheetBackgroundColor,
+                          builder: (context) => _dnsSheet(context),
+                        );
                       },
+                      label: "Secure DNS",
+                      description: _dnsOptions[dnsProvider] ?? 'Automatic',
+                      suffixIcon: Icon(Icons.arrow_drop_down),
                     )
                   ],
                 ),
@@ -271,4 +285,66 @@ class _GeneralSettingState extends State<GeneralSetting> {
     );
   }
 
+  Widget _dnsSheet(BuildContext context) {
+    return StatefulBuilder(
+      builder: (context, setSheet) => Container(
+        padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+        margin: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text("Secure DNS", style: textStyle().copyWith(fontSize: 23)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(
+                "Untuk aplikasi ini saja. Melewati blokir ISP saat streaming, scraping, dan upload.",
+                style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12),
+              ),
+            ),
+            ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: _dnsOptions.entries.map((entry) {
+                final selected = entry.key == dnsProvider;
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    color: selected ? appTheme.accentColor : appTheme.backgroundSubColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () async {
+                        await writeSettings(SettingsModal(dnsProvider: entry.key));
+                        setState(() {});
+                        setSheet(() {});
+                        if (mounted) Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        child: Text(
+                          entry.value,
+                          style: textStyle().copyWith(
+                            fontSize: 16,
+                            color: selected ? appTheme.onAccent : appTheme.textMainColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
