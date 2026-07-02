@@ -146,8 +146,13 @@ class _MobileControlsState extends State<MobileControls> {
                                     ),
                                   ],
                                 ),
-                                if (megaSkipDuration != null)
-                                  dataProvider.state.controlsLocked ? Container() : megaSkipButton(),
+                                if (!dataProvider.state.controlsLocked)
+                                  Row(
+                                    children: [
+                                      if (megaSkipDuration != null) megaSkipButton(),
+                                      _fullscreenButton(isMini),
+                                    ],
+                                  ),
                               ],
                             ),
                             Container(
@@ -203,6 +208,24 @@ class _MobileControlsState extends State<MobileControls> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _fullscreenButton(bool isMini) {
+    return InkWell(
+      onTap: () {
+        SystemChrome.setPreferredOrientations(isMini
+            ? const [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]
+            : const [DeviceOrientation.portraitUp]);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Icon(
+          isMini ? Icons.fullscreen_rounded : Icons.fullscreen_exit_rounded,
+          color: Colors.white,
+          size: 26,
+        ),
       ),
     );
   }
