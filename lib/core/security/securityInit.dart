@@ -16,7 +16,7 @@ class SecurityInit {
   static Timer? _timer;
 
   static Future<void> initialize() async {
-    if (!Platform.isAndroid) {
+    if (!Platform.isAndroid || kDebugMode) {
       verified.value = true;
       return;
     }
