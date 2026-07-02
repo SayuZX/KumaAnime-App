@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:animestream/core/app/values.dart';
+import 'package:kumaanime/core/app/values.dart';
 import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
@@ -14,24 +14,24 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:animestream/core/anime/providers/animeonsen.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/app/version.dart';
-import 'package:animestream/core/data/preferences.dart';
-import 'package:animestream/core/data/settings.dart';
-import 'package:animestream/core/data/theme.dart';
-import 'package:animestream/ui/models/notification.dart';
-import 'package:animestream/ui/models/providers/appProvider.dart';
-import 'package:animestream/ui/models/providers/mainNavProvider.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/sources.dart';
-import 'package:animestream/ui/models/widgets/appWrapper.dart';
-import 'package:animestream/ui/pages/info.dart';
-import 'package:animestream/ui/pages/mainNav.dart';
-import 'package:animestream/ui/theme/lime.dart';
-import 'package:animestream/ui/theme/themes.dart';
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/core/anime/providers/animeonsen.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/app/version.dart';
+import 'package:kumaanime/core/data/preferences.dart';
+import 'package:kumaanime/core/data/settings.dart';
+import 'package:kumaanime/core/data/theme.dart';
+import 'package:kumaanime/ui/models/notification.dart';
+import 'package:kumaanime/ui/models/providers/appProvider.dart';
+import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/sources.dart';
+import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
+import 'package:kumaanime/ui/pages/info.dart';
+import 'package:kumaanime/ui/pages/mainNav.dart';
+import 'package:kumaanime/ui/theme/lime.dart';
+import 'package:kumaanime/ui/theme/themes.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:fvp/fvp.dart' as fvp;
 
 class _HttpOverrides extends HttpOverrides {
@@ -52,7 +52,7 @@ void main(List<String> args) async {
     // Initialise app version instance
     AppVersion.init();
 
-    await Hive.initFlutter(!Platform.isAndroid ? "animestream" : null);
+    await Hive.initFlutter(!Platform.isAndroid ? "kumaanime" : null);
 
     await loadAndAssignSettings();
 
@@ -102,7 +102,7 @@ void main(List<String> args) async {
     runApp(
       ChangeNotifierProvider(
         create: (context) => AppProvider(),
-        child: const AnimeStream(),
+        child: const KumaAnime(),
       ),
     );
   } catch (err) {
@@ -152,7 +152,7 @@ Future<void> loadAndAssignSettings() async {
       appTheme.backgroundColor =
           (currentUserSettings!.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor;
     } else {
-      appTheme = AnimeStreamTheme(
+      appTheme = KumaAnimeTheme(
         accentColor: theme.lightVariant.accentColor,
         textMainColor: theme.lightVariant.textMainColor,
         textSubColor: theme.lightVariant.textSubColor,
@@ -167,17 +167,17 @@ Future<void> loadAndAssignSettings() async {
   });
 }
 
-class AnimeStream extends StatefulWidget {
-  const AnimeStream({super.key});
+class KumaAnime extends StatefulWidget {
+  const KumaAnime({super.key});
 
   static final GlobalKey<ScaffoldMessengerState> snackbarKey = GlobalKey<ScaffoldMessengerState>();
 
   static final navigatorKey = GlobalKey<NavigatorState>();
   @override
-  State<AnimeStream> createState() => _AnimeStreamState();
+  State<KumaAnime> createState() => _KumaAnimeState();
 }
 
-class _AnimeStreamState extends State<AnimeStream> {
+class _KumaAnimeState extends State<KumaAnime> {
   StreamSubscription<Uri>? _sub;
   late AppLinks _appLinks;
 
@@ -221,7 +221,7 @@ class _AnimeStreamState extends State<AnimeStream> {
   void listenDeepLinkCall() {
     _appLinks = AppLinks();
     _sub = _appLinks.uriLinkStream.listen((uri) {
-      if (uri.scheme == "astrm") {
+      if (uri.scheme == "kumaanime") {
         Logs.app.log("Invoked DeepLink uri: ${uri.toString()}");
         String host = uri.host;
         switch (host) {
@@ -229,7 +229,7 @@ class _AnimeStreamState extends State<AnimeStream> {
             {
               final id = int.tryParse(uri.queryParameters['id'] ?? "nothing");
               if (id != null) {
-                AnimeStream.navigatorKey.currentState?.push(
+                KumaAnime.navigatorKey.currentState?.push(
                       MaterialPageRoute(
                         builder: (context) => AppWrapper(
                           firstPage: Info(id: id),
@@ -258,11 +258,11 @@ class _AnimeStreamState extends State<AnimeStream> {
       ),
       child: DynamicColorBuilder(
         builder: (lightScheme, darkScheme) {
-          late AnimeStreamTheme scheme;
+          late KumaAnimeTheme scheme;
 
           //just checks for dark mode and sets the appTheme variable with suitable theme
           if (currentUserSettings?.darkMode ?? true) {
-            scheme = AnimeStreamTheme(
+            scheme = KumaAnimeTheme(
               accentColor: darkScheme?.primary ?? appTheme.accentColor,
               backgroundColor: (currentUserSettings?.amoledBackground ?? false)
                   ? Colors.black
@@ -274,7 +274,7 @@ class _AnimeStreamState extends State<AnimeStream> {
               onAccent: darkScheme?.onPrimary ?? appTheme.onAccent,
             );
           } else {
-            scheme = AnimeStreamTheme(
+            scheme = KumaAnimeTheme(
               accentColor: lightScheme?.primary ?? appTheme.accentColor,
               backgroundColor: lightScheme?.surface ?? appTheme.accentColor,
               backgroundSubColor: lightScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
@@ -295,7 +295,7 @@ class _AnimeStreamState extends State<AnimeStream> {
             //       seedColor: appTheme.accentColor,
             //       brightness: (currentUserSettings?.darkMode ?? true) ? Brightness.dark : Brightness.light),
             // ).colorScheme;
-            // appTheme = AnimeStreamTheme(
+            // appTheme = KumaAnimeTheme(
             //   accentColor: t.primary,
             //   backgroundColor: t.surface,
             //   backgroundSubColor: t.secondaryContainer,
@@ -309,9 +309,9 @@ class _AnimeStreamState extends State<AnimeStream> {
           final themeProvider = Provider.of<AppProvider>(context);
 
           return MaterialApp(
-            title: 'Animestream',
-            navigatorKey: AnimeStream.navigatorKey,
-            scaffoldMessengerKey: AnimeStream.snackbarKey,
+            title: 'Kuma Anime',
+            navigatorKey: KumaAnime.navigatorKey,
+            scaffoldMessengerKey: KumaAnime.snackbarKey,
             theme: ThemeData(
                 useMaterial3: true,
                 brightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
