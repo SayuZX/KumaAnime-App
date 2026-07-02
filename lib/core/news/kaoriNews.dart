@@ -34,7 +34,8 @@ class KaoriNews implements NewsService {
       throw Exception("News feed returned HTTP ${res.statusCode}");
     }
     final document = XmlDocument.parse(res.body);
-    final List<NewsItem> newses = [];
+
+    final parsed = <NewsItem>[];
     for (final item in document.findAllElements('item')) {
       final title = item.getElement('title')?.innerText.trim() ?? '';
       final url = item.getElement('link')?.innerText.trim() ?? '';
@@ -42,16 +43,54 @@ class KaoriNews implements NewsService {
       final (date, time) = _parsePubDate(item.getElement('pubDate')?.innerText ?? '');
       final descriptionHtml = item.getElement('description')?.innerText ?? '';
       final snippet = html.parse(descriptionHtml).body?.text.trim();
-      newses.add(NewsItem(
+      final image = _imageFromHtml(descriptionHtml);
+      parsed.add(NewsItem(
         title: title,
         url: url,
         date: date,
         time: time,
         category: item.findElements('category').firstOrNull?.innerText.trim(),
         snippet: snippet,
+        image: image,
       ));
     }
-    return newses;
+
+    final resolved = await Future.wait(parsed.map((n) async {
+      if (n.image != null && n.image!.isNotEmpty) return n;
+      final image = await _fetchOgImage(n.url);
+      return NewsItem(
+        title: n.title,
+        url: n.url,
+        date: n.date,
+        time: n.time,
+        category: n.category,
+        snippet: n.snippet,
+        image: image,
+      );
+    }));
+
+    return resolved;
+  }
+
+  String? _imageFromHtml(String htmlContent) {
+    if (htmlContent.isEmpty) return null;
+    final match = RegExp(r'''<img[^>]+src=["']([^"']+)["']''', caseSensitive: false).firstMatch(htmlContent);
+    return match?.group(1);
+  }
+
+  Future<String?> _fetchOgImage(String url) async {
+    try {
+      final res = await get(Uri.parse(url), headers: _headers).timeout(const Duration(seconds: 8));
+      if (res.statusCode != 200) return null;
+      final body = res.body;
+      final match = RegExp(r'''<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']''', caseSensitive: false)
+              .firstMatch(body) ??
+          RegExp(r'''<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']''', caseSensitive: false)
+              .firstMatch(body);
+      return match?.group(1);
+    } catch (_) {
+      return null;
+    }
   }
 
   (String, String) _parsePubDate(String pubDate) {
