@@ -4,6 +4,7 @@ import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AccountSetting extends StatefulWidget {
   const AccountSetting({super.key});
@@ -57,14 +58,17 @@ class _AccountSettingState extends State<AccountSetting> {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: appTheme.accentColor.withValues(alpha: 0.2),
-                  child: Text(
-                    avatar.isNotEmpty ? avatar : (nickname.isNotEmpty ? nickname[0].toUpperCase() : "?"),
-                    style: TextStyle(
-                      color: appTheme.accentColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: avatar.isNotEmpty ? 26 : 20,
-                    ),
-                  ),
+                  backgroundImage: avatar.startsWith('http') ? NetworkImage(avatar) : null,
+                  child: avatar.startsWith('http')
+                      ? null
+                      : Text(
+                          avatar.isNotEmpty ? avatar : (nickname.isNotEmpty ? nickname[0].toUpperCase() : "?"),
+                          style: TextStyle(
+                            color: appTheme.accentColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: avatar.isNotEmpty ? 26 : 20,
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -97,6 +101,7 @@ class _AccountSettingState extends State<AccountSetting> {
     final social = SocialService.instance;
     final controller = TextEditingController(text: social.nickname);
     String selected = social.avatar;
+    bool uploading = false;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -123,8 +128,46 @@ class _AccountSettingState extends State<AccountSetting> {
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text("Ikon Profil", style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: uploading
+                      ? null
+                      : () async {
+                          final picked =
+                              await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 100);
+                          if (picked == null) return;
+                          setSheet(() => uploading = true);
+                          final url = await social.uploadAvatar(picked.path);
+                          if (!mounted) return;
+                          if (url != null) {
+                            Navigator.pop(ctx);
+                            setState(() {});
+                            floatingSnackBar("Foto profil diperbarui");
+                          } else {
+                            setSheet(() => uploading = false);
+                            floatingSnackBar("Gagal mengunggah foto");
+                          }
+                        },
+                  icon: uploading
+                      ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: appTheme.accentColor),
+                        )
+                      : const Icon(Icons.photo_library_rounded),
+                  label: Text(uploading ? "Mengunggah..." : "Upload foto (maks 2MB)"),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: appTheme.accentColor,
+                    side: BorderSide(color: appTheme.accentColor),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text("Atau pilih ikon", style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
