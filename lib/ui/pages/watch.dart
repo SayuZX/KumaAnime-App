@@ -84,10 +84,22 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
 
   void setWatchMode() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations(_preferredWatchOrientations());
+  }
+
+  List<DeviceOrientation> _preferredWatchOrientations() {
+    switch (currentUserSettings?.playerOrientation ?? 'auto') {
+      case 'portrait':
+        return [DeviceOrientation.portraitUp];
+      case 'landscape':
+        return [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight];
+      default:
+        return [
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ];
+    }
   }
 
   void _initialize() async {
