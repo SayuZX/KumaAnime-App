@@ -21,8 +21,10 @@ import 'package:kumaanime/core/app/version.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/theme.dart';
+import 'package:kumaanime/core/security/securityInit.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/notification.dart';
+import 'package:kumaanime/ui/models/widgets/kumaSecureWidget.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
@@ -49,6 +51,8 @@ void main(List<String> args) async {
     }
 
     WidgetsFlutterBinding.ensureInitialized();
+
+    await SecurityInit.initialize();
 
     // Initialise app version instance
     AppVersion.init();
@@ -103,7 +107,7 @@ void main(List<String> args) async {
     runApp(
       ChangeNotifierProvider(
         create: (context) => AppProvider(),
-        child: const KumaAnime(),
+        child: const KumaSecureWidget(child: KumaAnime()),
       ),
     );
   } catch (err) {
