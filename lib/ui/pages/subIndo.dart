@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -36,6 +37,9 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   bool _loadingMore = false;
   bool _error = false;
 
+  int _heroIndex = 0;
+  Timer? _heroTimer;
+
   @override
   void initState() {
     super.initState();
@@ -47,10 +51,22 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
 
   @override
   void dispose() {
+    _heroTimer?.cancel();
     _enterController.dispose();
     _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _startHeroRotation() {
+    _heroTimer?.cancel();
+    final isHeroMode = _mode == _SubIndoMode.ongoing || _mode == _SubIndoMode.completed;
+    if (!isHeroMode || _items.length < 2) return;
+    _heroTimer = Timer.periodic(const Duration(seconds: 6), (_) {
+      if (!mounted) return;
+      final pool = _items.length < 8 ? _items.length : 8;
+      setState(() => _heroIndex = (_heroIndex + 1) % pool);
+    });
   }
 
   Widget _entrance(Widget child, double start, double end) {
@@ -121,6 +137,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
         _loading = false;
         _loadingMore = false;
       });
+      _startHeroRotation();
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -134,6 +151,8 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   void _switchMode(_SubIndoMode mode, {SubIndoGenre? genre}) {
     _mode = mode;
     _selectedGenre = genre;
+    _heroIndex = 0;
+    _heroTimer?.cancel();
     _load(reset: true);
   }
 
@@ -372,7 +391,15 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       controller: _scrollController,
       slivers: [
         if (showHero)
-          SliverToBoxAdapter(child: _hero(_items.first)),
+          SliverToBoxAdapter(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 450),
+              child: KeyedSubtree(
+                key: ValueKey(_items[_heroIndex.clamp(0, _items.length - 1)].animeId),
+                child: _hero(_items[_heroIndex.clamp(0, _items.length - 1)]),
+              ),
+            ),
+          ),
         SliverPadding(
           padding: EdgeInsets.only(top: 16, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
           sliver: SliverGrid.builder(
