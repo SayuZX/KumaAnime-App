@@ -165,7 +165,7 @@ class _NewsDetailsState extends State<NewsDetails> {
           Container(
             padding: const EdgeInsets.only(bottom: 50, top: 10),
             child: Text(
-              "credits: ${widget.service.credit}",
+              loc.ndCredits(widget.service.credit),
               style: TextStyle(
                 color: appTheme.textSubColor,
                 ),
