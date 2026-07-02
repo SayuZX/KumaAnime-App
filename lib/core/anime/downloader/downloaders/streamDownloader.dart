@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:animestream/core/anime/downloader/downloaders/baseDownloader.dart';
-import 'package:animestream/core/anime/downloader/types.dart';
-import 'package:animestream/core/commons/extensions.dart';
+import 'package:kumaanime/core/anime/downloader/downloaders/baseDownloader.dart';
+import 'package:kumaanime/core/anime/downloader/types.dart';
+import 'package:kumaanime/core/commons/extensions.dart';
 import 'package:http/http.dart';
 
 class StreamDownloader extends BaseDownloader {
