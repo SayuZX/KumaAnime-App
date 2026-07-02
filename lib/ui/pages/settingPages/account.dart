@@ -1,20 +1,20 @@
 import 'dart:ui';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/anilist/anilist.dart';
-import 'package:animestream/core/database/anilist/login.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/mal/login.dart';
-import 'package:animestream/core/database/simkl/login.dart';
-import 'package:animestream/core/database/simkl/types.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/loader.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/pages/settingPages/stats.dart';
-import 'package:animestream/ui/models/providers/appProvider.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/anilist/anilist.dart';
+import 'package:kumaanime/core/database/anilist/login.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/mal/login.dart';
+import 'package:kumaanime/core/database/simkl/login.dart';
+import 'package:kumaanime/core/database/simkl/types.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/settingPages/stats.dart';
+import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -221,7 +221,7 @@ class _AccountSettingState extends State<AccountSetting> {
                   ? Container(
                       padding: EdgeInsets.only(top: 30),
                       child: Center(
-                        child: AnimeStreamLoading(
+                        child: KumaAnimeLoading(
                           color: appTheme.accentColor,
                         ),
                       ),
