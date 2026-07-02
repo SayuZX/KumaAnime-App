@@ -1,5 +1,5 @@
-import 'package:animestream/ui/models/providers/playerDataProvider.dart';
-import 'package:animestream/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
