@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/news/types.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _NewsDetailsState extends State<NewsDetails> {
       ),
       body: !loaded
           ? Center(
-              child: CircularProgressIndicator(color: appTheme.accentColor),
+              child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
             )
           : error
               ? _errorBody(loc)
