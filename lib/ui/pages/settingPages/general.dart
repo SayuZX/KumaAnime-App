@@ -4,7 +4,6 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
-import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/sources.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
@@ -13,7 +12,6 @@ import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/plugin.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class GeneralSetting extends StatefulWidget {
   const GeneralSetting({super.key});
@@ -58,11 +56,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
   bool enableLogging = false;
 
   final sources = SourceManager.instance.sources;
-
-  static const languageNames = {
-    'en': 'English',
-    'id': 'Bahasa Indonesia',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -181,18 +174,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       description: loc.manageProvidersDesc,
                       suffixIcon: Icon(Icons.navigate_next_rounded),
                     ),
-                    ClickableItem(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          showDragHandle: true,
-                          builder: (context) => _languageSheet(context),
-                        );
-                      },
-                      label: loc.language,
-                      description: languageNames[currentUserSettings?.locale] ?? languageNames['en']!,
-                      suffixIcon: Icon(Icons.language_rounded),
-                    ),
                     ToggleItem(
                       onTapFunction: () {
                         setState(() {
@@ -277,69 +258,4 @@ class _GeneralSettingState extends State<GeneralSetting> {
     );
   }
 
-  StatefulBuilder _languageSheet(BuildContext context) {
-    return StatefulBuilder(
-      builder: (context, setSheetState) {
-        final activeLocale = currentUserSettings?.locale ?? 'en';
-        final codes = languageNames.keys.toList();
-        return Container(
-          padding: const EdgeInsets.only(
-            top: 10,
-            left: 20,
-            right: 20,
-          ),
-          margin: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
-                  AppLocalizations.of(context).selectLanguage,
-                  style: textStyle().copyWith(fontSize: 23),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: codes.length,
-                  itemBuilder: (context, index) {
-                    final code = codes[index];
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        color: code == activeLocale ? appTheme.accentColor : appTheme.backgroundSubColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: () async {
-                            final appProvider = context.read<AppProvider>();
-                            await writeSettings(SettingsModal(locale: code));
-                            appProvider.justRefresh();
-                            setSheetState(() {});
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            child: Text(
-                              languageNames[code]!,
-                              style: textStyle().copyWith(
-                                color: code == activeLocale ? appTheme.onAccent : appTheme.textMainColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
