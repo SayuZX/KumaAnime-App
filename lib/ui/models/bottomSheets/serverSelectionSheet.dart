@@ -1,25 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:animestream/core/anime/downloader/downloadManager.dart';
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/extractQuality.dart';
-import 'package:animestream/core/data/watching.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/ui/models/playerControllers/betterPlayer.dart';
-import 'package:animestream/ui/models/playerControllers/fvp.dart';
-import 'package:animestream/ui/models/providers/infoProvider.dart';
-import 'package:animestream/ui/models/providers/playerDataProvider.dart';
-import 'package:animestream/ui/models/providers/playerProvider.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/appWrapper.dart';
-import 'package:animestream/ui/models/widgets/sourceTile.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/pages/watch.dart';
+import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/extractQuality.dart';
+import 'package:kumaanime/core/data/watching.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
+import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
+import 'package:kumaanime/ui/models/providers/infoProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
+import 'package:kumaanime/ui/models/widgets/sourceTile.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/watch.dart';
 import 'package:flutter/material.dart';
-import 'package:animestream/ui/models/sources.dart';
+import 'package:kumaanime/ui/models/sources.dart';
 import 'package:provider/provider.dart';
 
 class ServerSelectionBottomSheet extends StatefulWidget {
