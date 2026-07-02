@@ -4,6 +4,7 @@ import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,7 @@ class BottomControls extends StatelessWidget {
   Widget build(BuildContext context) {
     final dataProvider = context.read<PlayerDataProvider>();
     final playerProvider = context.read<PlayerProvider>();
+    final loc = AppLocalizations.of(context);
     // final a = dataProvider.state.currentAudioTrack;
     // playerProvider.controller.setAudioTrack(a.url, a.language, a.name);
 
@@ -53,7 +55,7 @@ class BottomControls extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 10),
                                     child: Text(
-                                      "Choose Quality",
+                                      loc.bcChooseQuality,
                                       style:
                                           TextStyle(color: appTheme.textMainColor, fontSize: 20),
                                     ),
@@ -106,7 +108,7 @@ class BottomControls extends StatelessWidget {
                           },
                         );
                       },
-                      tooltip: "qualities",
+                      tooltip: loc.bcQualities,
                       icon: Icon(
                         Icons.high_quality_rounded,
                         color: Colors.white,
@@ -123,7 +125,7 @@ class BottomControls extends StatelessWidget {
                           ),
                         );
                       },
-                      tooltip: "servers",
+                      tooltip: loc.bcServers,
                       icon: Icon(
                         Icons.source_rounded,
                         color: Colors.white,
@@ -143,7 +145,7 @@ class BottomControls extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 20),
                                   child: Text(
-                                    "Select Episode",
+                                    loc.bcSelectEpisode,
                                     style: textStyle().copyWith(fontSize: 23),
                                   ),
                                 ),
@@ -187,7 +189,7 @@ class BottomControls extends StatelessWidget {
                           ),
                         );
                       },
-                      tooltip: "Episode list",
+                      tooltip: loc.bcEpisodeList,
                       icon: Icon(
                         Icons.view_list_rounded,
                         color: Colors.white,
@@ -208,7 +210,7 @@ class BottomControls extends StatelessWidget {
                           },
                         );
                       },
-                      tooltip: "Playback speed",
+                      tooltip: loc.bcPlaybackSpeed,
                       icon: Icon(
                         Icons.speed_rounded,
                         color: Colors.white,
@@ -228,7 +230,7 @@ class BottomControls extends StatelessWidget {
                           dataProvider.initSubsettings();
                         });
                       },
-                      tooltip: "Subtitles",
+                      tooltip: loc.bcSubtitles,
                       icon: Icon(
                         !playerProvider.state.showSubs ? Icons.subtitles_outlined : Icons.subtitles_rounded,
                         color: Colors.white,
@@ -239,7 +241,7 @@ class BottomControls extends StatelessWidget {
                         await playerProvider.setPip(!playerProvider.state.pip);
                       },
                       icon: Icon(Icons.picture_in_picture_alt_rounded),
-                      tooltip: "Picture in Picture",
+                      tooltip: loc.bcPictureInPicture,
                       color: Colors.white,
                     ),
                     // IconButton(
@@ -328,6 +330,7 @@ class BottomControls extends StatelessWidget {
   }
 
   Widget playBackSpeedDialog(BuildContext context, PlayerProvider pp, PlayerDataProvider dp) {
+    final loc = AppLocalizations.of(context);
     final playbackSpeeds = pp.playbackSpeeds;
     return Container(
       height: MediaQuery.of(context).size.height / 2,
@@ -339,7 +342,7 @@ class BottomControls extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(
-              "Speed",
+              loc.bcSpeed,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, ),
             ),
           ),
@@ -392,7 +395,7 @@ class BottomControls extends StatelessWidget {
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                "close",
+                loc.bcClose,
                 style: TextStyle(fontSize: 16),
               ),
             ),
