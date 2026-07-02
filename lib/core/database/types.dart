@@ -1,4 +1,4 @@
-import 'package:animestream/core/database/database.dart';
+import 'package:kumaanime/core/database/database.dart';
 
 abstract class DatabaseSearchResult {
   int get id;
