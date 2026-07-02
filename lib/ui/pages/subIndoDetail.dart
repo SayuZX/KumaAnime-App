@@ -5,6 +5,7 @@ import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/subIndoWatched.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
@@ -35,6 +36,9 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
   bool _error = false;
   bool _synopsisExpanded = false;
 
+  Set<int> _watched = {};
+  int? _lastWatched;
+
   @override
   void initState() {
     super.initState();
@@ -48,9 +52,13 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     });
     try {
       final detail = await _provider.getDetail(widget.animeId);
+      final watched = await SubIndoWatched.getWatched(widget.animeId);
+      final last = await SubIndoWatched.getLast(widget.animeId);
       if (!mounted) return;
       setState(() {
         _detail = detail;
+        _watched = watched;
+        _lastWatched = last;
         _loading = false;
       });
     } catch (_) {
@@ -62,14 +70,23 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     }
   }
 
+  Future<void> _reloadWatched() async {
+    final watched = await SubIndoWatched.getWatched(widget.animeId);
+    final last = await SubIndoWatched.getLast(widget.animeId);
+    if (mounted) setState(() {
+      _watched = watched;
+      _lastWatched = last;
+    });
+  }
+
   void _openServerSheet(int episodeIndex) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: appTheme.modalSheetBackgroundColor,
-      builder: (context) => _SubIndoServerSheet(detail: _detail!, episodeIndex: episodeIndex),
-    );
+      builder: (context) => _SubIndoServerSheet(detail: _detail!, animeId: widget.animeId, episodeIndex: episodeIndex),
+    ).then((_) => _reloadWatched());
   }
 
   @override
@@ -227,11 +244,9 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
                   _synopsis(loc, detail),
                 ],
                 const SizedBox(height: 24),
-                _sectionTitle(detail.isMovie
-                    ? loc.movie
-                    : "${loc.subIndoEpisodes}${detail.episodes != null && detail.episodes!.isNotEmpty ? " (${detail.episodes})" : ""}"),
-                const SizedBox(height: 4),
-                _episodeList(loc, detail),
+                _episodeHeader(loc, detail),
+                const SizedBox(height: 12),
+                _episodeGrid(detail),
               ],
             ),
           ),
@@ -334,55 +349,105 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     );
   }
 
-  Widget _episodeList(AppLocalizations loc, SubIndoAnimeDetail detail) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: detail.episodeList.length,
-      itemBuilder: (context, index) {
-        final episode = detail.episodeList[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: appTheme.backgroundSubColor,
-            borderRadius: BorderRadius.circular(12),
+  Widget _episodeHeader(AppLocalizations loc, SubIndoAnimeDetail detail) {
+    final title = detail.isMovie
+        ? loc.movie
+        : "${loc.subIndoEpisodes}${detail.episodes != null && detail.episodes!.isNotEmpty ? " (${detail.episodes})" : ""}";
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(child: _sectionTitle(title)),
+        if (!detail.isMovie) ...[
+          IconButton(
+            tooltip: loc.markAllWatched,
+            onPressed: () => _markAll(detail),
+            icon: Icon(Icons.done_all_rounded, color: appTheme.textSubColor),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
+          IconButton(
+            tooltip: loc.resetProgress,
+            onPressed: () => _confirmReset(loc),
+            icon: Icon(Icons.restart_alt_rounded, color: appTheme.textSubColor),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _episodeGrid(SubIndoAnimeDetail detail) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: List.generate(detail.episodeList.length, (index) {
+        final ep = detail.episodeList[index];
+        final number = ep.episodeNumber;
+        final isWatched = _watched.contains(number);
+        final isLast = _lastWatched == number;
+        return GestureDetector(
+          onTap: () => _openServerSheet(index),
+          child: Container(
+            width: 52,
+            height: 52,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: isLast ? appTheme.accentColor : appTheme.backgroundSubColor,
               borderRadius: BorderRadius.circular(12),
-              onTap: () => _openServerSheet(index),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Row(
-                  children: [
-                    Icon(
-                      detail.isMovie ? Icons.movie_outlined : Icons.play_circle_outline_rounded,
-                      color: appTheme.accentColor,
+              border: !isLast && isWatched
+                  ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.5), width: 1.5)
+                  : null,
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Opacity(
+                  opacity: isWatched && !isLast ? 0.5 : 1.0,
+                  child: Text(
+                    "$number",
+                    style: TextStyle(
+                      color: isLast ? appTheme.onAccent : appTheme.textMainColor,
+                      fontFamily: "Rubik",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        detail.isMovie && detail.episodeList.length == 1
-                            ? loc.watchMovie
-                            : "${loc.episode} ${episode.episodeNumber}",
-                        style: TextStyle(
-                          color: appTheme.textMainColor,
-                          fontFamily: "NotoSans",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    Icon(Icons.chevron_right_rounded, color: appTheme.textSubColor),
-                  ],
+                  ),
                 ),
-              ),
+                if (isWatched && !isLast)
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: Icon(Icons.check_circle_rounded, size: 12, color: appTheme.accentColor),
+                  ),
+              ],
             ),
           ),
         );
-      },
+      }),
+    );
+  }
+
+  Future<void> _markAll(SubIndoAnimeDetail detail) async {
+    await SubIndoWatched.markAll(widget.animeId, detail.episodeList.map((e) => e.episodeNumber).toList());
+    await _reloadWatched();
+  }
+
+  void _confirmReset(AppLocalizations loc) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: appTheme.modalSheetBackgroundColor,
+        content: Text(loc.resetProgressConfirm, style: TextStyle(color: appTheme.textMainColor)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("No")),
+          TextButton(
+            onPressed: () async {
+              await SubIndoWatched.reset(widget.animeId);
+              await _reloadWatched();
+              if (mounted) Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: appTheme.accentColor),
+            child: Text(loc.resetProgress),
+          ),
+        ],
+      ),
     );
   }
 
@@ -401,10 +466,12 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
 
 class _SubIndoServerSheet extends StatefulWidget {
   final SubIndoAnimeDetail detail;
+  final String animeId;
   final int episodeIndex;
 
   const _SubIndoServerSheet({
     required this.detail,
+    required this.animeId,
     required this.episodeIndex,
   });
 
@@ -446,6 +513,8 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
     final navigatorState = Platform.isWindows ? AppWrapper.navKey.currentState : Navigator.of(context);
     final detail = widget.detail;
     final streams = _streams;
+
+    SubIndoWatched.mark(widget.animeId, detail.episodeList[widget.episodeIndex].episodeNumber);
 
     Navigator.pop(context, true);
 
