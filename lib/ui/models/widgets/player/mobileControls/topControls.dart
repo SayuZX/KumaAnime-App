@@ -1,6 +1,9 @@
+import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/bottomSheets/watchSocialSheet.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/pages/settingPages/player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +106,15 @@ class TopControls extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+              if (dataProvider.showId > 0 && !dataProvider.state.controlsLocked)
+                IconButton(
+                  onPressed: () => _openSocial(context),
+                  tooltip: "Comments & info",
+                  icon: Icon(
+                    Icons.forum_rounded,
+                    color: Colors.white,
+                  ),
+                ),
               if (!dataProvider.state.controlsLocked)
                 IconButton(
                   onPressed: () {
@@ -141,5 +153,31 @@ class TopControls extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _openSocial(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: appTheme.modalSheetBackgroundColor,
+      builder: (_) => WatchSocialSheet(
+        animeId: dataProvider.showId,
+        title: dataProvider.showTitle,
+        onDownload: () => _downloadCurrent(context),
+      ),
+    );
+  }
+
+  void _downloadCurrent(BuildContext context) {
+    final stream = dataProvider.state.currentStream;
+    DownloadManager().addDownloadTask(
+      stream.url,
+      "${dataProvider.showTitle} - Ep ${dataProvider.state.currentEpIndex + 1}",
+      subtitleUrl: stream.subtitle,
+      customHeaders: stream.customHeaders ?? const {},
+    );
+    Navigator.pop(context);
+    floatingSnackBar("Mengunduh episode ke folder unduhan");
   }
 }
