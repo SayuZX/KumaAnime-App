@@ -108,7 +108,6 @@ class PlayerSettingState extends State<PlayerSetting> {
                                     valueIndicatorShape: RoundedSliderValueIndicator(height: 30, width: 35, radius: 5),
                                     valueIndicatorTextStyle: TextStyle(
                                       color: appTheme.backgroundColor,
-                                      fontFamily: "NotoSans",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
@@ -156,7 +155,6 @@ class PlayerSettingState extends State<PlayerSetting> {
                                     valueIndicatorShape: RoundedSliderValueIndicator(height: 30, width: 40, radius: 5),
                                     valueIndicatorTextStyle: TextStyle(
                                       color: appTheme.backgroundColor,
-                                      fontFamily: "NotoSans",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
@@ -337,7 +335,6 @@ class PlayerSettingState extends State<PlayerSetting> {
         style: TextStyle(
           // color: preferredQuality == label ? appTheme.backgroundColor : appTheme.accentColor,
           fontSize: 16,
-          fontFamily: "NotoSans",
           fontWeight: FontWeight.bold,
         ),
       ),
