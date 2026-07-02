@@ -3,6 +3,7 @@ import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/commons/enums.dart';
 import 'package:kumaanime/ui/models/bottomSheets/serverSelectionSheet.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ContinueWatchingSideBox extends StatelessWidget {
@@ -21,6 +22,7 @@ class ContinueWatchingSideBox extends StatelessWidget {
     0;
   final double value = (raw is num) ? raw.toDouble() : double.tryParse(raw.toString()) ?? 0.0;
   final int watchedProgress = (value.isNaN || value.isInfinite) ? 0 : value.toInt();
+    final loc = AppLocalizations.of(context);
     final size = MediaQuery.sizeOf(context);
     return Container(
       margin: EdgeInsets.only(left: 60, top: 20, bottom: 20),
@@ -31,7 +33,7 @@ class ContinueWatchingSideBox extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 15, bottom: 15),
             child: Text(
-              "Continue Watching",
+              loc.cbContinueWatching,
               style: TextStyle(
                 color: appTheme.textMainColor,
                 fontSize: 22,
@@ -192,7 +194,7 @@ class ContinueWatchingSideBox extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${provider.started ? 'Continue' : 'Start'}",
+                                    provider.started ? loc.cbContinue : loc.cbStart,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
@@ -202,7 +204,7 @@ class ContinueWatchingSideBox extends StatelessWidget {
                                   ),
                                   SizedBox(height: 4),
                                   Text(
-                                    "Episode ${provider.watched >= provider.epLinks.length ? provider.watched : provider.watched + 1}",
+                                    loc.cbEpisodeNumber(provider.watched >= provider.epLinks.length ? provider.watched : provider.watched + 1),
                                     style: TextStyle(
                                       color: Colors.white.withAlpha(204),
                                       fontSize: 14,
@@ -227,7 +229,7 @@ class ContinueWatchingSideBox extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Your Progress",
+                            loc.cbYourProgress,
                             style: TextStyle(
                               color: appTheme.textMainColor,
                               fontSize: 16,
@@ -323,6 +325,7 @@ class ContinueWatchingBodyBox extends StatelessWidget {
     0;
   final double value = (raw is num) ? raw.toDouble() : double.tryParse(raw.toString()) ?? 0.0;
   final watchedProgress = (value.isNaN || value.isInfinite) ? 0 : value.toInt();
+    final loc = AppLocalizations.of(context);
     final size = MediaQuery.sizeOf(context);
 
     return Container(
@@ -392,7 +395,7 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Continue Episode ${provider.watched >= provider.epLinks.length ? provider.watched : provider.watched + 1}",
+                      loc.cbContinueEpisode(provider.watched >= provider.epLinks.length ? provider.watched : provider.watched + 1),
                       style: TextStyle(
                         color: appTheme.textMainColor,
                         fontSize: 16,
@@ -434,7 +437,7 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Your progress",
+                                    loc.cbYourProgressLower,
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(204),
                                       fontSize: 14,
@@ -532,7 +535,7 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                             Icon(Icons.play_circle_filled_rounded, size: 18),
                             SizedBox(width: 8),
                             Text(
-                              "Continue Watching",
+                              loc.cbContinueWatching,
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
