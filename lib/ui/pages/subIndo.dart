@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
@@ -7,6 +8,7 @@ import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/cards/subIndoCard.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/subIndoDetail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 enum _SubIndoMode { ongoing, completed, genre, search }
@@ -61,9 +63,7 @@ class _SubIndoPageState extends State<SubIndoPage> {
     try {
       final genres = await _provider.getGenres();
       if (mounted) setState(() => _genres = genres);
-    } catch (_) {
-      // Genre chips are optional, the rest of the page still works
-    }
+    } catch (_) {}
   }
 
   Future<void> _load({bool reset = false}) async {
@@ -121,6 +121,12 @@ class _SubIndoPageState extends State<SubIndoPage> {
     _mode = mode;
     _selectedGenre = genre;
     _load(reset: true);
+  }
+
+  void _openDetail(SubIndoAnime anime) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => SubIndoDetailPage(animeId: anime.animeId)),
+    );
   }
 
   @override
@@ -262,34 +268,136 @@ class _SubIndoPageState extends State<SubIndoPage> {
       );
     }
 
-    final cardWidth = Platform.isWindows || Platform.isLinux ? 170.0 : 130.0;
+    final desktop = Platform.isWindows || Platform.isLinux;
+    final showHero = _mode == _SubIndoMode.ongoing || _mode == _SubIndoMode.completed;
 
-    return GridView.builder(
+    return CustomScrollView(
       controller: _scrollController,
-      padding: EdgeInsets.only(top: 20, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: cardWidth,
-        mainAxisExtent: Platform.isWindows || Platform.isLinux ? 290 : 250,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 10,
-      ),
-      itemCount: _items.length + (_loadingMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index >= _items.length) {
-          return Center(child: CircularProgressIndicator(color: appTheme.accentColor));
-        }
-        final anime = _items[index];
-        return SubIndoCard(
-          anime: anime,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => SubIndoDetailPage(animeId: anime.animeId),
+      slivers: [
+        if (showHero)
+          SliverToBoxAdapter(child: _hero(_items.first)),
+        SliverPadding(
+          padding: EdgeInsets.only(top: 16, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
+          sliver: SliverGrid.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: desktop ? 165 : 125,
+              mainAxisExtent: desktop ? 300 : 240,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: _items.length,
+            itemBuilder: (context, index) {
+              final anime = _items[index];
+              return SubIndoCard(anime: anime, onTap: () => _openDetail(anime));
+            },
+          ),
+        ),
+        if (_loadingMore)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Center(child: CircularProgressIndicator(color: appTheme.accentColor)),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _hero(SubIndoAnime anime) {
+    return GestureDetector(
+      onTap: () => _openDetail(anime),
+      child: Container(
+        height: 200,
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: CachedNetworkImage(
+                imageUrl: anime.poster,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(color: appTheme.backgroundSubColor),
+                errorWidget: (context, url, error) => Container(color: appTheme.backgroundSubColor),
               ),
-            );
-          },
-        );
-      },
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: [Colors.black.withValues(alpha: 0.35), Colors.black.withValues(alpha: 0.85)],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: anime.poster,
+                      width: 110,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(color: appTheme.backgroundSubColor, width: 110),
+                      errorWidget: (context, url, error) => Container(color: appTheme.backgroundSubColor, width: 110),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: appTheme.accentColor,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context).subIndo.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              letterSpacing: 0.5,
+                              color: appTheme.onAccent,
+                              fontFamily: "NotoSans",
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          anime.title,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Rubik",
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (anime.episodes != null && anime.episodes!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              "${anime.episodes} ${AppLocalizations.of(context).subIndoEpisodes}",
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontFamily: "NotoSans"),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
