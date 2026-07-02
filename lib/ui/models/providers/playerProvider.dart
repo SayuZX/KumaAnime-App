@@ -1,17 +1,17 @@
 import 'dart:io';
 
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/extractQuality.dart';
-import 'package:animestream/ui/models/providers/playerDataProvider.dart';
-import 'package:animestream/ui/models/providers/appProvider.dart';
-import 'package:animestream/ui/models/widgets/appWrapper.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/extractQuality.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/appProvider.dart';
+import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/ui/models/playerControllers/videoController.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/ui/models/playerControllers/videoController.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
