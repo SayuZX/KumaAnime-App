@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:kumaanime/core/social/imageCompressor.dart';
@@ -147,11 +147,19 @@ class SocialService {
     if (_uid == null) return null;
     final data = await ImageCompressor.compressUnder2MB(path);
     if (data == null) return null;
-    final ref = FirebaseStorage.instance.ref('avatars/$_uid.jpg');
-    await ref.putData(data, SettableMetadata(contentType: 'image/jpeg'));
-    final url = await ref.getDownloadURL();
-    await saveProfile(nickname: nickname, avatar: url);
-    return url;
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse('https://catbox.moe/user/api.php'))
+        ..fields['reqtype'] = 'fileupload'
+        ..files.add(http.MultipartFile.fromBytes('fileToUpload', data, filename: '$_uid.jpg'));
+      final response = await http.Response.fromStream(await request.send());
+      final url = response.body.trim();
+      if (response.statusCode != 200 || !url.startsWith('http')) return null;
+      await saveProfile(nickname: nickname, avatar: url);
+      return url;
+    } catch (err) {
+      Logs.app.log("[SOCIAL] avatar upload failed: ${err.toString()}");
+      return null;
+    }
   }
 
   DocumentReference<Map<String, dynamic>> _animeDoc(String key) => _db.collection('anime_social').doc(key);
