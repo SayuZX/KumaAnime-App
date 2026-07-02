@@ -1,13 +1,13 @@
-import 'package:animestream/core/app/values.dart';
+import 'package:kumaanime/core/app/values.dart';
 import 'package:graphql/client.dart';
 
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/commons/utils.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/anilist/queries.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/utils.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/anilist/queries.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/types.dart';
 
 class AnilistApiException implements Exception {
   final String message;
