@@ -49,13 +49,18 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Color _accentFor(Color fallback) {
+    final value = currentUserSettings?.accentColorValue;
+    return value != null ? Color(value) : fallback;
+  }
+
   set theme(KumaAnimeTheme selectedTheme) {
     _theme = selectedTheme;
 
     final dark = currentUserSettings?.darkMode ?? true;
 
     appTheme = KumaAnimeTheme(
-      accentColor: selectedTheme.accentColor,
+      accentColor: _accentFor(selectedTheme.accentColor),
       //set background color only if dark theme and amoled bg are true, otherwise set respective theme's default bg
       backgroundColor:
           ((currentUserSettings?.amoledBackground ?? false) && dark) ? Colors.black : selectedTheme.backgroundColor,
@@ -91,7 +96,7 @@ class AppProvider with ChangeNotifier {
 
     if (dark) {
       appTheme = KumaAnimeTheme(
-        accentColor: theme.theme.accentColor,
+        accentColor: _accentFor(theme.theme.accentColor),
         backgroundColor: (currentUserSettings?.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor,
         backgroundSubColor: theme.theme.backgroundSubColor,
         textMainColor: theme.theme.textMainColor,
@@ -101,7 +106,7 @@ class AppProvider with ChangeNotifier {
       );
     } else {
       appTheme = KumaAnimeTheme(
-        accentColor: Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor),
+        accentColor: _accentFor(Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor)),
         backgroundColor: lightModeValues.backgroundColor,
         backgroundSubColor: lightModeValues.backgroundSubColor,
         textMainColor: lightModeValues.textMainColor,
