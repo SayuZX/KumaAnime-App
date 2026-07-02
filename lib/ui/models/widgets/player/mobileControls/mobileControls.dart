@@ -134,15 +134,15 @@ class _MobileControlsState extends State<MobileControls> {
                                   children: [
                                     Text(
                                       dataProvider.state.currentTimeStamp,
-                                      style: TextStyle(color: Colors.white, fontFamily: 'NunitoSans'),
+                                      style: TextStyle(color: Colors.white, ),
                                     ),
                                     const Text(
                                       " / ",
-                                      style: TextStyle(color: Colors.white, fontFamily: 'NunitoSans'),
+                                      style: TextStyle(color: Colors.white, ),
                                     ),
                                     Text(
                                       dataProvider.state.maxTimeStamp,
-                                      style: TextStyle(color: Colors.white, fontFamily: 'NunitoSans'),
+                                      style: TextStyle(color: Colors.white, ),
                                     ),
                                   ],
                                 ),
@@ -245,7 +245,6 @@ class _MobileControlsState extends State<MobileControls> {
                         : "+$megaSkipDuration",
                 style: TextStyle(
                   color: Colors.white,
-                  fontFamily: "Rubik",
                   fontSize: 17,
                 ),
               ),
