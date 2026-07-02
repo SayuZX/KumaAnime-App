@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
@@ -177,53 +176,33 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   }
 
   Widget _vintageHeader(BuildContext context, AppLocalizations loc) {
-    const cream = Color(0xffF5ECD7);
     final topInset = MediaQuery.of(context).padding.top;
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [const Color(0xff1C1410), appTheme.backgroundColor],
-        ),
-      ),
-      child: Stack(
+    return Padding(
+      padding: EdgeInsets.only(top: topInset + 10, left: 20, right: 20, bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Positioned.fill(
-            child: IgnorePointer(
-              child: CustomPaint(painter: _GrainPainter()),
+          Material(
+            color: appTheme.backgroundSubColor,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.hardEdge,
+            child: IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+              padding: EdgeInsets.zero,
+              icon: Icon(Icons.arrow_back_rounded, color: appTheme.textMainColor, size: 22),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: topInset + 10, left: 20, right: 20, bottom: 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Material(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.hardEdge,
-                  child: IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    constraints: const BoxConstraints.tightFor(width: 40, height: 40),
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.arrow_back_rounded, color: cream, size: 22),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  loc.subIndo,
-                  style: const TextStyle(
-                    color: cream,
-                    fontFamily: "Rubik",
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                    height: 1.0,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 14),
+          Text(
+            loc.subIndo,
+            style: TextStyle(
+              color: appTheme.textMainColor,
+              fontFamily: "Rubik",
+              fontSize: 34,
+              fontWeight: FontWeight.bold,
+              height: 1.0,
             ),
           ),
         ],
@@ -492,22 +471,4 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       ),
     );
   }
-}
-
-class _GrainPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (size.width <= 0 || size.height <= 0) return;
-    final random = math.Random(42);
-    final paint = Paint()..color = const Color(0xffF5ECD7).withValues(alpha: 0.03);
-    final count = ((size.width * size.height) / 900).clamp(0, 400).toInt();
-    for (var i = 0; i < count; i++) {
-      final dx = random.nextDouble() * size.width;
-      final dy = random.nextDouble() * size.height;
-      canvas.drawCircle(Offset(dx, dy), 0.6, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_GrainPainter oldDelegate) => false;
 }
