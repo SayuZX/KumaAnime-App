@@ -1,3 +1,4 @@
+import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/database/database.dart';
 import 'package:kumaanime/core/database/handler/handler.dart';
@@ -192,6 +193,9 @@ class _WatchActionsBarState extends State<WatchActionsBar> {
   final _social = SocialService.instance;
   int _myVote = 0;
 
+  late final Stream<Map<String, int>> _countsStream =
+      _social.isReady ? _social.watchCounts(widget.socialKey) : const Stream<Map<String, int>>.empty();
+
   @override
   void initState() {
     super.initState();
@@ -219,7 +223,7 @@ class _WatchActionsBarState extends State<WatchActionsBar> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: StreamBuilder<Map<String, int>>(
-        stream: _social.isReady ? _social.watchCounts(widget.socialKey) : const Stream.empty(),
+        stream: _countsStream,
         builder: (context, snapshot) {
           final likes = snapshot.data?['likes'] ?? 0;
           final dislikes = snapshot.data?['dislikes'] ?? 0;
@@ -314,6 +318,9 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
   final _controller = TextEditingController();
   bool _sending = false;
 
+  late final Stream<List<SocialComment>> _commentsStream =
+      _social.isReady ? _social.watchComments(widget.socialKey) : const Stream<List<SocialComment>>.empty();
+
   @override
   void dispose() {
     _controller.dispose();
@@ -327,9 +334,10 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
     _controller.clear();
     try {
       await _social.addComment(widget.socialKey, text);
-    } catch (_) {
+    } catch (e) {
+      Logs.app.log("[SOCIAL] comment write failed: ${e.toString()}");
       _controller.text = text;
-      floatingSnackBar("Gagal mengirim komentar");
+      floatingSnackBar("Komentar gagal terkirim: ${e.toString()}");
     }
     if (mounted) setState(() => _sending = false);
   }
@@ -357,7 +365,7 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
       return Center(child: Text("Fitur sosial tidak tersedia", style: TextStyle(color: appTheme.textSubColor)));
     }
     return StreamBuilder<List<SocialComment>>(
-      stream: _social.watchComments(widget.socialKey),
+      stream: _commentsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 30));
