@@ -178,7 +178,6 @@ class _DiscoverState extends State<Discover> {
                   label,
                   style: TextStyle(
                     color: appTheme.textMainColor,
-                    fontFamily: "NotoSans",
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                   ),
@@ -215,7 +214,6 @@ class _DiscoverState extends State<Discover> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: appTheme.textMainColor,
-                fontFamily: 'Rubik',
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
                 height: 1.1,
@@ -230,7 +228,6 @@ class _DiscoverState extends State<Discover> {
                   "${item.rating != null ? item.rating! / 10 : '??'}",
                   style: TextStyle(
                     color: appTheme.textMainColor,
-                    fontFamily: "Rubik",
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -241,7 +238,7 @@ class _DiscoverState extends State<Discover> {
                     item.genres.take(3).join(' • '),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: appTheme.textSubColor, fontFamily: 'NotoSans', fontSize: 13),
+                    style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
                   ),
                 ),
               ],
