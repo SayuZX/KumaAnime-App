@@ -8,11 +8,13 @@ import 'package:kumaanime/ui/models/widgets/infoPageWidgets/scrollingList.dart';
 import 'package:flutter/material.dart';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/header.dart';
 import 'package:kumaanime/ui/pages/genres.dart';
 import 'package:kumaanime/ui/pages/info.dart';
 import 'package:kumaanime/ui/pages/news.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/subIndo.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Discover extends StatefulWidget {
@@ -113,80 +115,36 @@ class _DiscoverState extends State<Discover> {
                   )
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 30, right: 25),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
+              Padding(
+                padding: EdgeInsets.only(top: 30),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 25,
+                  runSpacing: 15,
+                  children: [
+                    _bannerButton(
+                      label: "News",
+                      imageAsset: 'lib/assets/images/chisato.jpeg',
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => News()));
                       },
-                      child: Container(
-                        height: 75,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          // color: Colors.black,
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                              image: AssetImage(
-                                'lib/assets/images/chisato.jpeg',
-                              ),
-                              fit: BoxFit.cover,
-                              opacity: 0.4),
-                          border: Border.all(color: appTheme.accentColor),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "News",
-                            style: TextStyle(
-                              color: appTheme.textMainColor,
-                              fontFamily: "NotoSans",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 30),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
+                    _bannerButton(
+                      label: "Genres",
+                      imageAsset: 'lib/assets/images/mitsuha.jpg',
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => GenresPage()));
                       },
-                      child: Container(
-                        height: 75,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          // color: Colors.black,
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                              image: AssetImage(
-                                'lib/assets/images/mitsuha.jpg',
-                              ),
-                              fit: BoxFit.cover,
-                              opacity: 0.4),
-                          border: Border.all(color: appTheme.accentColor),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Genres",
-                            style: TextStyle(
-                              color: appTheme.textMainColor,
-                              fontFamily: "NotoSans",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
-                  ),
-                ],
+                    _bannerButton(
+                      label: AppLocalizations.of(context).subIndo,
+                      imageAsset: 'lib/assets/images/chisato_AI.jpg',
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubIndoPage()));
+                      },
+                    ),
+                  ],
+                ),
               ),
               _itemTitle("Recently updated", recentlyUpdatedScrollController),
               _scrollList(widget.mainNavProvider.recentlyUpdatedList, recentlyUpdatedScrollController),
@@ -205,6 +163,37 @@ class _DiscoverState extends State<Discover> {
   SizedBox footSpace() {
     return SizedBox(
       height: MediaQuery.of(context).padding.bottom + 60,
+    );
+  }
+
+  Widget _bannerButton({required String label, required String imageAsset, required void Function() onTap}) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: onTap,
+      child: Container(
+        height: 75,
+        width: 150,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+            image: AssetImage(imageAsset),
+            fit: BoxFit.cover,
+            opacity: 0.4,
+          ),
+          border: Border.all(color: appTheme.accentColor),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: appTheme.textMainColor,
+              fontFamily: "NotoSans",
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
