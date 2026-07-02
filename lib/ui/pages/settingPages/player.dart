@@ -3,6 +3,7 @@ import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
+import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
 import 'package:flutter/material.dart';
@@ -344,7 +345,7 @@ class PlayerSettingState extends State<PlayerSetting> {
   @override
   void dispose() {
     if (widget.fromWatchPage) {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+      SystemChrome.setPreferredOrientations(watchPreferredOrientations());
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     } else {
       SystemChrome.setPreferredOrientations(
