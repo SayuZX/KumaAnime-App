@@ -143,7 +143,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
                 Text(
                   loc.subIndoLoadError,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 16),
+                  style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
@@ -200,7 +200,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
                     detail.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 17),
+                    style: TextStyle(color: appTheme.textMainColor, fontSize: 17),
                   ),
                 );
               },
@@ -248,7 +248,6 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
                   detail.title,
                   style: TextStyle(
                     color: appTheme.textMainColor,
-                    fontFamily: "Rubik",
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -258,7 +257,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       detail.japanese!,
-                      style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13),
+                      style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
                     ),
                   ),
                 const SizedBox(height: 12),
@@ -292,7 +291,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
         children: [
           Icon(icon, size: 15, color: iconColor ?? appTheme.textSubColor),
           const SizedBox(width: 4),
-          Text(value, style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13)),
+          Text(value, style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
         ],
       ));
     }
@@ -323,7 +322,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
       ),
       child: Text(
         label,
-        style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 12),
+        style: TextStyle(color: appTheme.textMainColor, fontSize: 12),
       ),
     );
   }
@@ -343,7 +342,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
         icon: const Icon(Icons.play_arrow_rounded, size: 26),
         label: Text(
           detail.isMovie ? loc.watchMovie : loc.subIndoWatchNow,
-          style: const TextStyle(fontFamily: "Poppins", fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -367,7 +366,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
               child: Text(
                 text,
                 overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
-                style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 14, height: 1.5),
+                style: TextStyle(color: appTheme.textSubColor, fontSize: 14, height: 1.5),
               ),
             ),
           ),
@@ -377,7 +376,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
               padding: const EdgeInsets.only(top: 6),
               child: Text(
                 _synopsisExpanded ? loc.showLess : loc.showMore,
-                style: TextStyle(color: appTheme.accentColor, fontFamily: "NotoSans", fontWeight: FontWeight.bold),
+                style: TextStyle(color: appTheme.accentColor, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -447,14 +446,14 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
             name,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 13),
+            style: TextStyle(color: appTheme.textMainColor, fontSize: 13),
           ),
           if (role.isNotEmpty)
             Text(
               role,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 11),
+              style: TextStyle(color: appTheme.textSubColor, fontSize: 11),
             ),
         ],
       ),
@@ -494,7 +493,6 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
       title,
       style: TextStyle(
         color: appTheme.textMainColor,
-        fontFamily: "Rubik",
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
@@ -630,7 +628,6 @@ class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
                         "$number",
                         style: TextStyle(
                           color: fg,
-                          fontFamily: "Rubik",
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -753,7 +750,7 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
                   widget.detail.isMovie && widget.detail.episodeList.length == 1
                       ? loc.movie
                       : "${loc.episode} ${widget.detail.episodeList[widget.episodeIndex].episodeNumber}",
-                  style: TextStyle(color: appTheme.textSubColor, fontFamily: "Rubik"),
+                  style: TextStyle(color: appTheme.textSubColor, ),
                 ),
               ],
             ),
@@ -783,7 +780,7 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
               child: Center(
                 child: Text(
                   loc.subIndoEmpty,
-                  style: const TextStyle(fontFamily: "Rubik", fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
             ),
