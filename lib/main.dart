@@ -159,11 +159,11 @@ Future<void> loadAndAssignSettings() async {
     } else {
       appTheme = KumaAnimeTheme(
         accentColor: theme.lightVariant.accentColor,
-        textMainColor: theme.lightVariant.textMainColor,
-        textSubColor: theme.lightVariant.textSubColor,
-        backgroundColor: theme.lightVariant.backgroundColor,
-        backgroundSubColor: theme.lightVariant.backgroundSubColor,
-        modalSheetBackgroundColor: theme.lightVariant.modalSheetBackgroundColor,
+        textMainColor: lightModeValues.textMainColor,
+        textSubColor: lightModeValues.textSubColor,
+        backgroundColor: lightModeValues.backgroundColor,
+        backgroundSubColor: lightModeValues.backgroundSubColor,
+        modalSheetBackgroundColor: lightModeValues.modalSheetBackgroundColor,
         onAccent: theme.lightVariant.onAccent,
       );
     }
