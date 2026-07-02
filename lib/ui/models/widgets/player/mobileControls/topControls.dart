@@ -4,6 +4,7 @@ import 'package:kumaanime/ui/models/bottomSheets/watchSocialSheet.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/pages/settingPages/player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,7 @@ class TopControls extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-              if (dataProvider.showId > 0 && !dataProvider.state.controlsLocked)
+              if (!dataProvider.state.controlsLocked)
                 IconButton(
                   onPressed: () => _openSocial(context),
                   tooltip: "Comments & info",
@@ -127,10 +128,7 @@ class TopControls extends StatelessWidget {
                       dataProvider.initSubsettings();
                       // Restore View state (subtitle screen may change the view type)
                       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-                      SystemChrome.setPreferredOrientations([
-                        DeviceOrientation.landscapeLeft,
-                        DeviceOrientation.landscapeRight,
-                      ]);
+                      SystemChrome.setPreferredOrientations(watchPreferredOrientations());
                     });
                   },
                   tooltip: "Player settings",
