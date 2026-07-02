@@ -13,6 +13,22 @@ String socialKeyFor(int animeId, String title) {
   return "title:${slug.isEmpty ? 'unknown' : slug}";
 }
 
+void openCommentsSheet(BuildContext context, String socialKey) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: appTheme.modalSheetBackgroundColor,
+    builder: (_) => Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.85,
+        child: WatchCommentsView(socialKey: socialKey),
+      ),
+    ),
+  );
+}
+
 class WatchSocialSheet extends StatelessWidget {
   final int animeId;
   final String title;
@@ -27,62 +43,83 @@ class WatchSocialSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final socialKey = socialKeyFor(animeId, title);
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.88,
-        child: WatchSocialPanel(animeId: animeId, title: title, onDownload: onDownload, showTitleHeader: true),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
+              child: _TitleDescription(animeId: animeId, title: title),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: WatchActionsBar(socialKey: socialKey, animeId: animeId, title: title, onDownload: onDownload),
+            ),
+            Divider(height: 1, color: appTheme.textSubColor.withValues(alpha: 0.15)),
+            Expanded(child: WatchCommentsView(socialKey: socialKey)),
+          ],
+        ),
       ),
     );
   }
 }
 
-class WatchSocialPanel extends StatefulWidget {
+class WatchSocialPanel extends StatelessWidget {
   final int animeId;
   final String title;
   final VoidCallback onDownload;
-  final bool showTitleHeader;
 
   const WatchSocialPanel({
     super.key,
     required this.animeId,
     required this.title,
     required this.onDownload,
-    this.showTitleHeader = false,
   });
 
   @override
-  State<WatchSocialPanel> createState() => _WatchSocialPanelState();
+  Widget build(BuildContext context) {
+    final socialKey = socialKeyFor(animeId, title);
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+      children: [
+        _TitleDescription(animeId: animeId, title: title),
+        const SizedBox(height: 14),
+        WatchActionsBar(socialKey: socialKey, animeId: animeId, title: title, onDownload: onDownload),
+        const SizedBox(height: 16),
+        _CommentsPreviewCard(socialKey: socialKey),
+      ],
+    );
+  }
 }
 
-class _WatchSocialPanelState extends State<WatchSocialPanel> {
-  final _social = SocialService.instance;
-  final _commentController = TextEditingController();
+class _TitleDescription extends StatefulWidget {
+  final int animeId;
+  final String title;
 
-  late final String _key = socialKeyFor(widget.animeId, widget.title);
+  const _TitleDescription({required this.animeId, required this.title});
 
+  @override
+  State<_TitleDescription> createState() => _TitleDescriptionState();
+}
+
+class _TitleDescriptionState extends State<_TitleDescription> {
   String? _synopsis;
-  bool _synopsisLoading = true;
-  bool _synopsisExpanded = false;
-  int _myVote = 0;
-  bool _sending = false;
+  bool _loading = true;
+  bool _expanded = false;
 
   @override
   void initState() {
     super.initState();
-    _loadSynopsis();
-    _loadVote();
+    _load();
   }
 
-  @override
-  void dispose() {
-    _commentController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadSynopsis() async {
+  Future<void> _load() async {
     if (widget.animeId <= 0) {
-      setState(() => _synopsisLoading = false);
+      setState(() => _loading = false);
       return;
     }
     try {
@@ -90,21 +127,93 @@ class _WatchSocialPanelState extends State<WatchSocialPanel> {
       if (!mounted) return;
       setState(() {
         _synopsis = info.synopsis;
-        _synopsisLoading = false;
+        _loading = false;
       });
     } catch (_) {
-      if (mounted) setState(() => _synopsisLoading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final desc = (_synopsis ?? '').trim();
+    return GestureDetector(
+      onTap: desc.isEmpty ? null : () => setState(() => _expanded = !_expanded),
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.title,
+            maxLines: _expanded ? 4 : 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: appTheme.textMainColor, fontSize: 17, fontWeight: FontWeight.bold, height: 1.3),
+          ),
+          if (_loading && widget.animeId > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text("Memuat deskripsi...", style: TextStyle(color: appTheme.textSubColor, fontSize: 12)),
+            )
+          else if (desc.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 180),
+              alignment: Alignment.topCenter,
+              child: Text(
+                desc,
+                maxLines: _expanded ? null : 2,
+                overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                style: TextStyle(color: appTheme.textSubColor, fontSize: 13, height: 1.45),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              _expanded ? "Tutup" : "...selengkapnya",
+              style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class WatchActionsBar extends StatefulWidget {
+  final String socialKey;
+  final int animeId;
+  final String title;
+  final VoidCallback onDownload;
+
+  const WatchActionsBar({
+    super.key,
+    required this.socialKey,
+    required this.animeId,
+    required this.title,
+    required this.onDownload,
+  });
+
+  @override
+  State<WatchActionsBar> createState() => _WatchActionsBarState();
+}
+
+class _WatchActionsBarState extends State<WatchActionsBar> {
+  final _social = SocialService.instance;
+  int _myVote = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVote();
+  }
+
   Future<void> _loadVote() async {
-    final vote = await _social.getMyVote(_key);
+    final vote = await _social.getMyVote(widget.socialKey);
     if (mounted) setState(() => _myVote = vote);
   }
 
   Future<void> _vote(int value) async {
     if (!_social.isReady) return;
-    final applied = await _social.setVote(_key, value);
+    final applied = await _social.setVote(widget.socialKey, value);
     if (mounted) setState(() => _myVote = applied);
   }
 
@@ -113,15 +222,195 @@ class _WatchSocialPanelState extends State<WatchSocialPanel> {
     SharePlus.instance.share(ShareParams(text: "Nonton ${widget.title} di Kuma Anime$link"));
   }
 
-  Future<void> _sendComment() async {
-    final text = _commentController.text.trim();
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: StreamBuilder<Map<String, int>>(
+        stream: _social.isReady ? _social.watchCounts(widget.socialKey) : const Stream.empty(),
+        builder: (context, snapshot) {
+          final likes = snapshot.data?['likes'] ?? 0;
+          final dislikes = snapshot.data?['dislikes'] ?? 0;
+          return Row(
+            children: [
+              _voteSegment(likes, dislikes),
+              const SizedBox(width: 10),
+              _pill(Icons.share_rounded, "Bagikan", _share),
+              const SizedBox(width: 10),
+              _pill(Icons.download_rounded, "Unduh", widget.onDownload),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _voteSegment(int likes, int dislikes) {
+    return Container(
+      decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(30)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            borderRadius: const BorderRadius.horizontal(left: Radius.circular(30)),
+            onTap: () => _vote(1),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(_myVote == 1 ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
+                      size: 20, color: _myVote == 1 ? appTheme.accentColor : appTheme.textMainColor),
+                  const SizedBox(width: 8),
+                  Text("$likes", style: TextStyle(color: appTheme.textMainColor, fontSize: 14)),
+                ],
+              ),
+            ),
+          ),
+          Container(width: 1, height: 22, color: appTheme.textSubColor.withValues(alpha: 0.25)),
+          InkWell(
+            borderRadius: const BorderRadius.horizontal(right: Radius.circular(30)),
+            onTap: () => _vote(-1),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(_myVote == -1 ? Icons.thumb_down_alt_rounded : Icons.thumb_down_alt_outlined,
+                      size: 20, color: _myVote == -1 ? appTheme.accentColor : appTheme.textMainColor),
+                  if (dislikes > 0) ...[
+                    const SizedBox(width: 8),
+                    Text("$dislikes", style: TextStyle(color: appTheme.textMainColor, fontSize: 14)),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pill(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(30)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 20, color: appTheme.textMainColor),
+            const SizedBox(width: 8),
+            Text(label, style: TextStyle(color: appTheme.textMainColor, fontSize: 14)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CommentsPreviewCard extends StatelessWidget {
+  final String socialKey;
+
+  const _CommentsPreviewCard({required this.socialKey});
+
+  @override
+  Widget build(BuildContext context) {
+    final social = SocialService.instance;
+    return GestureDetector(
+      onTap: social.isReady ? () => openCommentsSheet(context, socialKey) : null,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(16)),
+        child: StreamBuilder<List<SocialComment>>(
+          stream: social.isReady ? social.watchComments(socialKey) : const Stream.empty(),
+          builder: (context, snapshot) {
+            final comments = snapshot.data ?? [];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text("Komentar",
+                        style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 8),
+                    Text("${comments.length}", style: TextStyle(color: appTheme.textSubColor, fontSize: 14)),
+                    const Spacer(),
+                    Icon(Icons.expand_more_rounded, color: appTheme.textSubColor),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (!social.isReady)
+                  Text("Fitur sosial tidak tersedia", style: TextStyle(color: appTheme.textSubColor, fontSize: 13))
+                else if (comments.isEmpty)
+                  Text("Belum ada komentar. Ketuk untuk menambahkan.",
+                      style: TextStyle(color: appTheme.textSubColor, fontSize: 13))
+                else
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _avatar(comments.first.nickname),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          comments.first.text,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: appTheme.textMainColor, fontSize: 13, height: 1.35),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _avatar(String nickname) {
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: appTheme.accentColor.withValues(alpha: 0.2),
+      child: Text(
+        nickname.isNotEmpty ? nickname[0].toUpperCase() : "?",
+        style: TextStyle(color: appTheme.accentColor, fontWeight: FontWeight.bold, fontSize: 14),
+      ),
+    );
+  }
+}
+
+class WatchCommentsView extends StatefulWidget {
+  final String socialKey;
+
+  const WatchCommentsView({super.key, required this.socialKey});
+
+  @override
+  State<WatchCommentsView> createState() => _WatchCommentsViewState();
+}
+
+class _WatchCommentsViewState extends State<WatchCommentsView> {
+  final _social = SocialService.instance;
+  final _controller = TextEditingController();
+  bool _sending = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    final text = _controller.text.trim();
     if (text.isEmpty || !_social.isReady || _sending) return;
     setState(() => _sending = true);
-    _commentController.clear();
+    _controller.clear();
     try {
-      await _social.addComment(_key, text);
+      await _social.addComment(widget.socialKey, text);
     } catch (_) {
-      _commentController.text = text;
+      _controller.text = text;
       floatingSnackBar("Gagal mengirim komentar");
     }
     if (mounted) setState(() => _sending = false);
@@ -134,146 +423,23 @@ class _WatchSocialPanelState extends State<WatchSocialPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 6),
-          if (widget.showTitleHeader) ...[
-            Text(
-              widget.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-          ],
-          _synopsisBlock(),
-          const SizedBox(height: 14),
-          _actionRow(),
-          const SizedBox(height: 6),
-          Divider(color: appTheme.textSubColor.withValues(alpha: 0.2)),
-          _commentsHeader(),
-          const SizedBox(height: 8),
-          Expanded(child: _commentsList()),
-          _commentInput(),
+          const SizedBox(height: 4),
+          Text("Komentar", style: TextStyle(color: appTheme.textMainColor, fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(child: _list()),
+          _input(),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
         ],
       ),
     );
   }
 
-  Widget _synopsisBlock() {
-    if (widget.animeId <= 0) return const SizedBox.shrink();
-    if (_synopsisLoading) {
-      return Row(
-        children: [
-          KumaAnimeLoading(color: appTheme.accentColor, size: 18),
-          const SizedBox(width: 10),
-          Text("Memuat deskripsi...", style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
-        ],
-      );
-    }
-    final text = _synopsis ?? '';
-    if (text.isEmpty) {
-      return Text("Deskripsi tidak tersedia", style: TextStyle(color: appTheme.textSubColor, fontSize: 13));
-    }
-    return GestureDetector(
-      onTap: () => setState(() => _synopsisExpanded = !_synopsisExpanded),
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 200),
-        alignment: Alignment.topCenter,
-        child: Text(
-          text,
-          maxLines: _synopsisExpanded ? null : 3,
-          overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-          style: TextStyle(color: appTheme.textSubColor, fontSize: 13, height: 1.5),
-        ),
-      ),
-    );
-  }
-
-  Widget _actionRow() {
-    return StreamBuilder<Map<String, int>>(
-      stream: _social.isReady ? _social.watchCounts(_key) : const Stream.empty(),
-      builder: (context, snapshot) {
-        final likes = snapshot.data?['likes'] ?? 0;
-        final dislikes = snapshot.data?['dislikes'] ?? 0;
-        return Row(
-          children: [
-            _pillButton(
-              icon: _myVote == 1 ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
-              label: "$likes",
-              active: _myVote == 1,
-              onTap: () => _vote(1),
-            ),
-            const SizedBox(width: 10),
-            _pillButton(
-              icon: _myVote == -1 ? Icons.thumb_down_alt_rounded : Icons.thumb_down_alt_outlined,
-              label: "$dislikes",
-              active: _myVote == -1,
-              onTap: () => _vote(-1),
-            ),
-            const Spacer(),
-            _iconButton(Icons.share_rounded, _share),
-            const SizedBox(width: 6),
-            _iconButton(Icons.download_rounded, widget.onDownload),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _pillButton({
-    required IconData icon,
-    required String label,
-    required bool active,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        decoration: BoxDecoration(
-          color: active ? appTheme.accentColor.withValues(alpha: 0.16) : appTheme.backgroundSubColor,
-          borderRadius: BorderRadius.circular(30),
-          border: active ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.55)) : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: active ? appTheme.accentColor : appTheme.textMainColor),
-            const SizedBox(width: 8),
-            Text(label,
-                style: TextStyle(color: active ? appTheme.accentColor : appTheme.textMainColor, fontSize: 14)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _iconButton(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(color: appTheme.backgroundSubColor, shape: BoxShape.circle),
-        child: Icon(icon, size: 20, color: appTheme.textMainColor),
-      ),
-    );
-  }
-
-  Widget _commentsHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 6),
-      child: Text("Komentar", style: TextStyle(color: appTheme.textMainColor, fontSize: 17, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  Widget _commentsList() {
+  Widget _list() {
     if (!_social.isReady) {
-      return Center(
-        child: Text("Fitur sosial tidak tersedia", style: TextStyle(color: appTheme.textSubColor, fontSize: 14)),
-      );
+      return Center(child: Text("Fitur sosial tidak tersedia", style: TextStyle(color: appTheme.textSubColor)));
     }
     return StreamBuilder<List<SocialComment>>(
-      stream: _social.watchComments(_key),
+      stream: _social.watchComments(widget.socialKey),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 30));
@@ -288,14 +454,14 @@ class _WatchSocialPanelState extends State<WatchSocialPanel> {
         return ListView.separated(
           padding: const EdgeInsets.only(top: 4),
           itemCount: comments.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 14),
-          itemBuilder: (context, index) => _commentTile(comments[index]),
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          itemBuilder: (context, index) => _tile(comments[index]),
         );
       },
     );
   }
 
-  Widget _commentTile(SocialComment comment) {
+  Widget _tile(SocialComment comment) {
     final mine = comment.uid == _social.uid;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,13 +510,13 @@ class _WatchSocialPanelState extends State<WatchSocialPanel> {
     return "${(diff.inDays / 7).floor()}mgg";
   }
 
-  Widget _commentInput() {
+  Widget _input() {
     if (!_social.isReady) return const SizedBox.shrink();
     return Row(
       children: [
         Expanded(
           child: TextField(
-            controller: _commentController,
+            controller: _controller,
             minLines: 1,
             maxLines: 4,
             style: TextStyle(color: appTheme.textMainColor),
@@ -367,11 +533,11 @@ class _WatchSocialPanelState extends State<WatchSocialPanel> {
         ),
         const SizedBox(width: 8),
         ValueListenableBuilder(
-          valueListenable: _commentController,
+          valueListenable: _controller,
           builder: (context, value, child) {
             final enabled = value.text.trim().isNotEmpty && !_sending;
             return IconButton.filled(
-              onPressed: enabled ? _sendComment : null,
+              onPressed: enabled ? _send : null,
               icon: const Icon(Icons.send_rounded),
               style: IconButton.styleFrom(
                 backgroundColor: appTheme.accentColor,
