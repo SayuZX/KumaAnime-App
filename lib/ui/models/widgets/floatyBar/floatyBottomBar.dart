@@ -1,5 +1,5 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/widgets/floatyBar/controller.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
 import 'package:flutter/material.dart';
 
 class FloatyBarItem {
