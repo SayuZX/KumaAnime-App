@@ -2,6 +2,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/pages/settingPages/account.dart';
 import 'package:kumaanime/ui/pages/settingPages/appInfo.dart';
+import 'package:kumaanime/ui/pages/settingPages/appearance.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/general.dart';
 import 'package:kumaanime/ui/pages/settingPages/player.dart';
@@ -41,6 +42,11 @@ class _SettingsPageState extends State<SettingsPage> {
           navigateTo: AccountSetting()),
       SettingItem(
           icon: Icons.brush_rounded, label: loc.settingsUi, description: loc.settingsUiDesc, navigateTo: ThemeSetting()),
+      SettingItem(
+          icon: Icons.palette_outlined,
+          label: "Appearance",
+          description: "Accent, font, text size & layout",
+          navigateTo: AppearanceSetting()),
       SettingItem(
           icon: Icons.play_circle_fill_rounded,
           label: loc.settingsPlayer,
