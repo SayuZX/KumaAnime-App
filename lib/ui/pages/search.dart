@@ -7,6 +7,7 @@ import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/core/database/handler/handler.dart';
 import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/cards/animeCardExtended.dart';
 import 'package:kumaanime/ui/models/widgets/header.dart';
@@ -67,6 +68,7 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: GestureDetector(
@@ -75,7 +77,7 @@ class _SearchState extends State<Search> {
           padding: pagePadding(context).copyWith(left: 0),
           child: Column(
             children: [
-              buildHeader("Search", context, afterNavigation: () => setState(() {})),
+              buildHeader(loc.searchTitle, context, afterNavigation: () => setState(() {})),
               Container(
                 padding: EdgeInsets.only(top: 15, left: 25, right: 25, bottom: 10),
                 child: Column(
@@ -94,7 +96,7 @@ class _SearchState extends State<Search> {
                           Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              "searching...",
+                              loc.searchSearching,
                               style: TextStyle(
                                   color: appTheme.accentColor,
                                   fontWeight: FontWeight.bold,
@@ -119,6 +121,7 @@ class _SearchState extends State<Search> {
   }
 
   Container _searchOptions() {
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: EdgeInsets.only(top: 10),
       child: Row(
@@ -133,7 +136,7 @@ class _SearchState extends State<Search> {
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           Text(
-            "exact match",
+            loc.searchExactMatch,
             style: TextStyle(
               color: appTheme.textMainColor,
               fontWeight: FontWeight.bold,
@@ -150,7 +153,7 @@ class _SearchState extends State<Search> {
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           Text(
-            "list view",
+            loc.searchListView,
             style: TextStyle(
               color: appTheme.textMainColor,
               fontWeight: FontWeight.bold,
@@ -220,6 +223,7 @@ class _SearchState extends State<Search> {
   }
 
   TextField _searchBar() {
+    final loc = AppLocalizations.of(context);
     return TextField(
       controller: textEditingController,
       onChanged: (val) {
@@ -246,7 +250,7 @@ class _SearchState extends State<Search> {
       autocorrect: false,
       cursorColor: appTheme.accentColor,
       decoration: InputDecoration(
-        labelText: "search",
+        labelText: loc.searchLabel,
         labelStyle:
             TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold, fontSize: 17),
         suffixIcon: Padding(
@@ -265,7 +269,7 @@ class _SearchState extends State<Search> {
           borderRadius: BorderRadius.circular(50.0),
           borderSide: BorderSide(color: appTheme.accentColor),
         ),
-        hintText: "Search...",
+        hintText: loc.searchHint,
         hintStyle: TextStyle(color: Color.fromARGB(255, 168, 168, 168)),
         contentPadding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
       ),
