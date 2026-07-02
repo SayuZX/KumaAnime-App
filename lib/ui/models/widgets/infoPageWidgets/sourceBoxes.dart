@@ -1,8 +1,8 @@
-import 'package:animestream/core/anime/providers/providerDetails.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/bottomSheets/manualSearchSheet.dart';
-import 'package:animestream/ui/models/providers/infoProvider.dart';
-import 'package:animestream/ui/models/sources.dart';
+import 'package:kumaanime/core/anime/providers/providerDetails.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/bottomSheets/manualSearchSheet.dart';
+import 'package:kumaanime/ui/models/providers/infoProvider.dart';
+import 'package:kumaanime/ui/models/sources.dart';
 import 'package:flutter/material.dart';
 
 class SourceSideWidget extends StatelessWidget {
