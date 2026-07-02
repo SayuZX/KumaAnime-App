@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:animestream/core/commons/extractQuality.dart';
+import 'package:kumaanime/core/commons/extractQuality.dart';
 import 'package:flutter/material.dart';
 
 class Player extends StatelessWidget {
