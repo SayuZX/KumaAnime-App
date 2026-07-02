@@ -30,5 +30,17 @@
   "enableLogging": "Enable Logging",
   "enableLoggingDesc": "Helps with debugging issues",
   "language": "Language",
-  "selectLanguage": "Select Language"
+  "selectLanguage": "Select Language",
+  "subIndo": "Sub Indo",
+  "subIndoOngoing": "Ongoing",
+  "subIndoCompleted": "Completed",
+  "subIndoGenres": "Genres",
+  "subIndoSearchHint": "Search sub indo anime...",
+  "subIndoEpisodes": "Episodes",
+  "subIndoSynopsis": "Synopsis",
+  "subIndoSelectServer": "Select Server",
+  "subIndoEmpty": "Nothing found",
+  "subIndoLoadError": "Failed to load. Check your Sub Indo API URL in build config.",
+  "retry": "Retry",
+  "loadMore": "Load more"
 }
