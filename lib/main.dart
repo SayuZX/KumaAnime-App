@@ -45,7 +45,7 @@ class _HttpOverrides extends HttpOverrides {
     final client = super.createHttpClient(context)..userAgent = AppValues.defaultClientUserAgent;
     client.connectionFactory = (uri, proxyHost, proxyPort) {
       if (proxyHost != null) return Socket.startConnect(proxyHost, proxyPort ?? uri.port);
-      final dns = currentUserSettings?.dnsProvider ?? 'auto';
+      final dns = currentUserSettings?.dnsProvider ?? 'off';
       if (dns == 'off') return Socket.startConnect(uri.host, uri.port);
       return DohResolver.resolve(uri.host, provider: dns).then((ip) => Socket.startConnect(ip ?? uri.host, uri.port));
     };
@@ -105,15 +105,17 @@ void main(List<String> args) async {
     //   await FlutterDiscordRPC.initialize("1362858832266657812");
     // }
 
-    // FlutterError.onError = (FlutterErrorDetails details) async {
-    //   FlutterError.presentError(details);
+    FlutterError.onError = (details) {
+      FlutterError.presentError(details);
+      Logs.app.log("[ERROR] ${details.exceptionAsString()}");
+      floatingSnackBar("Error: ${details.exceptionAsString()}");
+    };
 
-    //   // force add these error to logs
-    //   Logs.app.log(details.exceptionAsString() + "\n${details.stack.toString()}", addToBuffer: true);
-    //   await Logs.writeAllLogs();
-
-    //   print("[ERROR] logged the error to logs folder");
-    // };
+    WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+      Logs.app.log("[ERROR] ${error.toString()}");
+      floatingSnackBar("Error: ${error.toString()}");
+      return true;
+    };
 
     runApp(
       ChangeNotifierProvider(
