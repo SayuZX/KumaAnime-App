@@ -67,7 +67,7 @@ class _NewsDetailsState extends State<NewsDetails> {
         backgroundColor: appTheme.backgroundColor,
         title: Text(
           loc.newsTitle,
-          style: TextStyle(color: appTheme.textMainColor, fontFamily: "Poppins", fontSize: 25),
+          style: TextStyle(color: appTheme.textMainColor, fontSize: 25),
         ),
       ),
       body: !loaded
@@ -88,7 +88,7 @@ class _NewsDetailsState extends State<NewsDetails> {
           Text(
             loc.newsLoadError,
             textAlign: TextAlign.center,
-            style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 16),
+            style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
           ),
           const SizedBox(height: 15),
           ElevatedButton(
@@ -115,7 +115,6 @@ class _NewsDetailsState extends State<NewsDetails> {
               detail.title,
               style: TextStyle(
                 color: appTheme.textMainColor,
-                fontFamily: "Poppins",
                 fontSize: 25,
               ),
               textAlign: TextAlign.center,
@@ -159,7 +158,7 @@ class _NewsDetailsState extends State<NewsDetails> {
               icon: Icon(Icons.open_in_new_rounded, size: 18, color: appTheme.accentColor),
               label: Text(
                 loc.readFullArticle,
-                style: TextStyle(color: appTheme.accentColor, fontFamily: "NotoSans"),
+                style: TextStyle(color: appTheme.accentColor, ),
               ),
             ),
           ),
@@ -169,8 +168,7 @@ class _NewsDetailsState extends State<NewsDetails> {
               "credits: ${widget.service.credit}",
               style: TextStyle(
                 color: appTheme.textSubColor,
-                fontFamily: 'NunitoSans',
-              ),
+                ),
             ),
           ),
         ],
@@ -181,7 +179,6 @@ class _NewsDetailsState extends State<NewsDetails> {
   TextStyle detailStyle(bool bold) {
     return TextStyle(
         color: appTheme.textMainColor,
-        fontFamily: 'NotoSans',
         fontSize: 18,
         fontWeight: bold ? FontWeight.bold : FontWeight.normal);
   }
