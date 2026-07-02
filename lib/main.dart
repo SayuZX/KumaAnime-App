@@ -317,7 +317,15 @@ class _KumaAnimeState extends State<KumaAnime> {
 
           final themeProvider = Provider.of<AppProvider>(context);
 
-          return MaterialApp(
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: appTheme.backgroundColor,
+              statusBarIconBrightness: themeProvider.isDark ? Brightness.light : Brightness.dark,
+              statusBarBrightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
+              systemNavigationBarColor: appTheme.backgroundColor,
+              systemNavigationBarIconBrightness: themeProvider.isDark ? Brightness.light : Brightness.dark,
+            ),
+            child: MaterialApp(
             title: 'Kuma Anime',
             navigatorKey: KumaAnime.navigatorKey,
             scaffoldMessengerKey: KumaAnime.snackbarKey,
@@ -350,6 +358,7 @@ class _KumaAnimeState extends State<KumaAnime> {
               child: Platform.isWindows || Platform.isLinux ? AppWrapper(firstPage: MainNavigator()) : MainNavigator(),
             ),
             debugShowCheckedModeBanner: false,
+            ),
           );
         },
       ),
