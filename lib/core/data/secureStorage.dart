@@ -1,4 +1,4 @@
-import 'package:animestream/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/enums.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final Map<String, String?> _secureValCache = {};
