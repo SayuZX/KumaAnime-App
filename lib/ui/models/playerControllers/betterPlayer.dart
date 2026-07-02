@@ -36,17 +36,36 @@ class BetterPlayerWrapper implements VideoController {
 
   @override
   Future<void> initiateVideo(String url, {Map<String, String>? headers, bool offline = false}) async {
-    final ds = offline
-        ? BetterPlayerDataSource.file(url)
-        : await dataSourceConfig(url, headers: headers);
+    final mergedHeaders = offline
+        ? null
+        : <String, String>{
+            'User-Agent':
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+            ...?headers,
+          };
+    final ds = offline ? BetterPlayerDataSource.file(url) : await dataSourceConfig(url, headers: mergedHeaders);
     await controller.setupDataSource(ds);
   }
 
   @override
-  bool? get isBuffering => controller.isBuffering();
+  bool? get isBuffering {
+    try {
+      if (!(controller.isVideoInitialized() ?? false)) return false;
+      return controller.isBuffering();
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
-  bool? get isPlaying => controller.isPlaying();
+  bool? get isPlaying {
+    try {
+      if (!(controller.isVideoInitialized() ?? false)) return false;
+      return controller.isPlaying();
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
   int? get position => controller.videoPlayerController?.value.position.inMilliseconds;
