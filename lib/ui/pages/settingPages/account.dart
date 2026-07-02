@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/social/rankSystem.dart';
 import 'package:kumaanime/core/social/socialService.dart';
@@ -36,6 +38,12 @@ class _AccountSettingState extends State<AccountSetting> {
     );
   }
 
+  ImageProvider? _avatarImage(String avatar) {
+    if (avatar.startsWith('data:')) return MemoryImage(base64Decode(avatar.split(',').last));
+    if (avatar.startsWith('http')) return NetworkImage(avatar);
+    return null;
+  }
+
   Widget _communityProfileCard() {
     final social = SocialService.instance;
     final avatar = social.avatar;
@@ -58,8 +66,8 @@ class _AccountSettingState extends State<AccountSetting> {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: appTheme.accentColor.withValues(alpha: 0.2),
-                  backgroundImage: avatar.startsWith('http') ? NetworkImage(avatar) : null,
-                  child: avatar.startsWith('http')
+                  backgroundImage: _avatarImage(avatar),
+                  child: _avatarImage(avatar) != null
                       ? null
                       : Text(
                           avatar.isNotEmpty ? avatar : (nickname.isNotEmpty ? nickname[0].toUpperCase() : "?"),
