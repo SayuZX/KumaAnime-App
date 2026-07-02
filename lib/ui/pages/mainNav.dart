@@ -1,20 +1,20 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/app/update.dart';
-import 'package:animestream/core/commons/utils.dart';
-import 'package:animestream/core/data/downloadHistory.dart';
-import 'package:animestream/ui/models/providers/mainNavProvider.dart';
-import 'package:animestream/ui/models/widgets/bottomBar.dart';
-import 'package:animestream/ui/models/widgets/floatyBar/controller.dart';
-import 'package:animestream/ui/models/widgets/floatyBar/floatyBarView.dart';
-import 'package:animestream/ui/models/widgets/floatyBar/floatyBottomBar.dart';
-import 'package:animestream/ui/models/widgets/cards.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/pages/discover.dart';
-import 'package:animestream/ui/pages/home.dart';
-import 'package:animestream/ui/pages/newHome.dart';
-import 'package:animestream/ui/pages/search.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/app/update.dart';
+import 'package:kumaanime/core/commons/utils.dart';
+import 'package:kumaanime/core/data/downloadHistory.dart';
+import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
+import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
+import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
+import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBarView.dart';
+import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBottomBar.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/pages/discover.dart';
+import 'package:kumaanime/ui/pages/home.dart';
+import 'package:kumaanime/ui/pages/newHome.dart';
+import 'package:kumaanime/ui/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +58,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
   }
 
   final _floatyBarController = FloatyBottomBarController(length: 3);
-  final _barController = AnimeStreamBottomBarController(length: 3);
+  final _barController = KumaAnimeBottomBarController(length: 3);
 
   bool popInvoked = false;
   // late bool tv;
@@ -139,11 +139,11 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
         body: MediaQuery.of(context).orientation == Orientation.landscape || Platform.isWindows || Platform.isLinux
             ? Row(
                 children: [
-                  // AnimeStreamNavRail(
+                  // KumaAnimeNavRail(
                   //   destinations: [
-                  //     AnimeStreamNavDestination(icon: Icons.home, label: "Home"),
-                  //     AnimeStreamNavDestination(icon: Icons.auto_awesome, label: "Discover"),
-                  //     AnimeStreamNavDestination(icon: Icons.search, label: "Search"),
+                  //     KumaAnimeNavDestination(icon: Icons.home, label: "Home"),
+                  //     KumaAnimeNavDestination(icon: Icons.auto_awesome, label: "Discover"),
+                  //     KumaAnimeNavDestination(icon: Icons.search, label: "Search"),
                   //   ],
                   //   controller: _barController,
                   //   initialIndex: 0,
@@ -232,7 +232,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   ),
                 ],
               ),
-              AnimeStreamBottomBar(
+              KumaAnimeBottomBar(
                 borderRadius: 12,
                 accentColor: appTheme.accentColor,
                 backgroundColor: appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
