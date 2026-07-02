@@ -43,6 +43,8 @@ class Watch extends StatefulWidget {
 class _WatchState extends State<Watch> with WidgetsBindingObserver {
   late VideoController controller;
 
+  int? _countedEpIndex;
+
   @override
   void initState() {
     super.initState();
@@ -145,8 +147,6 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
       _isPlayerReady = true;
     });
 
-    SocialService.instance.recordEpisodeWatched();
-
     controller.addListener(_listener);
 
     if (controller is BetterPlayerWrapper) {
@@ -221,6 +221,13 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
           dataProvider.altDatabases,
         );
       }
+    }
+
+    final watchedFraction =
+        (controller.duration ?? 0) > 0 ? (controller.position ?? 0) / (controller.duration ?? 1) : 0.0;
+    if (watchedFraction >= 0.5 && _countedEpIndex != dataProvider.state.currentEpIndex) {
+      _countedEpIndex = dataProvider.state.currentEpIndex;
+      SocialService.instance.recordEpisodeWatched();
     }
 
     final finalEpReached = dataProvider.state.currentEpIndex + 1 == dataProvider.epLinks.length;
