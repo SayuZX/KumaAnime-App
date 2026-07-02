@@ -4,8 +4,8 @@ class KumaAnimeEnvironment {
       String.fromEnvironment("SIMKL_CLIENT_SECRET");
   static const String commentumApiUrl =
       String.fromEnvironment("COMMENTUM_API_URL");
-  static const String subIndoApiUrl = String.fromEnvironment(
-    "SUBINDO_API_URL",
-    defaultValue: "https://wajik-anime-api.vercel.app",
+  static const String subIndoBaseUrl = String.fromEnvironment(
+    "SUBINDO_BASE_URL",
+    defaultValue: "https://otakudesu.blog",
   );
 }
