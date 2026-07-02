@@ -242,12 +242,14 @@ class _DiscoverState extends State<Discover> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          appTheme.backgroundColor.withValues(alpha: 0.4),
+                          appTheme.backgroundColor.withValues(alpha: 0.45),
                           Colors.transparent,
-                          Colors.black.withValues(alpha: 0.6),
-                          Colors.black.withValues(alpha: 0.9),
+                          appTheme.backgroundColor.withValues(alpha: 0.35),
+                          appTheme.backgroundColor.withValues(alpha: 0.7),
+                          appTheme.backgroundColor.withValues(alpha: 0.92),
+                          appTheme.backgroundColor,
                         ],
-                        stops: const [0.0, 0.3, 0.72, 1.0],
+                        stops: const [0.0, 0.28, 0.5, 0.72, 0.88, 1.0],
                       ),
                     ),
                   ),
@@ -264,12 +266,11 @@ class _DiscoverState extends State<Discover> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: appTheme.textMainColor,
                             fontFamily: 'Rubik',
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
                             height: 1.1,
-                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.6), blurRadius: 8)],
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -279,8 +280,8 @@ class _DiscoverState extends State<Discover> {
                             const SizedBox(width: 3),
                             Text(
                               "${trendingList[moddedIndex].rating != null ? trendingList[moddedIndex].rating! / 10 : '??'}",
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: appTheme.textMainColor,
                                 fontFamily: "Rubik",
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -293,7 +294,7 @@ class _DiscoverState extends State<Discover> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.75),
+                                  color: appTheme.textSubColor,
                                   fontFamily: 'NotoSans',
                                   fontSize: 13,
                                 ),
