@@ -1,9 +1,9 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/bottomSheets/customControlsSheet.dart';
-import 'package:animestream/ui/models/providers/playerDataProvider.dart';
-import 'package:animestream/ui/models/providers/playerProvider.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/pages/settingPages/subtitle.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/bottomSheets/customControlsSheet.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
