@@ -73,6 +73,7 @@ class _DiscoverState extends State<Discover> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     if (!initialTimeOutCalled && widget.mainNavProvider.trendingList.length > 0) {
       pageTimeout();
       initialTimeOutCalled = true;
@@ -110,7 +111,7 @@ class _DiscoverState extends State<Discover> {
                   _heroTextOverlay(),
                   Padding(
                     padding: pagePadding(context).copyWith(left: 0),
-                    child: buildHeader("Discover", context, afterNavigation: () => setState(() {})),
+                    child: buildHeader(loc.discoverTitle, context, afterNavigation: () => setState(() {})),
                   )
                 ],
               ),
@@ -123,12 +124,12 @@ class _DiscoverState extends State<Discover> {
                   children: [
                     _navChip(
                       icon: Icons.newspaper_rounded,
-                      label: "News",
+                      label: loc.discoverNews,
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => News())),
                     ),
                     _navChip(
                       icon: Icons.category_rounded,
-                      label: "Genres",
+                      label: loc.discoverGenres,
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => GenresPage())),
                     ),
                     _navChip(
@@ -139,11 +140,11 @@ class _DiscoverState extends State<Discover> {
                   ],
                 ),
               ),
-              _itemTitle("Recently updated", recentlyUpdatedScrollController),
+              _itemTitle(loc.discoverRecentlyUpdated, recentlyUpdatedScrollController),
               _scrollList(widget.mainNavProvider.recentlyUpdatedList, recentlyUpdatedScrollController),
-              _itemTitle("This season", thisSeasonScrollController),
+              _itemTitle(loc.discoverThisSeason, thisSeasonScrollController),
               _scrollList(widget.mainNavProvider.thisSeason, thisSeasonScrollController),
-              _itemTitle("Recommended", recommendedScrollController),
+              _itemTitle(loc.discoverRecommended, recommendedScrollController),
               _scrollList(widget.mainNavProvider.recommendedList, recommendedScrollController),
               footSpace(),
             ],
