@@ -37,6 +37,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
       fasterDownloads = settings.fasterDownloads!;
       useQueuedDownloads = settings.useQueuedDownloads!;
       enableLogging = settings.enableLogging!;
+      secureDns = settings.useSecureDns ?? true;
     });
   }
 
@@ -54,6 +55,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
   bool useQueuedDownloads = false;
   bool enableDiscordPresence = false;
   bool enableLogging = false;
+  bool secureDns = true;
 
   final sources = SourceManager.instance.sources;
 
@@ -184,6 +186,17 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       label: loc.enableLogging,
                       description: loc.enableLoggingDesc,
                       value: enableLogging,
+                    ),
+                    ToggleItem(
+                      label: "Secure DNS",
+                      description: "Resolve domains over DNS-over-HTTPS to bypass ISP blocking",
+                      value: secureDns,
+                      onTapFunction: () {
+                        setState(() {
+                          secureDns = !secureDns;
+                        });
+                        writeSettings(SettingsModal(useSecureDns: secureDns));
+                      },
                     )
                   ],
                 ),
