@@ -56,7 +56,6 @@ class TopControls extends StatelessWidget {
                                     : epTitle,
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontFamily: 'NotoSans',
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                 )),
@@ -68,7 +67,6 @@ class TopControls extends StatelessWidget {
                               "${dataProvider.showTitle}",
                               style: TextStyle(
                                 color: Color.fromARGB(255, 190, 190, 190),
-                                fontFamily: 'NotoSans',
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 overflow: TextOverflow.ellipsis,
