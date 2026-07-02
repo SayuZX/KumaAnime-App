@@ -170,33 +170,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             0.3,
             1.0,
           ),
-          Expanded(
-            child: Stack(
-              children: [
-                _body(loc),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: IgnorePointer(
-                    child: Container(
-                      height: 28,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            appTheme.backgroundColor,
-                            appTheme.backgroundColor.withValues(alpha: 0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          Expanded(child: _body(loc)),
         ],
       ),
     );
@@ -243,7 +217,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                   loc.subIndo,
                   style: const TextStyle(
                     color: cream,
-                    fontFamily: "PlayfairDisplay",
+                    fontFamily: "Rubik",
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
                     height: 1.0,
