@@ -1,5 +1,5 @@
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:flutter/material.dart';
 
 class SourceTile extends StatefulWidget {
