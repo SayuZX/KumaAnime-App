@@ -1,4 +1,4 @@
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 
 /// The default theme
@@ -13,7 +13,7 @@ class LimeZest implements ThemeItem {
   bool get dev => false;
 
   @override
-  AnimeStreamTheme get lightVariant => AnimeStreamTheme(
+  KumaAnimeTheme get lightVariant => KumaAnimeTheme(
         accentColor: Color(0xffcaf979),
         backgroundColor: Colors.white,
         textMainColor: Colors.black,
@@ -24,7 +24,7 @@ class LimeZest implements ThemeItem {
       );
 
   @override
-  AnimeStreamTheme get theme => AnimeStreamTheme(
+  KumaAnimeTheme get theme => KumaAnimeTheme(
         accentColor: Color(0xffCAF979),
         backgroundColor: Color.fromARGB(255, 24, 24, 24),
         backgroundSubColor: Color.fromARGB(255, 36, 36, 36),
