@@ -1,8 +1,8 @@
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/mal/login.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/mal/login.dart';
+import 'package:kumaanime/core/database/types.dart';
 import 'package:http/http.dart';
 
 class MAL extends Database {
