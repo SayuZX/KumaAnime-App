@@ -7,6 +7,7 @@ import 'package:kumaanime/core/database/anilist/types.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class UserStats extends StatefulWidget {
@@ -71,6 +72,7 @@ class _UserStatsState extends State<UserStats> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       appBar: AppBar(
@@ -83,7 +85,7 @@ class _UserStatsState extends State<UserStats> {
         ),
         backgroundColor: appTheme.backgroundColor,
         title: Text(
-          "Stats",
+          loc.stStats,
           style: TextStyle(color: appTheme.textMainColor, fontSize: 25),
         ),
       ),
@@ -96,14 +98,14 @@ class _UserStatsState extends State<UserStats> {
                 child: MediaQuery.sizeOf(context).width < 1200
                     ? SingleChildScrollView(
                         child: Column(
-                          children: [_profileSection(false), _tableSection()],
+                          children: [_profileSection(false, loc), _tableSection(loc)],
                         ),
                       )
                     : Row(
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(flex: 2, child: _profileSection(true)),
-                          Expanded(flex: 3, child: SingleChildScrollView(child: _tableSection())),
+                          Expanded(flex: 2, child: _profileSection(true, loc)),
+                          Expanded(flex: 3, child: SingleChildScrollView(child: _tableSection(loc))),
                         ],
                       ),
               ),
@@ -116,7 +118,7 @@ class _UserStatsState extends State<UserStats> {
     );
   }
 
-  Column _tableSection() {
+  Column _tableSection(AppLocalizations loc) {
     return Column(
       children: [
         Container(
@@ -141,20 +143,20 @@ class _UserStatsState extends State<UserStats> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "Genre",
+                        loc.stGenre,
                         style: textStyle(18, bold: true, ).copyWith(color: appTheme.accentColor),
                       ),
                     ),
                     Expanded(
                       child: Text(
-                        "Watched",
+                        loc.stWatched,
                         textAlign: TextAlign.center,
                         style: textStyle(18, bold: true, ).copyWith(color: appTheme.accentColor),
                       ),
                     ),
                     Expanded(
                       child: Text(
-                        "Minutes",
+                        loc.stMinutes,
                         textAlign: TextAlign.right,
                         style: textStyle(18, bold: true, ).copyWith(color: appTheme.accentColor),
                       ),
@@ -229,7 +231,7 @@ class _UserStatsState extends State<UserStats> {
     );
   }
 
-  Column _profileSection(bool center) {
+  Column _profileSection(bool center, AppLocalizations loc) {
     return Column(
       mainAxisAlignment: center ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
@@ -254,7 +256,7 @@ class _UserStatsState extends State<UserStats> {
         Container(
           margin: EdgeInsets.only(top: 30),
           child: Text(
-            "Stats",
+            loc.stStats,
             style: textStyle(23, bold: true, ),
           ),
         ),
@@ -267,7 +269,7 @@ class _UserStatsState extends State<UserStats> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Animes watched/watching: ",
+                    loc.stAnimesWatched,
                     style: textStyle(18, bold: true),
                   ),
                   Text(
@@ -280,7 +282,7 @@ class _UserStatsState extends State<UserStats> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Episodes watched: ",
+                    loc.stEpisodesWatched,
                     style: textStyle(18, bold: true),
                   ),
                   Text(
@@ -293,11 +295,11 @@ class _UserStatsState extends State<UserStats> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Total time: ",
+                    loc.stTotalTime,
                     style: textStyle(18, bold: true),
                   ),
                   Text(
-                    "${stats!.minutesWatched} minutes ",
+                    loc.stMinutesValue(stats!.minutesWatched),
                     style: textStyle(17),
                   ),
                   GestureDetector(
@@ -310,10 +312,11 @@ class _UserStatsState extends State<UserStats> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text("aight!"))
+                                child: Text(loc.stAight))
                           ],
                           content: Text(
-                            "Its about ${timeSpent!.years} years, ${timeSpent!.months} months, ${timeSpent!.days} days, ${timeSpent!.hours} hours and ${timeSpent!.minutes} minutes!",
+                            loc.stTimeSpentDetail(timeSpent!.years, timeSpent!.months, timeSpent!.days,
+                                timeSpent!.hours, timeSpent!.minutes),
                             style: textStyle(18),
                           ),
                         ),
@@ -333,7 +336,7 @@ class _UserStatsState extends State<UserStats> {
         Container(
           padding: EdgeInsets.only(top: 30),
           child: Text(
-            "Most Watched Genre",
+            loc.stMostWatchedGenre,
             style: textStyle(23, bold: true, ),
           ),
         ),
@@ -368,7 +371,7 @@ class _UserStatsState extends State<UserStats> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        stats?.genres.isNotEmpty == true ? stats!.genres.first.genre : "No Genre Data",
+                        stats?.genres.isNotEmpty == true ? stats!.genres.first.genre : loc.stNoGenreData,
                         style: textStyle(35, bold: true),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -376,13 +379,13 @@ class _UserStatsState extends State<UserStats> {
                       SizedBox(height: 8),
                       if (stats?.genres.isNotEmpty == true) ...[
                         _buildStatRow(
-                          "Watched: ",
+                          loc.stWatchedLabel,
                           "${stats!.genres.first.count}",
                         ),
                         SizedBox(height: 4),
                         _buildStatRow(
-                          "Time spent: ",
-                          "${stats!.genres.first.minutesWatched} min",
+                          loc.stTimeSpent,
+                          loc.stMinValue(stats!.genres.first.minutesWatched),
                         ),
                       ],
                     ],
