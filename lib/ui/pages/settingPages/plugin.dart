@@ -65,7 +65,7 @@ class _PluginPageState extends State<PluginPage> with TickerProviderStateMixin {
                         padding: EdgeInsets.only(left: 10, right: 20),
                         child: Text(
                           "Manage Providers [Beta]",
-                          style: TextStyle(fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 20),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ),
                     ],
@@ -84,8 +84,7 @@ class _PluginPageState extends State<PluginPage> with TickerProviderStateMixin {
             //   unselectedLabelColor: appTheme.textSubColor,
             //   labelStyle: TextStyle(
             //     fontWeight: FontWeight.bold,
-            //     fontFamily: "NotoSans",
-            //   ),
+            //     //   ),
             //   // dividerHeight: 0,
             //   // indicatorSize: TabBarIndicatorSize.tab,
             //   tabs: [
