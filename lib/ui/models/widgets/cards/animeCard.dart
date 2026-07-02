@@ -41,8 +41,9 @@ class AnimeCard extends StatefulWidget {
 
 class _AnimeCardState extends State<AnimeCard> {
   bool isFocused = false;
-  double width = Platform.isWindows || Platform.isLinux ? 150 : 110;
-  double height = Platform.isWindows || Platform.isLinux ? 200 : 160;
+  final double _scale = (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15).toDouble();
+  late final double width = (Platform.isWindows || Platform.isLinux ? 150.0 : 110.0) * _scale;
+  late final double height = (Platform.isWindows || Platform.isLinux ? 200.0 : 160.0) * _scale;
 
   void updateFocus(bool val) {
     return setState(() {
