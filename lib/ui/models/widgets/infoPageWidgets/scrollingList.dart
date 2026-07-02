@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:animestream/core/database/types.dart';
-import 'package:animestream/ui/models/widgets/cards.dart';
+import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:flutter/material.dart';
 
 class ScrollingList {
