@@ -112,6 +112,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     mainNavProvider = context.watch<MainNavProvider>();
 
     if (mainNavProvider.recentlyUpdatedList.isNotEmpty && mainNavProvider.thisSeason.isNotEmpty) {
@@ -132,7 +133,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
         //exit the app if back is pressed again within 3 sec window
         if (popInvoked) return await SystemNavigator.pop();
 
-        floatingSnackBar("Hit back once again to exit the app");
+        floatingSnackBar(loc.mainNavExitPrompt);
         popInvoked = true;
         popTimeoutWindow();
       },
