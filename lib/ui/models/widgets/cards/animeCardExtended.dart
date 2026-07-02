@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/pages/info.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
 class AnimeCardExtended extends StatelessWidget {
   final int id;
@@ -39,6 +40,7 @@ class AnimeCardExtended extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -50,7 +52,7 @@ class AnimeCardExtended extends StatelessWidget {
         child: InkWell(
           focusColor: appTheme.textSubColor,
           onTap: () async {
-            if (!isAnime) return floatingSnackBar("Mangas/Novels arent supported");
+            if (!isAnime) return floatingSnackBar(loc.animeCardExtMangaNotSupported);
             if (shouldNavigate)
               Navigator.of(context)
                   .push(
