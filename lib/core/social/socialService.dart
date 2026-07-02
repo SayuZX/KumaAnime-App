@@ -9,6 +9,7 @@ class SocialComment {
   final String id;
   final String uid;
   final String nickname;
+  final String avatar;
   final String text;
   final DateTime? createdAt;
 
@@ -16,6 +17,7 @@ class SocialComment {
     required this.id,
     required this.uid,
     required this.nickname,
+    required this.avatar,
     required this.text,
     this.createdAt,
   });
@@ -26,6 +28,7 @@ class SocialComment {
       id: doc.id,
       uid: (data['uid'] ?? '').toString(),
       nickname: (data['nickname'] ?? 'Anon').toString(),
+      avatar: (data['avatar'] ?? '').toString(),
       text: (data['text'] ?? '').toString(),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
@@ -38,14 +41,24 @@ class SocialService {
   static final SocialService instance = SocialService._();
 
   static const String _nicknameKey = 'socialNickname';
+  static const String _avatarKey = 'socialAvatar';
 
   bool _ready = false;
   String? _uid;
+  String _nickname = "";
+  String _avatar = "";
 
   bool get isReady => _ready;
   String? get uid => _uid;
+  String get nickname => _nickname.isNotEmpty ? _nickname : _defaultNickname();
+  String get avatar => _avatar;
 
   FirebaseFirestore get _db => FirebaseFirestore.instance;
+
+  String _defaultNickname() {
+    final u = _uid ?? '0000';
+    return "Otaku-${u.substring(0, u.length < 4 ? u.length : 4)}";
+  }
 
   Future<void> init() async {
     try {
@@ -53,6 +66,7 @@ class SocialService {
       final cred = await FirebaseAuth.instance.signInAnonymously();
       _uid = cred.user?.uid;
       _ready = _uid != null;
+      if (_ready) await _loadProfile();
     } catch (err) {
       _ready = false;
       Logs.app.log("[SOCIAL] init failed: ${err.toString()}");
@@ -64,17 +78,38 @@ class SocialService {
     return Hive.isBoxOpen(name) ? Hive.box(name) : await Hive.openBox(name);
   }
 
-  Future<String> getNickname() async {
-    final box = await _box();
-    final stored = box.get(_nicknameKey);
-    if (stored is String && stored.trim().isNotEmpty) return stored;
-    final fallback = "Otaku-${(_uid ?? '0000').substring(0, (_uid ?? '0000').length < 4 ? (_uid ?? '0000').length : 4)}";
-    return fallback;
+  Future<void> _loadProfile() async {
+    try {
+      final box = await _box();
+      _nickname = (box.get(_nicknameKey) as String?) ?? "";
+      _avatar = (box.get(_avatarKey) as String?) ?? "";
+      final snap = await _db.collection('social_users').doc(_uid).get();
+      final data = snap.data();
+      if (data != null) {
+        final remoteName = (data['nickname'] ?? '').toString();
+        final remoteAvatar = (data['avatar'] ?? '').toString();
+        if (remoteName.isNotEmpty) _nickname = remoteName;
+        if (remoteAvatar.isNotEmpty) _avatar = remoteAvatar;
+        await box.put(_nicknameKey, _nickname);
+        await box.put(_avatarKey, _avatar);
+      }
+    } catch (err) {
+      Logs.app.log("[SOCIAL] profile load failed: ${err.toString()}");
+    }
   }
 
-  Future<void> setNickname(String nickname) async {
+  Future<void> saveProfile({required String nickname, required String avatar}) async {
+    _nickname = nickname.trim();
+    _avatar = avatar.trim();
     final box = await _box();
-    await box.put(_nicknameKey, nickname.trim());
+    await box.put(_nicknameKey, _nickname);
+    await box.put(_avatarKey, _avatar);
+    if (_uid == null) return;
+    await _db.collection('social_users').doc(_uid).set({
+      'nickname': _nickname,
+      'avatar': _avatar,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   DocumentReference<Map<String, dynamic>> _animeDoc(String key) => _db.collection('anime_social').doc(key);
@@ -139,7 +174,8 @@ class SocialService {
     if (_uid == null || text.trim().isEmpty) return;
     await _animeDoc(key).collection('comments').add({
       'uid': _uid,
-      'nickname': await getNickname(),
+      'nickname': nickname,
+      'avatar': _avatar,
       'text': text.trim(),
       'createdAt': FieldValue.serverTimestamp(),
     });
