@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/commons/enums.dart';
 import 'package:kumaanime/ui/models/bottomSheets/serverSelectionSheet.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
@@ -131,9 +132,7 @@ class ContinueWatchingSideBox extends StatelessWidget {
                                   return Container(
                                     color: appTheme.backgroundSubColor.withAlpha(127),
                                     child: Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(appTheme.accentColor),
-                                      ),
+                                      child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                                     ),
                                   );
                                 },
