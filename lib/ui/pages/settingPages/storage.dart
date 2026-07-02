@@ -59,10 +59,10 @@ class _StorageSettingState extends State<StorageSetting> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("In-memory image cache",
-                        style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 15)),
+                        style: TextStyle(color: appTheme.textMainColor, fontSize: 15)),
                     Text(_cacheSize,
                         style: TextStyle(
-                            color: appTheme.accentColor, fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 16)),
+                            color: appTheme.accentColor, fontWeight: FontWeight.bold, fontSize: 16)),
                   ],
                 ),
               ),
@@ -108,7 +108,7 @@ class _StorageSettingState extends State<StorageSetting> {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 18, bottom: 4),
       child: Text(text,
-          style: TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 16, fontWeight: FontWeight.bold)),
+          style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
