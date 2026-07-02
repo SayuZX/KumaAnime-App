@@ -61,7 +61,6 @@ class SubIndoCard extends StatelessWidget {
                           fontSize: 10,
                           letterSpacing: 0.5,
                           color: appTheme.onAccent,
-                          fontFamily: "NotoSans",
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -87,7 +86,6 @@ class SubIndoCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Colors.white,
-                                fontFamily: "NotoSans",
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -105,7 +103,6 @@ class SubIndoCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
             style: TextStyle(
-              fontFamily: "NotoSans",
               fontWeight: FontWeight.w600,
               fontSize: 13,
               color: appTheme.textMainColor,
@@ -116,7 +113,7 @@ class SubIndoCard extends StatelessWidget {
               subText,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: TextStyle(fontFamily: "NunitoSans", fontSize: 11, color: appTheme.textSubColor),
+              style: TextStyle(fontSize: 11, color: appTheme.textSubColor),
             ),
         ],
       ),
