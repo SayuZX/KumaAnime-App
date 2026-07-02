@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:animestream/core/commons/subtitleParsers/assParser.dart';
-import 'package:animestream/core/commons/subtitleParsers/srtParser.dart';
-import 'package:animestream/core/commons/subtitleParsers/vttParser.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitle.dart';
+import 'package:kumaanime/core/commons/subtitleParsers/assParser.dart';
+import 'package:kumaanime/core/commons/subtitleParsers/srtParser.dart';
+import 'package:kumaanime/core/commons/subtitleParsers/vttParser.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitle.dart';
 import 'package:http/http.dart';
 
 class Subtitleparsers {
