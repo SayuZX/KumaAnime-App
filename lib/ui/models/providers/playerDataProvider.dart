@@ -1,14 +1,14 @@
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/extractQuality.dart';
-import 'package:animestream/core/commons/utils.dart';
-import 'package:animestream/core/data/preferences.dart';
-import 'package:animestream/core/database/aniskip/aniskip.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/types.dart';
-import 'package:animestream/ui/models/sources.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitleSettings.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/extractQuality.dart';
+import 'package:kumaanime/core/commons/utils.dart';
+import 'package:kumaanime/core/data/preferences.dart';
+import 'package:kumaanime/core/database/aniskip/aniskip.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/ui/models/sources.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
 import 'package:flutter/material.dart';
 
 /// Handle the state of player. manages datas like quality, servers etc..
