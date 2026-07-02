@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/utils.dart';
-import 'package:animestream/ui/models/bottomSheets/updateSheet.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/utils.dart';
+import 'package:kumaanime/ui/models/bottomSheets/updateSheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -50,7 +50,7 @@ class UpdateCheckResult {
 Future<UpdateCheckResult?> checkForUpdates() async {
   print(_checkIfTheNewVersionIsActuallyAnUpgrade("1.6.0-beta1", "1.6.0-beta1"));
   try {
-    final releasesUrl = 'https://api.github.com/repos/frostnova721/animestream/releases';
+    final releasesUrl = 'https://api.github.com/repos/SayuZX/KumaAnime-App/releases';
     final packageInfo = await PackageInfo.fromPlatform();
     final releasesRes = json.decode(await fetch(releasesUrl))[0];
     final String currentVersion = packageInfo.version;
@@ -81,7 +81,7 @@ Future<UpdateCheckResult?> checkForUpdates() async {
     if (triggerSheet || isAnUpgrade) {
       Logs.app.log("<UPDATE-CHECK> UPDATE AVAILABLE!!!");
       final List<dynamic> asset = releasesRes['assets']
-          .where((item) => item['name'] == (Platform.isAndroid ? "app-release.apk" : "animestream-x86_64.exe"))
+          .where((item) => item['name'] == (Platform.isAndroid ? "app-release.apk" : "kumaanime-x86_64.exe"))
           .toList();
       if (asset.isEmpty) return null;
       final downloadLink = asset[0]['browser_download_url'];
