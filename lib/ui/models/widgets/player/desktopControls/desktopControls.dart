@@ -10,6 +10,7 @@ import 'package:kumaanime/ui/models/widgets/player/desktopControls/pipMode.dart'
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -100,6 +101,7 @@ class _DesktopControlsState extends State<DesktopControls> {
   Widget build(BuildContext context) {
     provider = context.watch<PlayerProvider>();
     dataProvider = context.watch<PlayerDataProvider>();
+    final loc = AppLocalizations.of(context);
 
     if (provider.state.pip) {
       return PipUi(playerProvider: provider, dataProvider: dataProvider);
@@ -130,7 +132,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Episode ${dataProvider.state.currentEpIndex + 1}",
+                              loc.dcEpisodeNumber(dataProvider.state.currentEpIndex + 1),
                               style: TextStyle(fontSize: 35, color: Colors.white),
                             ),
                             Text(
@@ -249,7 +251,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                           IconButton(
                               onPressed: () {
                                 if (dataProvider.state.currentEpIndex == 0)
-                                  return floatingSnackBar("Already on the first episode");
+                                  return floatingSnackBar(loc.dcAlreadyFirstEpisode);
                                 showDialog(
                                     context: context,
                                     useRootNavigator: false,
@@ -280,7 +282,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                           IconButton(
                               onPressed: () {
                                 if (dataProvider.state.currentEpIndex + 1 == dataProvider.epLinks.length)
-                                  return floatingSnackBar("You are already in the final episode!");
+                                  return floatingSnackBar(loc.dcAlreadyFinalEpisode);
                                 if (dataProvider.state.preloadedSources.isNotEmpty) {
                                   print("from preload");
                                   provider.playPreloadedEpisode(dataProvider);
@@ -344,7 +346,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                               menuItems: [
                                 ContextMenuItem(
                                     icon: Icons.open_in_new,
-                                    label: "Customize Subs",
+                                    label: loc.dcCustomizeSubs,
                                     onClick: () {
                                       Navigator.of(context)
                                           .push(MaterialPageRoute(builder: (ctx) => SubtitleSettingPage()))
@@ -383,6 +385,7 @@ class _DesktopControlsState extends State<DesktopControls> {
   }
 
   Widget sideBox({int initialIndex = 0}) {
+    final loc = AppLocalizations.of(context);
     final mq = MediaQuery.sizeOf(context);
     return Dialog(
       clipBehavior: Clip.antiAlias,
@@ -406,7 +409,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                       Tab(
                         child: DefaultTabController.of(context).index == 0
                             ? Text(
-                                "Qualities",
+                                loc.dcQualities,
                                 style: textStyle,
                               )
                             : Icon(Icons.hd_outlined),
@@ -422,7 +425,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                       Tab(
                         child: DefaultTabController.of(context).index == 1
                             ? Text(
-                                "Servers",
+                                loc.dcServers,
                                 style: textStyle,
                               )
                             : Icon(Icons.folder_open_outlined),
@@ -430,7 +433,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                       Tab(
                         child: DefaultTabController.of(context).index == 2
                             ? Text(
-                                "Episodes",
+                                loc.dcEpisodes,
                                 style: textStyle,
                               )
                             : Icon(Icons.tv_rounded),
