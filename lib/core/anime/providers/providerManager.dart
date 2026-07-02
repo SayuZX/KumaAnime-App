@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:animestream/core/anime/providers/providerDetails.dart';
-import 'package:animestream/core/data/providers.dart';
+import 'package:kumaanime/core/anime/providers/providerDetails.dart';
+import 'package:kumaanime/core/data/providers.dart';
 import 'package:http/http.dart';
 
 class ProviderManager {
