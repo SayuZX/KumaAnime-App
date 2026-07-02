@@ -258,7 +258,7 @@ class _KumaAnimeState extends State<KumaAnime> {
     final isDarkMode = currentUserSettings?.darkMode ?? true;
     return AnnotatedRegion(
       value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: appTheme.backgroundColor,
         statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: appTheme.backgroundColor,
