@@ -186,7 +186,6 @@ class _AnimeCardState extends State<AnimeCard> {
                             style: TextStyle(
                               fontSize: 14,
                               color: appTheme.onAccent,
-                              fontFamily: "NotoSans",
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -202,7 +201,6 @@ class _AnimeCardState extends State<AnimeCard> {
                 maxLines: 2,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: "NotoSans",
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                     color: isFocused ? appTheme.accentColor : appTheme.textMainColor),
@@ -210,7 +208,7 @@ class _AnimeCardState extends State<AnimeCard> {
               if (widget.subText != null)
                 Text(
                   widget.subText!,
-                  style: TextStyle(fontFamily: "NunitoSans", color: appTheme.textSubColor),
+                  style: TextStyle(color: appTheme.textSubColor),
                 )
             ],
           ),
