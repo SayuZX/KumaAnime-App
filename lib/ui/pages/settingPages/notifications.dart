@@ -5,6 +5,7 @@ import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class NotificationSetting extends StatefulWidget {
@@ -25,6 +26,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final s = currentUserSettings;
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
@@ -34,36 +36,36 @@ class _NotificationSettingState extends State<NotificationSetting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              settingPagesTitleHeader(context, "Notifications"),
+              settingPagesTitleHeader(context, loc.ntfNotifications),
               ToggleItem(
-                label: "New episode alerts",
-                description: "Notify when followed anime get new episodes",
+                label: loc.ntfNewEpisodeAlerts,
+                description: loc.ntfNewEpisodeAlertsDesc,
                 value: s?.notifyNewEpisode ?? false,
                 onTapFunction: () => _write(SettingsModal(notifyNewEpisode: !(s?.notifyNewEpisode ?? false))),
               ),
               ToggleItem(
-                label: "Anime news",
-                description: "Notify on new anime news",
+                label: loc.ntfAnimeNews,
+                description: loc.ntfAnimeNewsDesc,
                 value: s?.notifyNews ?? false,
                 onTapFunction: () => _write(SettingsModal(notifyNews: !(s?.notifyNews ?? false))),
               ),
               ToggleItem(
-                label: "Download complete",
+                label: loc.ntfDownloadComplete,
                 value: s?.notifyDownloadComplete ?? true,
                 onTapFunction: () =>
                     _write(SettingsModal(notifyDownloadComplete: !(s?.notifyDownloadComplete ?? true))),
               ),
               ClickableItem(
                 onTap: () => _showFrequencySheet(s?.updateCheckFrequency ?? 'off'),
-                label: "Background update check",
+                label: loc.ntfBackgroundUpdateCheck,
                 description: (s?.updateCheckFrequency ?? 'off').toUpperCase(),
                 suffixIcon: Icon(Icons.arrow_drop_down, color: appTheme.textMainColor),
               ),
               const SizedBox(height: 20),
-              resetCategoryButton(context, "Reset notifications", () async {
+              resetCategoryButton(context, loc.ntfResetNotifications, () async {
                 await Settings().resetKeys(_keys);
                 if (mounted) setState(() {});
-                floatingSnackBar("Notification settings reset");
+                floatingSnackBar(loc.ntfNotificationsReset);
               }),
               const SizedBox(height: 20),
             ],
@@ -74,6 +76,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
   }
 
   void _showFrequencySheet(String current) {
+    final loc = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -86,7 +89,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 12, left: 8),
-              child: Text("Check frequency", style: textStyle().copyWith(fontSize: 22)),
+              child: Text(loc.ntfCheckFrequency, style: textStyle().copyWith(fontSize: 22)),
             ),
             ..._frequencies.map((f) => optionTile(
                   label: f.toUpperCase(),
