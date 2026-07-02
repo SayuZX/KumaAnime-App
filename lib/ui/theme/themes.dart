@@ -41,6 +41,18 @@ KumaAnimeTheme lightModeValues = KumaAnimeTheme(
   onAccent: Colors.white
 );
 
+KumaAnimeTheme lightThemeFor(Color accent, Color onAccent) {
+  return KumaAnimeTheme(
+    accentColor: accent,
+    backgroundColor: Color.alphaBlend(accent.withValues(alpha: 0.05), lightModeValues.backgroundColor),
+    backgroundSubColor: Color.alphaBlend(accent.withValues(alpha: 0.07), Colors.white),
+    textMainColor: lightModeValues.textMainColor,
+    textSubColor: lightModeValues.textSubColor,
+    modalSheetBackgroundColor: Color.alphaBlend(accent.withValues(alpha: 0.04), Colors.white),
+    onAccent: onAccent,
+  );
+}
+
 // Represents a generic dark theme (used only for its values)
 KumaAnimeTheme darkModeValues = KumaAnimeTheme(
   backgroundColor: Color.fromARGB(255, 24, 24, 24),
