@@ -72,110 +72,88 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.only(top: 40, left: 20, bottom: 40),
+              Padding(
+                padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 24),
                 child: Text(
                   loc.settingsTitle,
-                  style: TextStyle(fontFamily: "Rubik", fontSize: 40, color: appTheme.textMainColor),
-                ),
-              ),
-              ListView.builder(
-                itemCount: settingItems.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) => Container(
-                  padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                  child: Container(
-                    // margin: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                    decoration:
-                        BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(20)),
-                    clipBehavior: Clip.hardEdge,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context)
-                              .push(
-                            PageRouteBuilder(
-                              pageBuilder: (context, anim, anim2) {
-                                return settingItems[index].navigateTo;
-                              },
-                              transitionDuration: Duration(milliseconds: 100),
-                              reverseTransitionDuration: Duration(milliseconds: 100),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                // final tween = Tween(begin: Offset(1.0, 0.0), end: Offset.zero);
-                                // final curvedAnimation = CurvedAnimation(
-                                //   parent: animation,
-                                //   curve: Curves.ease,
-                                // );
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                                // return SlideTransition(
-                                //   position: tween.animate(curvedAnimation),
-                                //   child: child,
-                                // );
-                              },
-                            ),
-                          )
-                              .then((val) {
-                            if (mounted) setState(() {});
-                          });
-                        },
-                        focusColor: appTheme.textSubColor,
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    settingItems[index].icon,
-                                    color: appTheme.textMainColor,
-                                    size: 35,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          settingItems[index].label,
-                                          style: TextStyle(
-                                              fontFamily: "NotoSans",
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: appTheme.textMainColor),
-                                        ),
-                                        Text(
-                                          settingItems[index].description,
-                                          style: TextStyle(
-                                            fontFamily: "NunitoSans",
-                                            color: appTheme.textSubColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_rounded,
-                                color: appTheme.textMainColor,
-                                size: 30,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                  style: TextStyle(
+                    fontFamily: "Rubik",
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: appTheme.textMainColor,
                   ),
                 ),
-              )
+              ),
+              ...settingItems.map((item) => _settingTile(context, item)),
+              const SizedBox(height: 30),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _settingTile(BuildContext context, SettingItem item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      child: Material(
+        color: appTheme.backgroundSubColor,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              PageRouteBuilder(
+                pageBuilder: (context, anim, anim2) => item.navigateTo,
+                transitionDuration: const Duration(milliseconds: 120),
+                reverseTransitionDuration: const Duration(milliseconds: 120),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+              ),
+            ).then((_) {
+              if (mounted) setState(() {});
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: appTheme.accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(item.icon, color: appTheme.accentColor, size: 22),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.label,
+                        style: TextStyle(
+                          fontFamily: "NotoSans",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: appTheme.textMainColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.description,
+                        style: TextStyle(fontFamily: "NunitoSans", fontSize: 13, color: appTheme.textSubColor),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: appTheme.textSubColor, size: 24),
+              ],
+            ),
           ),
         ),
       ),
