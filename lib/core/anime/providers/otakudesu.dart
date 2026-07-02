@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:kumaanime/core/anime/extractors/desustream.dart';
+import 'package:kumaanime/core/anime/extractors/streamwish.dart';
 import 'package:kumaanime/core/anime/providers/animeProvider.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
@@ -292,7 +293,15 @@ class OtakuDesu extends AnimeProvider {
   Future<void> _extractEmbed(
       String embedUrl, String server, String quality, Function(List<VideoStream>, bool) update) async {
     try {
-      final streams = await DesuStream().extract(embedUrl, label: server, quality: quality);
+      final host = Uri.parse(embedUrl).host.toLowerCase();
+      List<VideoStream> streams;
+      if (host.contains('vidhide') || host.contains('streamwish') || host.contains('filelions')) {
+        streams = await StreamWish().extract(embedUrl, label: server);
+      } else if (host.contains('desustream') || host.contains('blogger')) {
+        streams = await DesuStream().extract(embedUrl, label: server, quality: quality);
+      } else {
+        return;
+      }
       update(streams, false);
     } catch (_) {
       // Extraction failure on one embed shouldn't kill the others
