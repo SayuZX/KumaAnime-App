@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-import 'package:animestream/core/anime/providers/providerDetails.dart';
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/commons/utils.dart';
-import 'package:animestream/core/data/animeSpecificPreference.dart';
-import 'package:animestream/core/data/preferences.dart';
-import 'package:animestream/core/data/types.dart';
-import 'package:animestream/core/data/watching.dart';
-import 'package:animestream/core/database/anilist/login.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/handler/handler.dart';
-import 'package:animestream/core/database/types.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/sources.dart';
+import 'package:kumaanime/core/anime/providers/providerDetails.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/utils.dart';
+import 'package:kumaanime/core/data/animeSpecificPreference.dart';
+import 'package:kumaanime/core/data/preferences.dart';
+import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/core/data/watching.dart';
+import 'package:kumaanime/core/database/anilist/login.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/handler/handler.dart';
+import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/sources.dart';
 
 class InfoProvider extends ChangeNotifier {
   int id;
