@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
@@ -7,7 +8,6 @@ import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/cards/subIndoCard.dart';
-import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/subIndoDetail.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -135,24 +135,93 @@ class _SubIndoPageState extends State<SubIndoPage> {
     final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      body: Padding(
-        padding: pagePadding(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            settingPagesTitleHeader(context, loc.subIndo),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _searchField(loc),
-            ),
-            Container(
-              height: 50,
-              margin: const EdgeInsets.only(top: 15),
-              child: _filterChips(loc),
-            ),
-            Expanded(child: _body(loc)),
-          ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _vintageHeader(context, loc),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
+            child: _searchField(loc),
+          ),
+          Container(
+            height: 44,
+            margin: const EdgeInsets.only(top: 14),
+            child: _filterChips(loc),
+          ),
+          Expanded(child: _body(loc)),
+        ],
+      ),
+    );
+  }
+
+  Widget _vintageHeader(BuildContext context, AppLocalizations loc) {
+    const cream = Color(0xffF5ECD7);
+    final topInset = MediaQuery.of(context).padding.top;
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [const Color(0xff1C1410), appTheme.backgroundColor],
         ),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(painter: _GrainPainter()),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: topInset + 10, left: 20, right: 20, bottom: 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Material(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.hardEdge,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.arrow_back_rounded, color: cream, size: 22),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Container(width: 22, height: 1, color: cream.withValues(alpha: 0.5)),
+                    const SizedBox(width: 8),
+                    Text(
+                      loc.subIndoTagline.toUpperCase(),
+                      style: TextStyle(
+                        color: cream.withValues(alpha: 0.65),
+                        fontFamily: "NotoSans",
+                        fontSize: 10,
+                        letterSpacing: 3,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  loc.subIndo,
+                  style: const TextStyle(
+                    color: cream,
+                    fontFamily: "PlayfairDisplay",
+                    fontSize: 34,
+                    fontWeight: FontWeight.bold,
+                    height: 1.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -401,4 +470,22 @@ class _SubIndoPageState extends State<SubIndoPage> {
       ),
     );
   }
+}
+
+class _GrainPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.width <= 0 || size.height <= 0) return;
+    final random = math.Random(42);
+    final paint = Paint()..color = const Color(0xffF5ECD7).withValues(alpha: 0.03);
+    final count = ((size.width * size.height) / 900).clamp(0, 400).toInt();
+    for (var i = 0; i < count; i++) {
+      final dx = random.nextDouble() * size.width;
+      final dy = random.nextDouble() * size.height;
+      canvas.drawCircle(Offset(dx, dy), 0.6, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GrainPainter oldDelegate) => false;
 }
