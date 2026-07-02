@@ -1,8 +1,8 @@
-
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-// HMM used an AI, Im just a vibe coder atp ig
+/// Four dots arranged as a square that spins inward and collapses to a
+/// single point, then expands back out. Used as the app-wide loading spinner.
 class KumaAnimeLoading extends StatefulWidget {
   final Color color;
   final double size;
@@ -11,16 +11,15 @@ class KumaAnimeLoading extends StatefulWidget {
   const KumaAnimeLoading({
     Key? key,
     this.color = Colors.purple,
-    this.size = 80.0,
-    this.duration = const Duration(milliseconds: 1800),
+    this.size = 44.0,
+    this.duration = const Duration(milliseconds: 1400),
   }) : super(key: key);
 
   @override
   _KumaAnimeLoadingState createState() => _KumaAnimeLoadingState();
 }
 
-class _KumaAnimeLoadingState extends State<KumaAnimeLoading>
-    with SingleTickerProviderStateMixin {
+class _KumaAnimeLoadingState extends State<KumaAnimeLoading> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -47,9 +46,9 @@ class _KumaAnimeLoadingState extends State<KumaAnimeLoading>
         animation: _controller,
         builder: (context, child) {
           return CustomPaint(
-            painter: _SimpleAnimePainter(
+            painter: _DotSquarePainter(
               color: widget.color,
-              animation: _controller,
+              progress: _controller.value,
             ),
           );
         },
@@ -58,57 +57,43 @@ class _KumaAnimeLoadingState extends State<KumaAnimeLoading>
   }
 }
 
-class _SimpleAnimePainter extends CustomPainter {
+class _DotSquarePainter extends CustomPainter {
   final Color color;
-  final Animation<double> animation;
+  final double progress;
 
-  _SimpleAnimePainter({
+  _DotSquarePainter({
     required this.color,
-    required this.animation,
+    required this.progress,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     if (size.width <= 0 || size.height <= 0) return;
-    
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
-    
-    for (int i = 0; i < 3; i++) {
-      final angle = animation.value * math.pi * 2 + (i * 2 * math.pi / 3);
-      final orbitRadius = radius * 0.6;
-      final x = center.dx + orbitRadius * math.cos(angle);
-      final y = center.dy + orbitRadius * math.sin(angle);
- 
-      final pulseFactor = 0.6 + 0.4 * math.sin(animation.value * math.pi * 2 + i * math.pi * 2 / 3);
-      final dotRadius = radius * 0.15 * pulseFactor;
 
-      final alpha = (179 + 76 * pulseFactor).toInt().clamp(0, 255);
-      
-      final paint = Paint()
-        ..color = color.withAlpha(alpha)
-        ..style = PaintingStyle.fill;
-      
-      canvas.drawCircle(Offset(x, y), dotRadius, paint);
-    }
-    
-    final centerPulseFactor = 0.8 + 0.2 * math.sin(animation.value * math.pi * 4);
-    final centerPaint = Paint()
-      ..color = color.withAlpha((128 * centerPulseFactor).toInt().clamp(0, 255))
+    final center = Offset(size.width / 2, size.height / 2);
+    final maxRadius = math.min(size.width, size.height) / 2 * 0.82;
+    final baseDot = math.min(size.width, size.height) * 0.11;
+
+    // Eased shrink: 1 (square) -> 0 (single point) -> 1
+    final t = Curves.easeInOut.transform((1 - math.cos(progress * 2 * math.pi)) / 2);
+    final spread = maxRadius * t;
+    final rotation = progress * 2 * math.pi;
+    final dotRadius = baseDot * (1 + (1 - t) * 0.6);
+
+    final paint = Paint()
+      ..color = color
       ..style = PaintingStyle.fill;
-    
-    canvas.drawCircle(center, radius * 0.25 * centerPulseFactor, centerPaint);
-    
-    final ringPaint = Paint()
-      ..color = color.withAlpha(76)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-    
-    canvas.drawCircle(center, radius * 0.6, ringPaint);
+
+    for (int i = 0; i < 4; i++) {
+      final angle = math.pi / 4 + i * math.pi / 2 + rotation;
+      final pos = Offset(
+        center.dx + spread * math.cos(angle),
+        center.dy + spread * math.sin(angle),
+      );
+      canvas.drawCircle(pos, dotRadius, paint);
+    }
   }
 
   @override
-  bool shouldRepaint(_SimpleAnimePainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(_DotSquarePainter oldDelegate) => oldDelegate.progress != progress;
 }
