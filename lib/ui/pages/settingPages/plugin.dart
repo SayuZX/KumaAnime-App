@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class PluginPage extends StatefulWidget {
@@ -41,6 +42,7 @@ class _PluginPageState extends State<PluginPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: Padding(
         padding: MediaQuery.paddingOf(context),
@@ -64,7 +66,7 @@ class _PluginPageState extends State<PluginPage> with TickerProviderStateMixin {
                       Container(
                         padding: EdgeInsets.only(left: 10, right: 20),
                         child: Text(
-                          "Manage Providers [Beta]",
+                          loc.plgManageProviders,
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ),
@@ -75,7 +77,7 @@ class _PluginPageState extends State<PluginPage> with TickerProviderStateMixin {
               ),
             ),
 
-            Expanded(child: Center(child: Text("Should arrive soon!"),))
+            Expanded(child: Center(child: Text(loc.plgComingSoon),))
             
             // TabBar(
             //   controller: _tabController,
