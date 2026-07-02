@@ -1,5 +1,5 @@
-import 'package:animestream/core/anime/downloader/downloadManager.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
@@ -10,10 +10,10 @@ class NotificationService {
       'resource://drawable/ic_launcher_foreground',
       [
         NotificationChannel(
-          channelGroupKey: 'animestream_group',
-          channelKey: 'animestream',
-          channelName: 'animestream',
-          channelDescription: 'animestream notification channel',
+          channelGroupKey: 'kumaanime_group',
+          channelKey: 'kumaanime',
+          channelName: 'Kuma Anime',
+          channelDescription: 'Kuma Anime notification channel',
           defaultColor: appTheme.accentColor,
           playSound: false,
           ledColor: Colors.white,
@@ -22,8 +22,8 @@ class NotificationService {
       debug: false,
       channelGroups: [
         NotificationChannelGroup(
-          channelGroupKey: 'animestream_group',
-          channelGroupName: 'animestream',
+          channelGroupKey: 'kumaanime_group',
+          channelGroupName: 'Kuma Anime',
         )
       ],
     );
@@ -35,7 +35,7 @@ class NotificationService {
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
-        channelKey: "animestream",
+        channelKey: "kumaanime",
         title: title,
         body: content,
         backgroundColor: appTheme.accentColor,
@@ -59,7 +59,7 @@ class NotificationService {
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: id,
-          channelKey: 'animestream',
+          channelKey: 'kumaanime',
           title: 'Downloading $fileName ($progress%)',
           body: 'The file is being downloaded',
           category: NotificationCategory.Progress,
@@ -83,7 +83,7 @@ class NotificationService {
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: id,
-          channelKey: 'animestream',
+          channelKey: 'kumaanime',
           title: 'Download finished',
           body: '$fileName has been downloaded succesfully!',
           payload: {
