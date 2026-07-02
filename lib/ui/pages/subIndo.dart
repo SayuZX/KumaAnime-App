@@ -21,10 +21,11 @@ class SubIndoPage extends StatefulWidget {
   State<SubIndoPage> createState() => _SubIndoPageState();
 }
 
-class _SubIndoPageState extends State<SubIndoPage> {
+class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStateMixin {
   final _provider = OtakuDesu();
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
+  late final AnimationController _enterController;
 
   _SubIndoMode _mode = _SubIndoMode.ongoing;
   SubIndoGenre? _selectedGenre;
@@ -39,6 +40,7 @@ class _SubIndoPageState extends State<SubIndoPage> {
   @override
   void initState() {
     super.initState();
+    _enterController = AnimationController(vsync: this, duration: const Duration(milliseconds: 550))..forward();
     _scrollController.addListener(_onScroll);
     _loadGenres();
     _load(reset: true);
@@ -46,9 +48,21 @@ class _SubIndoPageState extends State<SubIndoPage> {
 
   @override
   void dispose() {
+    _enterController.dispose();
     _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  Widget _entrance(Widget child, double start, double end) {
+    final anim = CurvedAnimation(parent: _enterController, curve: Interval(start, end, curve: Curves.easeOut));
+    return FadeTransition(
+      opacity: anim,
+      child: SlideTransition(
+        position: Tween(begin: const Offset(0, 0.18), end: Offset.zero).animate(anim),
+        child: child,
+      ),
+    );
   }
 
   void _onScroll() {
@@ -138,15 +152,23 @@ class _SubIndoPageState extends State<SubIndoPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _vintageHeader(context, loc),
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
-            child: _searchField(loc),
+          _entrance(_vintageHeader(context, loc), 0.0, 0.6),
+          _entrance(
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
+              child: _searchField(loc),
+            ),
+            0.3,
+            1.0,
           ),
-          Container(
-            height: 44,
-            margin: const EdgeInsets.only(top: 14),
-            child: _filterChips(loc),
+          _entrance(
+            Container(
+              height: 44,
+              margin: const EdgeInsets.only(top: 14),
+              child: _filterChips(loc),
+            ),
+            0.3,
+            1.0,
           ),
           Expanded(child: _body(loc)),
         ],
