@@ -48,8 +48,8 @@ class _SettingsPageState extends State<SettingsPage> {
           icon: Icons.brush_rounded, label: loc.settingsUi, description: loc.settingsUiDesc, navigateTo: ThemeSetting()),
       SettingItem(
           icon: Icons.palette_outlined,
-          label: "Appearance",
-          description: "Accent, font, text size & layout",
+          label: loc.settingsAppearance,
+          description: loc.settingsAppearanceDesc,
           navigateTo: AppearanceSetting()),
       SettingItem(
           icon: Icons.play_circle_fill_rounded,
@@ -58,23 +58,23 @@ class _SettingsPageState extends State<SettingsPage> {
           navigateTo: PlayerSetting()),
       SettingItem(
           icon: Icons.smart_display_outlined,
-          label: "Playback",
-          description: "Quality, buffer, auto-play & orientation",
+          label: loc.settingsPlayback,
+          description: loc.settingsPlaybackDesc,
           navigateTo: PlaybackSetting()),
       SettingItem(
           icon: Icons.translate_rounded,
-          label: "Content & Language",
-          description: "Language, adult content & genre filter",
+          label: loc.settingsContent,
+          description: loc.settingsContentDesc,
           navigateTo: ContentSetting()),
       SettingItem(
           icon: Icons.notifications_none_rounded,
-          label: "Notifications",
-          description: "Episodes, news & updates",
+          label: loc.settingsNotifications,
+          description: loc.settingsNotificationsDesc,
           navigateTo: NotificationSetting()),
       SettingItem(
           icon: Icons.storage_rounded,
-          label: "Storage & Cache",
-          description: "Cache size & clear data",
+          label: loc.settingsStorage,
+          description: loc.settingsStorageDesc,
           navigateTo: StorageSetting()),
       SettingItem(
           icon: Icons.tune_rounded,
