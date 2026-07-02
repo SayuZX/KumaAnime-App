@@ -5,6 +5,7 @@ import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class PlaybackSetting extends StatefulWidget {
@@ -33,6 +34,7 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final s = currentUserSettings;
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
@@ -42,25 +44,25 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              settingPagesTitleHeader(context, "Playback"),
+              settingPagesTitleHeader(context, loc.pbPlayback),
               ToggleItem(
-                label: "Hardware acceleration",
-                description: "Use GPU decoding when available",
+                label: loc.pbHardwareAcceleration,
+                description: loc.pbHardwareAccelerationDesc,
                 value: s?.hardwareAcceleration ?? true,
                 onTapFunction: () => _write(SettingsModal(hardwareAcceleration: !(s?.hardwareAcceleration ?? true))),
               ),
               ToggleItem(
-                label: "Resume playback",
-                description: "Continue from the last watched position",
+                label: loc.pbResumePlayback,
+                description: loc.pbResumePlaybackDesc,
                 value: s?.resumePlayback ?? true,
                 onTapFunction: () => _write(SettingsModal(resumePlayback: !(s?.resumePlayback ?? true))),
               ),
               ToggleItem(
-                label: "Auto-play next episode",
+                label: loc.pbAutoPlayNext,
                 value: s?.autoPlayNext ?? true,
                 onTapFunction: () => _write(SettingsModal(autoPlayNext: !(s?.autoPlayNext ?? true))),
               ),
-              _sectionLabel("Auto-play countdown"),
+              _sectionLabel(loc.pbAutoPlayCountdown),
               _slider(
                 value: (s?.autoPlayCountdown ?? 10).toDouble(),
                 min: 3,
@@ -68,7 +70,7 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
                 unit: "s",
                 onChanged: (v) => _write(SettingsModal(autoPlayCountdown: v.round())),
               ),
-              _sectionLabel("Buffer size"),
+              _sectionLabel(loc.pbBufferSize),
               _slider(
                 value: ((s?.bufferSizeMs ?? 120000) / 1000),
                 min: 30,
@@ -78,15 +80,15 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
               ),
               ClickableItem(
                 onTap: () => _showOrientationSheet(s?.playerOrientation ?? 'auto'),
-                label: "Screen orientation",
+                label: loc.pbScreenOrientation,
                 description: (s?.playerOrientation ?? 'auto').toUpperCase(),
                 suffixIcon: Icon(Icons.arrow_drop_down, color: appTheme.textMainColor),
               ),
               const SizedBox(height: 20),
-              resetCategoryButton(context, "Reset playback", () async {
+              resetCategoryButton(context, loc.pbResetPlayback, () async {
                 await Settings().resetKeys(_keys);
                 if (mounted) setState(() {});
-                floatingSnackBar("Playback settings reset");
+                floatingSnackBar(loc.pbPlaybackReset);
               }),
               const SizedBox(height: 20),
             ],
@@ -133,6 +135,7 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
   }
 
   void _showOrientationSheet(String current) {
+    final loc = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -145,7 +148,7 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 12, left: 8),
-              child: Text("Screen orientation", style: textStyle().copyWith(fontSize: 22)),
+              child: Text(loc.pbScreenOrientation, style: textStyle().copyWith(fontSize: 22)),
             ),
             ..._orientations.map((o) => optionTile(
                   label: o.toUpperCase(),
