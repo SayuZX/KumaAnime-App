@@ -244,7 +244,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             loc.subIndo,
             style: TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "Rubik",
               fontSize: 34,
               fontWeight: FontWeight.bold,
               height: 1.0,
@@ -262,10 +261,10 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
         if (value.trim().isEmpty) return;
         _switchMode(_SubIndoMode.search);
       },
-      style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans"),
+      style: TextStyle(color: appTheme.textMainColor, ),
       decoration: InputDecoration(
         hintText: loc.subIndoSearchHint,
-        hintStyle: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans"),
+        hintStyle: TextStyle(color: appTheme.textSubColor, ),
         prefixIcon: Icon(Icons.search_rounded, color: appTheme.textSubColor, size: 22),
         filled: true,
         fillColor: appTheme.backgroundSubColor,
@@ -334,7 +333,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
               label,
               style: TextStyle(
                 color: selected ? appTheme.onAccent : appTheme.textSubColor,
-                fontFamily: "NotoSans",
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),
@@ -358,7 +356,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             Text(
               loc.subIndoLoadError,
               textAlign: TextAlign.center,
-              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 16),
+              style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
             ),
             const SizedBox(height: 15),
             ElevatedButton(
@@ -378,7 +376,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       return Center(
         child: Text(
           loc.subIndoEmpty,
-          style: TextStyle(color: appTheme.textSubColor, fontFamily: "Rubik", fontSize: 18),
+          style: TextStyle(color: appTheme.textSubColor, fontSize: 18),
         ),
       );
     }
@@ -497,7 +495,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                                 fontSize: 11,
                                 letterSpacing: 1.2,
                                 color: appTheme.accentColor,
-                                fontFamily: "NotoSans",
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -510,7 +507,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontFamily: "Rubik",
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             height: 1.15,
@@ -525,14 +521,14 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                               Text(
                                 anime.score!,
                                 style: const TextStyle(
-                                    color: Colors.white, fontFamily: "Rubik", fontSize: 12, fontWeight: FontWeight.bold),
+                                    color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(width: 10),
                             ],
                             if (anime.episodes != null && anime.episodes!.isNotEmpty)
                               Text(
                                 "${anime.episodes} ${loc.subIndoEpisodes}",
-                                style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontFamily: "NotoSans", fontSize: 12),
+                                style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12),
                               ),
                           ],
                         ),
@@ -552,7 +548,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                                 loc.subIndoWatchNow,
                                 style: TextStyle(
                                   color: appTheme.onAccent,
-                                  fontFamily: "Poppins",
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
