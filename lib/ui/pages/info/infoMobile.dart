@@ -62,7 +62,7 @@ class _InfoMobileState extends State<InfoMobile> {
                     child: const Text(
                       'oops! something went wrong',
                       style: TextStyle(
-                          color: Colors.white, fontFamily: "NunitoSans", fontSize: 25, fontWeight: FontWeight.bold),
+                          color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -120,7 +120,6 @@ class _InfoMobileState extends State<InfoMobile> {
             getTitle(data.title),
             style: TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "Rubik",
               fontSize: 24,
               fontWeight: FontWeight.bold,
               height: 1.15,
@@ -131,7 +130,7 @@ class _InfoMobileState extends State<InfoMobile> {
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 native,
-                style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13),
+                style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
               ),
             ),
           const SizedBox(height: 12),
@@ -161,7 +160,7 @@ class _InfoMobileState extends State<InfoMobile> {
         children: [
           Icon(icon, size: 15, color: iconColor ?? appTheme.textSubColor),
           const SizedBox(width: 4),
-          Text(value, style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13)),
+          Text(value, style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
         ],
       ));
     }
@@ -184,7 +183,7 @@ class _InfoMobileState extends State<InfoMobile> {
           .map((g) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(20)),
-                child: Text(g, style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 12)),
+                child: Text(g, style: TextStyle(color: appTheme.textMainColor, fontSize: 12)),
               ))
           .toList(),
     );
@@ -207,7 +206,7 @@ class _InfoMobileState extends State<InfoMobile> {
             icon: Icon(infoPage ? Icons.play_arrow_rounded : Icons.info_rounded, size: 24),
             label: Text(
               infoPage ? "Tonton Sekarang" : "Info",
-              style: const TextStyle(fontFamily: "Poppins", fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -288,7 +287,7 @@ class _InfoMobileState extends State<InfoMobile> {
             child: Text(
               synopsis,
               overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
-              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 14, height: 1.5),
+              style: TextStyle(color: appTheme.textSubColor, fontSize: 14, height: 1.5),
             ),
           ),
         ),
@@ -298,7 +297,7 @@ class _InfoMobileState extends State<InfoMobile> {
             padding: const EdgeInsets.only(top: 6),
             child: Text(
               _synopsisExpanded ? "Tutup" : "Selengkapnya",
-              style: TextStyle(color: appTheme.accentColor, fontFamily: "NotoSans", fontWeight: FontWeight.bold),
+              style: TextStyle(color: appTheme.accentColor, fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -309,7 +308,7 @@ class _InfoMobileState extends State<InfoMobile> {
   Widget _sectionHeading(String title) {
     return Text(
       title,
-      style: TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 20, fontWeight: FontWeight.bold),
+      style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold),
     );
   }
 
@@ -351,8 +350,7 @@ class _InfoMobileState extends State<InfoMobile> {
             width: 300,
             textStyle: TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "Poppins",
-            ),
+              ),
             trailingIcon: Icon(
               Icons.arrow_drop_down,
               color: appTheme.textMainColor,
@@ -397,7 +395,7 @@ class _InfoMobileState extends State<InfoMobile> {
             label: Text(
               "source",
               style: TextStyle(
-                  color: appTheme.textMainColor, fontSize: 20, fontFamily: "Rubik", overflow: TextOverflow.ellipsis),
+                  color: appTheme.textMainColor, fontSize: 20, overflow: TextOverflow.ellipsis),
             ),
           ),
         ),
@@ -426,8 +424,7 @@ class _InfoMobileState extends State<InfoMobile> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            fontFamily: "Rubik",
-                          ),
+                            ),
                         )),
                     if (provider.foundName != null)
                       Row(
@@ -465,7 +462,6 @@ class _InfoMobileState extends State<InfoMobile> {
                                               "Batch Download",
                                               style: TextStyle(
                                                 color: appTheme.textMainColor,
-                                                fontFamily: "Rubik",
                                                 fontSize: 23,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -521,8 +517,7 @@ class _InfoMobileState extends State<InfoMobile> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
-                                fontFamily: "NunitoSans",
-                              ),
+                                ),
                             ),
                           ],
                         ),
@@ -591,7 +586,6 @@ class _InfoMobileState extends State<InfoMobile> {
             decorationColor: appTheme.textMainColor,
             decorationStyle: TextDecorationStyle.solid,
             decorationThickness: 2,
-            fontFamily: "NotoSans",
             fontWeight: FontWeight.bold,
             shadows: [Shadow(color: appTheme.textMainColor, offset: Offset(0, -2))],
           ),
@@ -607,7 +601,7 @@ class _InfoMobileState extends State<InfoMobile> {
             child: Center(
               child: Text(
                 "Oops. no items here!",
-                style: TextStyle(fontFamily: "Rubik"),
+                style: TextStyle(),
               ),
             ),
           )
@@ -647,7 +641,6 @@ class _InfoMobileState extends State<InfoMobile> {
                             "${(index * 24) + 1} - ${(index * 24) + 24 > provider.epLinks.length ? provider.epLinks.length : (index * 24) + 24}",
                             style: TextStyle(
                               color: provider.currentPageIndex == index ? appTheme.onAccent : appTheme.textMainColor,
-                              fontFamily: 'NotoSans',
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -744,7 +737,6 @@ class _InfoMobileState extends State<InfoMobile> {
                         '${provider.started ? 'Continue' : 'Start'} from:',
                         style: TextStyle(
                           color: appTheme.textMainColor,
-                          fontFamily: "Rubik",
                           fontSize: 14,
                         ),
                       ),
@@ -752,7 +744,6 @@ class _InfoMobileState extends State<InfoMobile> {
                         'Episode ${provider.watched < provider.epLinks.length ? provider.watched + 1 : provider.watched}',
                         style: TextStyle(
                           color: appTheme.textMainColor,
-                          fontFamily: "Rubik",
                           fontSize: 17,
                         ),
                       ),
@@ -801,7 +792,6 @@ class _InfoMobileState extends State<InfoMobile> {
         text,
         style: TextStyle(
           color: appTheme.textMainColor,
-          fontFamily: "NotoSans",
           fontWeight: FontWeight.bold,
         ),
         maxLines: 1,
@@ -877,7 +867,7 @@ class _InfoMobileState extends State<InfoMobile> {
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     child: Text(
                                       ServerSheetType.values[ind].name,
-                                      style: TextStyle(fontFamily: "Poppins", fontSize: 18),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                                   ),
                                 ),
@@ -1032,7 +1022,6 @@ class _InfoMobileState extends State<InfoMobile> {
                           provider.visibleEpList[provider.currentPageIndex][index]['realIndex'] + 1 > provider.watched
                               ? appTheme.textMainColor
                               : appTheme.textSubColor,
-                      fontFamily: 'Poppins',
                       fontSize: 17,
                     ),
                   ),
@@ -1140,7 +1129,6 @@ class _InfoMobileState extends State<InfoMobile> {
                                             provider.watched
                                         ? appTheme.textMainColor
                                         : appTheme.textSubColor,
-                                    fontFamily: "Poppins",
                                     fontSize: 18,
                                   ),
                                   maxLines: 1,
@@ -1150,7 +1138,7 @@ class _InfoMobileState extends State<InfoMobile> {
                                     false)
                                   Text(
                                     "filler",
-                                    style: TextStyle(fontFamily: "Rubik", color: appTheme.textSubColor),
+                                    style: TextStyle(color: appTheme.textSubColor),
                                   ),
                               ],
                             ),
@@ -1347,7 +1335,6 @@ class _InfoMobileState extends State<InfoMobile> {
           child: const Text(
             'Nothing to see here!',
             style: TextStyle(
-              fontFamily: "NunitoSans",
               fontSize: 18,
               color: const Color.fromARGB(255, 255, 255, 255),
             ),
@@ -1400,7 +1387,6 @@ class _InfoMobileState extends State<InfoMobile> {
         title,
         style: TextStyle(
           color: appTheme.textMainColor,
-          fontFamily: "NatoSans",
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
@@ -1417,7 +1403,6 @@ class _InfoMobileState extends State<InfoMobile> {
         style: TextStyle(
             color: const Color.fromARGB(255, 141, 141, 141),
             fontSize: 17,
-            fontFamily: "NatoSans",
             fontWeight: FontWeight.bold),
       ),
     );
@@ -1431,7 +1416,6 @@ class _InfoMobileState extends State<InfoMobile> {
         style: TextStyle(
           color: appTheme.textMainColor,
           fontSize: 17,
-          fontFamily: "NotoSans",
           fontWeight: FontWeight.bold,
         ),
         textAlign: TextAlign.end,
@@ -1457,7 +1441,7 @@ class _InfoMobileState extends State<InfoMobile> {
                       children: [
                         Text(
                           "${provider.data.title['english'] ?? provider.data.title['romaji']} - Banner",
-                          style: TextStyle(fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 20),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                         Image.network(
                           img,
@@ -1492,7 +1476,6 @@ class _InfoMobileState extends State<InfoMobile> {
                               "save",
                               style: TextStyle(
                                   color: appTheme.onAccent,
-                                  fontFamily: "Poppins",
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20),
                             ),
