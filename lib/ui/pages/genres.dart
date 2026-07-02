@@ -5,6 +5,7 @@ import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/commons/extensions.dart';
 import 'package:kumaanime/core/database/anilist/queries.dart';
 import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
@@ -128,13 +129,14 @@ class _GenresPageState extends State<GenresPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: Padding(
         padding: pagePadding(context),
         child: Column(
           children: [
-            topRow(context, "Genres"),
+            topRow(context, loc.genresTitle),
             Container(
               padding: EdgeInsets.only(left: 15, right: 15, top: 10),
               child: Row(
@@ -142,7 +144,7 @@ class _GenresPageState extends State<GenresPage> {
                 children: [
                   Container(
                     child: Text(
-                      "Results",
+                      loc.genresResults,
                       style: TextStyle(
                           color: appTheme.textMainColor,
                           fontSize: 22,
@@ -165,25 +167,25 @@ class _GenresPageState extends State<GenresPage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  "Filters",
+                                  loc.genresFilters,
                                   style: TextStyle(
                                       color: appTheme.textMainColor,
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 _scrollablelListWithTitle(setChildState,
-                                    title: "Genres", mainList: genres, selectedList: selectedGenres),
+                                    title: loc.genresTitle, mainList: genres, selectedList: selectedGenres),
                                 _scrollablelListWithTitle(setChildState,
-                                    title: "Tags", mainList: tags, selectedList: selectedTags),
+                                    title: loc.genresTagsTitle, mainList: tags, selectedList: selectedTags),
                                 _scrollablelRadioListWithTitle(
-                                    title: "Sort",
+                                    title: loc.genresSortTitle,
                                     value: sortType,
                                     setChildState: setChildState,
                                     options: sortTypesString,
                                     onTap: (e) {
                                       sortType = e;
                                     }),
-                                _filterItemTitle("Rating range"),
+                                _filterItemTitle(loc.genresRatingRange),
                                 RangeSlider(
                                   values: ratingRange,
                                   min: 1,
@@ -210,7 +212,7 @@ class _GenresPageState extends State<GenresPage> {
                                           },
                                           style: ElevatedButton.styleFrom(backgroundColor: appTheme.accentColor),
                                           child: Text(
-                                            "Cancel",
+                                            loc.genresCancel,
                                             style: TextStyle(color: appTheme.backgroundColor, ),
                                           ),
                                         ),
@@ -225,7 +227,7 @@ class _GenresPageState extends State<GenresPage> {
                                         },
                                         style: ElevatedButton.styleFrom(backgroundColor: appTheme.accentColor),
                                         child: Text(
-                                          "Apply",
+                                          loc.genresApply,
                                           style: TextStyle(color: appTheme.backgroundColor, ),
                                         ),
                                       ),
@@ -247,7 +249,7 @@ class _GenresPageState extends State<GenresPage> {
                           color: appTheme.textMainColor,
                         ),
                         Text(
-                          "filters",
+                          loc.genresFiltersButton,
                           style: TextStyle(color: appTheme.textMainColor),
                         )
                       ],
@@ -277,14 +279,14 @@ class _GenresPageState extends State<GenresPage> {
                                           color: appTheme.textMainColor,
                                         )),
                                     Text(
-                                      "~~nooo matches~~",
+                                      loc.genresNoMatches,
                                       style: TextStyle(
                                           color: appTheme.textMainColor, fontSize: 17),
                                     ),
                                   ],
                                 )
                               : Text(
-                                  'Apply filters to discover animes!',
+                                  loc.genresApplyFiltersHint,
                                   style:
                                       TextStyle(color: appTheme.textMainColor, fontSize: 16),
                                   textAlign: TextAlign.center,
@@ -417,6 +419,7 @@ class _GenresPageState extends State<GenresPage> {
 
   Column _scrollablelListWithTitle(StateSetter setChildState,
       {required String title, required List<String> mainList, required List<String> selectedList}) {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         Row(
@@ -507,7 +510,7 @@ class _GenresPageState extends State<GenresPage> {
                                 },
                                 style: ElevatedButton.styleFrom(backgroundColor: appTheme.accentColor),
                                 child: Text(
-                                  "close",
+                                  loc.genresClose,
                                   style: TextStyle(color: appTheme.backgroundColor, ),
                                 ),
                               ),
