@@ -1,6 +1,6 @@
 {
-    "name": "animestream",
-    "short_name": "animestream",
+    "name": "Kuma Anime",
+    "short_name": "Kuma Anime",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
