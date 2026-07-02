@@ -101,7 +101,7 @@ class _FileExplorerState extends State<FileExplorer> {
                 ? Center(
                     child: Text(
                       "Empty folder!",
-                      style: TextStyle(fontFamily: "NunitoSans"),
+                      style: TextStyle(),
                     ),
                   )
                 : ListView.builder(
@@ -157,7 +157,7 @@ class _FileExplorerState extends State<FileExplorer> {
           else
             Text(
               "${entities.length} items",
-              style: TextStyle(fontSize: 12, fontFamily: "NunitoSans", fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             )
         ],
       ),
@@ -209,7 +209,7 @@ class _FileExplorerState extends State<FileExplorer> {
                           },
                           child: Text(
                             "Delete",
-                            style: TextStyle(fontFamily: "NotoSans", color: appTheme.textMainColor),
+                            style: TextStyle(color: appTheme.textMainColor),
                           )),
                     ]);
               },
@@ -258,7 +258,7 @@ class _FileExplorerState extends State<FileExplorer> {
                 if (ep != null)
                   Text(
                     "${_toMegs(File(entity.path).lengthSync())} MB",
-                    style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13),
+                    style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
                   ),
               ],
             ),
@@ -360,5 +360,5 @@ class _FileExplorerState extends State<FileExplorer> {
 
   String _toMegs(int sizeInBytes) => (sizeInBytes / (1024 * 1024)).toStringAsFixed(1);
 
-  TextStyle _titleStyle() => TextStyle(fontFamily: "NunitoSans", fontWeight: FontWeight.bold, fontSize: 18);
+  TextStyle _titleStyle() => TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
 }
