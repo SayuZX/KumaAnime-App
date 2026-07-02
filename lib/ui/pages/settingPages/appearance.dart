@@ -82,12 +82,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
               _sectionLabel("Anime List Layout"),
               _layoutChips(s?.listLayout ?? 'grid'),
               _sectionLabel("Card Size"),
-              _scaleSlider(
-                value: s?.cardScale ?? 1.0,
-                min: 0.8,
-                max: 1.3,
-                onChanged: (v) => _write(SettingsModal(cardScale: v)),
-              ),
+              _cardSizeChips(s?.cardScale ?? 1.0),
               const SizedBox(height: 8),
               ToggleItem(
                 label: "AMOLED pure black",
@@ -220,6 +215,39 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
           child: Text("${(value * 100).round()}%", style: TextStyle(color: appTheme.textSubColor)),
         ),
       ],
+    );
+  }
+
+  Widget _cardSizeChips(double current) {
+    const sizes = {'Small': 0.9, 'Medium': 1.0, 'Large': 1.15};
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: sizes.entries.map((entry) {
+          final selected = (current - entry.value).abs() < 0.03;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => _write(SettingsModal(cardScale: entry.value)),
+              child: Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: selected ? appTheme.accentColor : appTheme.backgroundSubColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  entry.key,
+                  style: TextStyle(
+                    color: selected ? appTheme.onAccent : appTheme.textMainColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
