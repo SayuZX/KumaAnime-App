@@ -655,7 +655,6 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
                 "${(value * 100).toInt()}%",
                 style: const TextStyle(
                   color: Colors.white,
-                  fontFamily: "Rubik",
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -724,7 +723,6 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
       child: Text(
         "${context.read<PlayerProvider>().state.speed}x",
         style: TextStyle(
-          fontFamily: "Rubik",
           fontSize: 14,
         ),
       ),
@@ -753,7 +751,6 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
                   child: Text(
                     "- ${(currentUserSettings?.skipDuration ?? 10) * skipCount}s",
                     style: TextStyle(
-                      fontFamily: "Rubik",
                       fontSize: 23,
                     ),
                   ),
@@ -772,7 +769,6 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
                   child: Text(
                     "+ ${(currentUserSettings?.skipDuration ?? 10) * skipCount}s",
                     style: TextStyle(
-                      fontFamily: "Rubik",
                       fontSize: 23,
                     ),
                   ),
