@@ -45,8 +45,9 @@ class _HttpOverrides extends HttpOverrides {
     final client = super.createHttpClient(context)..userAgent = AppValues.defaultClientUserAgent;
     client.connectionFactory = (uri, proxyHost, proxyPort) {
       if (proxyHost != null) return Socket.startConnect(proxyHost, proxyPort ?? uri.port);
-      if (!(currentUserSettings?.useSecureDns ?? true)) return Socket.startConnect(uri.host, uri.port);
-      return DohResolver.resolve(uri.host).then((ip) => Socket.startConnect(ip ?? uri.host, uri.port));
+      final dns = currentUserSettings?.dnsProvider ?? 'auto';
+      if (dns == 'off') return Socket.startConnect(uri.host, uri.port);
+      return DohResolver.resolve(uri.host, provider: dns).then((ip) => Socket.startConnect(ip ?? uri.host, uri.port));
     };
     return client;
   }
