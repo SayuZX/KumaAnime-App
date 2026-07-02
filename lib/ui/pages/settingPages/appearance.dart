@@ -3,6 +3,7 @@ import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/theme.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/ui/theme/themes.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
@@ -56,6 +57,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
   Widget build(BuildContext context) {
     final s = currentUserSettings;
     final appProvider = context.read<AppProvider>();
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -64,12 +66,12 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              settingPagesTitleHeader(context, "Appearance"),
-              _sectionLabel("Accent Color"),
+              settingPagesTitleHeader(context, loc.settingsAppearance),
+              _sectionLabel(loc.apAccentColor),
               _accentGrid(appProvider, s?.accentColorValue),
-              _sectionLabel("Font"),
+              _sectionLabel(loc.apFont),
               _fontList(appProvider, s?.fontFamily ?? 'NotoSans'),
-              _sectionLabel("Text Size"),
+              _sectionLabel(loc.apTextSize),
               _scaleSlider(
                 value: s?.textScale ?? 1.0,
                 min: 0.8,
@@ -79,14 +81,14 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                   appProvider.justRefresh();
                 },
               ),
-              _sectionLabel("Anime List Layout"),
-              _layoutChips(s?.listLayout ?? 'grid'),
-              _sectionLabel("Card Size"),
-              _cardSizeChips(s?.cardScale ?? 1.0),
+              _sectionLabel(loc.apAnimeListLayout),
+              _layoutChips(loc, s?.listLayout ?? 'grid'),
+              _sectionLabel(loc.apCardSize),
+              _cardSizeChips(loc, s?.cardScale ?? 1.0),
               const SizedBox(height: 8),
               ToggleItem(
-                label: "AMOLED pure black",
-                description: "Pure black background in dark mode",
+                label: loc.apAmoledBlack,
+                description: loc.apAmoledBlackDesc,
                 value: s?.amoledBackground ?? false,
                 onTapFunction: () {
                   _write(SettingsModal(amoledBackground: !(s?.amoledBackground ?? false)));
@@ -94,18 +96,18 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                 },
               ),
               ToggleItem(
-                label: "Blur hero banners",
+                label: loc.apBlurHero,
                 value: s?.heroBlur ?? true,
                 onTapFunction: () => _write(SettingsModal(heroBlur: !(s?.heroBlur ?? true))),
               ),
               ToggleItem(
-                label: "Reduce motion",
-                description: "Disable heavy animations",
+                label: loc.apReduceMotion,
+                description: loc.apReduceMotionDesc,
                 value: s?.reduceMotion ?? false,
                 onTapFunction: () => _write(SettingsModal(reduceMotion: !(s?.reduceMotion ?? false))),
               ),
               const SizedBox(height: 20),
-              _resetButton(appProvider),
+              _resetButton(loc, appProvider),
               const SizedBox(height: 20),
             ],
           ),
@@ -218,8 +220,8 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
     );
   }
 
-  Widget _cardSizeChips(double current) {
-    const sizes = {'Small': 0.9, 'Medium': 1.0, 'Large': 1.15};
+  Widget _cardSizeChips(AppLocalizations loc, double current) {
+    final sizes = {loc.sizeSmall: 0.9, loc.sizeMedium: 1.0, loc.sizeLarge: 1.15};
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -251,7 +253,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
     );
   }
 
-  Widget _layoutChips(String selected) {
+  Widget _layoutChips(AppLocalizations loc, String selected) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -269,7 +271,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  layout[0].toUpperCase() + layout.substring(1),
+                  {'grid': loc.layoutGrid, 'list': loc.layoutList, 'compact': loc.layoutCompact}[layout] ?? layout,
                   style: TextStyle(
                     color: isSelected ? appTheme.onAccent : appTheme.textMainColor,
                     fontWeight: FontWeight.bold,
@@ -283,7 +285,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
     );
   }
 
-  Widget _resetButton(AppProvider appProvider) {
+  Widget _resetButton(AppLocalizations loc, AppProvider appProvider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: SizedBox(
@@ -294,7 +296,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
             await setTheme(availableThemes[0].id);
             await appProvider.applyThemeMode(appProvider.isDark);
             if (mounted) setState(() {});
-            floatingSnackBar("Theme reset to default");
+            floatingSnackBar(loc.apThemeResetDone);
           },
           style: OutlinedButton.styleFrom(
             foregroundColor: appTheme.accentColor,
@@ -303,7 +305,7 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
           icon: const Icon(Icons.restart_alt_rounded),
-          label: const Text("Reset appearance"),
+          label: Text(loc.apResetAppearance),
         ),
       ),
     );
