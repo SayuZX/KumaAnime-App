@@ -102,11 +102,11 @@ class AppProvider with ChangeNotifier {
     } else {
       appTheme = KumaAnimeTheme(
         accentColor: theme.lightVariant.accentColor,
-        backgroundColor: theme.lightVariant.backgroundColor,
-        backgroundSubColor: theme.lightVariant.backgroundSubColor,
-        textMainColor: theme.lightVariant.textMainColor,
-        textSubColor: theme.lightVariant.textSubColor,
-        modalSheetBackgroundColor: theme.lightVariant.modalSheetBackgroundColor,
+        backgroundColor: lightModeValues.backgroundColor,
+        backgroundSubColor: lightModeValues.backgroundSubColor,
+        textMainColor: lightModeValues.textMainColor,
+        textSubColor: lightModeValues.textSubColor,
+        modalSheetBackgroundColor: lightModeValues.modalSheetBackgroundColor,
         onAccent: theme.lightVariant.onAccent,
       );
     }
