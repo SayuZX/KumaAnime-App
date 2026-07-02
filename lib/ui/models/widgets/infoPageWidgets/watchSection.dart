@@ -1,9 +1,9 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/providers/infoProvider.dart';
-import 'package:animestream/ui/models/widgets/infoPageWidgets/commonInfo.dart';
-import 'package:animestream/ui/models/widgets/infoPageWidgets/continueBoxes.dart';
-import 'package:animestream/ui/models/widgets/infoPageWidgets/episodeGrid.dart';
-import 'package:animestream/ui/models/widgets/infoPageWidgets/sourceBoxes.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/providers/infoProvider.dart';
+import 'package:kumaanime/ui/models/widgets/infoPageWidgets/commonInfo.dart';
+import 'package:kumaanime/ui/models/widgets/infoPageWidgets/continueBoxes.dart';
+import 'package:kumaanime/ui/models/widgets/infoPageWidgets/episodeGrid.dart';
+import 'package:kumaanime/ui/models/widgets/infoPageWidgets/sourceBoxes.dart';
 import 'package:flutter/material.dart';
 
 class WatchSection extends StatelessWidget {
