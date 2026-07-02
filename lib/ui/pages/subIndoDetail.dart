@@ -382,6 +382,12 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
         final number = ep.episodeNumber;
         final isWatched = _watched.contains(number);
         final isLast = _lastWatched == number;
+        final bg = isLast
+            ? appTheme.accentColor
+            : (isWatched ? appTheme.accentColor.withValues(alpha: 0.16) : appTheme.backgroundSubColor);
+        final fg = isLast
+            ? appTheme.onAccent
+            : (isWatched ? appTheme.accentColor : appTheme.textMainColor);
         return GestureDetector(
           onTap: () => _openServerSheet(index),
           child: Container(
@@ -389,34 +395,20 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
             height: 52,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isLast ? appTheme.accentColor : appTheme.backgroundSubColor,
+              color: bg,
               borderRadius: BorderRadius.circular(12),
               border: !isLast && isWatched
-                  ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.5), width: 1.5)
+                  ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.55), width: 1.5)
                   : null,
             ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Opacity(
-                  opacity: isWatched && !isLast ? 0.5 : 1.0,
-                  child: Text(
-                    "$number",
-                    style: TextStyle(
-                      color: isLast ? appTheme.onAccent : appTheme.textMainColor,
-                      fontFamily: "Rubik",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                if (isWatched && !isLast)
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: Icon(Icons.check_circle_rounded, size: 12, color: appTheme.accentColor),
-                  ),
-              ],
+            child: Text(
+              "$number",
+              style: TextStyle(
+                color: fg,
+                fontFamily: "Rubik",
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
           ),
         );
