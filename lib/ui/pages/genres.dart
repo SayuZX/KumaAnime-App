@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/commons/extensions.dart';
 import 'package:kumaanime/core/database/anilist/queries.dart';
 import 'package:kumaanime/core/database/anilist/types.dart';
@@ -328,9 +329,7 @@ class _GenresPageState extends State<GenresPage> {
                                 Container(
                                   margin: EdgeInsets.only(top: 40, bottom: MediaQuery.of(context).padding.bottom + 10),
                                   child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: appTheme.accentColor,
-                                    ),
+                                    child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                                   ),
                                 )
                             ],
