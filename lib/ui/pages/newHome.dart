@@ -89,7 +89,7 @@ class _NewHomeState extends State<NewHome> {
                               children: [
                                 Text(
                                   (currentUserSettings?.nativeTitle ?? false) ? it.title['native'] ?? title : title,
-                                  style: TextStyle(fontFamily: "Rubik", fontSize: 22, overflow: TextOverflow.ellipsis),
+                                  style: TextStyle(fontSize: 22, overflow: TextOverflow.ellipsis),
                                   maxLines: 2,
                                 ),
                                 Row(
@@ -160,7 +160,6 @@ class _NewHomeState extends State<NewHome> {
     return Padding(
       padding: EdgeInsets.only(top: 20, bottom: 5),
       child: Text(text, style: TextStyle(
-        fontFamily: "Rubik",
         fontWeight: FontWeight.bold,
         fontSize: 24
       )),
