@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -40,6 +41,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
   String downloadPath = "";
 
   void downloadAndInstallUpdate() async {
+    final loc = AppLocalizations.of(context);
     final filename = "kumaanime_${widget.version}.${Platform.isWindows ? "exe" : "apk"}";
     final tempPath = await getTemporaryDirectory();
     downloadPath = "${tempPath.path}/$filename";
@@ -76,7 +78,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
       try {
         await completer.future;
       } catch (err) {
-        floatingSnackBar("There was an issue downloading the update.");
+        floatingSnackBar(loc.usIssueDownloading);
         Logs.app.log("Error downloading the update: ${err.toString()}");
 
         setState(() {
@@ -129,6 +131,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 15, right: 15, top: 10),
       child: SingleChildScrollView(
@@ -146,7 +149,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Update Available",
+                        loc.usUpdateAvailable,
                         style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                       ),
 
@@ -168,7 +171,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
                                 color: appTheme.accentColor,
                               ),
                               child: Text(
-                                widget.pre ? "beta" : "stable",
+                                widget.pre ? loc.usBeta : loc.usStable,
                                 style: TextStyle(
                                   color: appTheme.onAccent,
                                   fontSize: 15,
@@ -189,7 +192,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
                       Icons.launch_rounded,
                       size: 28,
                     ),
-                    tooltip: "Open In Browser",
+                    tooltip: loc.usOpenInBrowser,
                   ),
                 ],
               ),
@@ -294,6 +297,7 @@ class LiquidDownloadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onPressed,
       child: ClipRRect(
@@ -318,7 +322,7 @@ class LiquidDownloadButton extends StatelessWidget {
                 ),
               Center(
                 child: Text(
-                  _getButtonText(),
+                  _getButtonText(loc),
                   style: TextStyle(
                     color: appTheme.onAccent,
                     fontWeight: FontWeight.bold,
@@ -333,14 +337,14 @@ class LiquidDownloadButton extends StatelessWidget {
     );
   }
 
-  String _getButtonText() {
+  String _getButtonText(AppLocalizations loc) {
     switch (state) {
       case DownloadState.idle:
-        return "Download";
+        return loc.usDownload;
       case DownloadState.downloading:
-        return "Downloading... ${(progress * 100).toInt()}%";
+        return loc.usDownloading((progress * 100).toInt());
       case DownloadState.completed:
-        return "Install";
+        return loc.usInstall;
     }
   }
 }
