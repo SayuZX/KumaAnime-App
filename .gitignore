@@ -52,3 +52,4 @@ localChangelog.md
 
 # FVM Version Cache
 .fvm/
+lib/l10n/generated/
