@@ -19,7 +19,6 @@ Widget topRow(BuildContext context, String title) {
         child: Text(
           title,
           style: TextStyle(
-            fontFamily: "Rubik",
             fontSize: 23,
             color: appTheme.textMainColor,
           ),
@@ -80,7 +79,6 @@ Widget settingPagesTitleHeader(BuildContext context, String title) {
         child: Text(
           title,
           style: TextStyle(
-            fontFamily: "Rubik",
             fontSize: 40,
             color: appTheme.textMainColor,
           ),
@@ -93,7 +91,6 @@ Widget settingPagesTitleHeader(BuildContext context, String title) {
 TextStyle textStyle() {
   return TextStyle(
     color: appTheme.textMainColor,
-    fontFamily: "NotoSans",
     fontWeight: FontWeight.bold,
     fontSize: 20,
   );
@@ -153,7 +150,6 @@ Widget optionTile({required String label, required bool selected, required VoidC
                     label,
                     style: TextStyle(
                       color: selected ? appTheme.onAccent : appTheme.textMainColor,
-                      fontFamily: "NotoSans",
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -163,7 +159,6 @@ Widget optionTile({required String label, required bool selected, required VoidC
                       description,
                       style: TextStyle(
                         color: selected ? appTheme.onAccent.withValues(alpha: 0.8) : appTheme.textSubColor,
-                        fontFamily: "NunitoSans",
                         fontSize: 12,
                       ),
                     ),
