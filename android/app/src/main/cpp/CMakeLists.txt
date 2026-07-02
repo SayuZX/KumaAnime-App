@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(kuma_security C)
+project(kuma_security C ASM)
 
-add_library(kuma_security SHARED kuma_security.c)
+enable_language(ASM)
+
+add_library(kuma_security SHARED
+    kuma_security.c
+    kuma_asm.S)
 
 target_compile_options(kuma_security PRIVATE
     -fvisibility=hidden
