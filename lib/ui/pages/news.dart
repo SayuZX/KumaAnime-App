@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/news/animenews.dart';
 import 'package:kumaanime/core/news/kaoriNews.dart';
 import 'package:kumaanime/core/news/types.dart';
@@ -131,7 +132,7 @@ class _NewsState extends State<News> {
   Widget _body(AppLocalizations loc) {
     if (!loaded) {
       return Center(
-        child: CircularProgressIndicator(color: appTheme.accentColor),
+        child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
       );
     }
 
