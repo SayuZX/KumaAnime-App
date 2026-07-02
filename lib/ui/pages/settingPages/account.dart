@@ -135,19 +135,24 @@ class _AccountSettingState extends State<AccountSetting> {
                   onPressed: uploading
                       ? null
                       : () async {
-                          final picked =
-                              await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 100);
-                          if (picked == null) return;
-                          setSheet(() => uploading = true);
-                          final url = await social.uploadAvatar(picked.path);
-                          if (!mounted) return;
-                          if (url != null) {
-                            Navigator.pop(ctx);
-                            setState(() {});
-                            floatingSnackBar("Foto profil diperbarui");
-                          } else {
-                            setSheet(() => uploading = false);
-                            floatingSnackBar("Gagal mengunggah foto");
+                          try {
+                            final picked =
+                                await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 100);
+                            if (picked == null) return;
+                            setSheet(() => uploading = true);
+                            final url = await social.uploadAvatar(picked.path);
+                            if (!mounted) return;
+                            if (url != null) {
+                              Navigator.pop(ctx);
+                              setState(() {});
+                              floatingSnackBar("Foto profil diperbarui");
+                            } else {
+                              setSheet(() => uploading = false);
+                              floatingSnackBar("Gagal mengunggah foto");
+                            }
+                          } catch (e) {
+                            if (mounted) setSheet(() => uploading = false);
+                            floatingSnackBar("Gagal membuka galeri: ${e.toString()}");
                           }
                         },
                   icon: uploading
