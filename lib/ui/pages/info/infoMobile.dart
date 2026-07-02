@@ -1499,10 +1499,10 @@ class _InfoMobileState extends State<InfoMobile> {
                 colors: [Colors.transparent, appTheme.backgroundColor],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                stops: [0.09, 0.23]).createShader(bounds),
+                stops: [0.0, 0.42]).createShader(bounds),
             blendMode: BlendMode.dstIn,
             child: Container(
-              height: 270,
+              height: 310,
               width: double.infinity,
               child: Image.network(
                 provider.data.banner != null ? provider.data.banner! : provider.data.cover,
