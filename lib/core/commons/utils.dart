@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:animestream/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/enums.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -98,7 +98,7 @@ Future<Directory> getDocumentsDirectory() async {
         return dir;
       }
     }
-    return Directory('/storage/emulated/0/Documents/animestream');
+    return Directory('/storage/emulated/0/Documents/KumaAnime');
   }
-  return Directory(dir.path + '/animestream');
+  return Directory(dir.path + '/KumaAnime');
 }
