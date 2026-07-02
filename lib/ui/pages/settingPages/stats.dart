@@ -84,7 +84,7 @@ class _UserStatsState extends State<UserStats> {
         backgroundColor: appTheme.backgroundColor,
         title: Text(
           "Stats",
-          style: TextStyle(color: appTheme.textMainColor, fontFamily: "Poppins", fontSize: 25),
+          style: TextStyle(color: appTheme.textMainColor, fontSize: 25),
         ),
       ),
       body: stats != null
@@ -142,21 +142,21 @@ class _UserStatsState extends State<UserStats> {
                       flex: 2,
                       child: Text(
                         "Genre",
-                        style: textStyle(18, bold: true, fontFamily: "Rubik").copyWith(color: appTheme.accentColor),
+                        style: textStyle(18, bold: true, ).copyWith(color: appTheme.accentColor),
                       ),
                     ),
                     Expanded(
                       child: Text(
                         "Watched",
                         textAlign: TextAlign.center,
-                        style: textStyle(18, bold: true, fontFamily: "Rubik").copyWith(color: appTheme.accentColor),
+                        style: textStyle(18, bold: true, ).copyWith(color: appTheme.accentColor),
                       ),
                     ),
                     Expanded(
                       child: Text(
                         "Minutes",
                         textAlign: TextAlign.right,
-                        style: textStyle(18, bold: true, fontFamily: "Rubik").copyWith(color: appTheme.accentColor),
+                        style: textStyle(18, bold: true, ).copyWith(color: appTheme.accentColor),
                       ),
                     ),
                   ],
@@ -255,7 +255,7 @@ class _UserStatsState extends State<UserStats> {
           margin: EdgeInsets.only(top: 30),
           child: Text(
             "Stats",
-            style: textStyle(23, bold: true, fontFamily: "Rubik"),
+            style: textStyle(23, bold: true, ),
           ),
         ),
         Container(
@@ -334,7 +334,7 @@ class _UserStatsState extends State<UserStats> {
           padding: EdgeInsets.only(top: 30),
           child: Text(
             "Most Watched Genre",
-            style: textStyle(23, bold: true, fontFamily: "Rubik"),
+            style: textStyle(23, bold: true, ),
           ),
         ),
         Container(
@@ -369,7 +369,7 @@ class _UserStatsState extends State<UserStats> {
                     children: [
                       Text(
                         stats?.genres.isNotEmpty == true ? stats!.genres.first.genre : "No Genre Data",
-                        style: textStyle(35, fontFamily: "Poppins", bold: true),
+                        style: textStyle(35, bold: true),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
