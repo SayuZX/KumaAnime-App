@@ -6,6 +6,7 @@ import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/ui/models/bottomSheets/watchSocialSheet.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
@@ -143,6 +144,8 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
       isInitiated = true;
       _isPlayerReady = true;
     });
+
+    SocialService.instance.recordEpisodeWatched();
 
     controller.addListener(_listener);
 
