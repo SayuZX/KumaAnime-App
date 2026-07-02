@@ -84,6 +84,34 @@ class SettingsModal {
   /// Language code for the app interface [defaults to en]
   final String? locale;
 
+  final int? accentColorValue;
+  final String? fontFamily;
+  final double? textScale;
+  final bool? reduceMotion;
+  final String? listLayout;
+  final double? cardScale;
+  final bool? heroBlur;
+  final bool? hardwareAcceleration;
+  final int? bufferSizeMs;
+  final bool? resumePlayback;
+  final bool? autoPlayNext;
+  final int? autoPlayCountdown;
+  final String? playerOrientation;
+  final bool? notifyNewEpisode;
+  final bool? notifyNews;
+  final String? updateCheckFrequency;
+  final bool? notifyDownloadComplete;
+  final int? maxCacheSizeMb;
+  final bool? autoClearCacheOnExit;
+  final bool? showAdultContent;
+  final List<String>? blockedGenres;
+  final bool? highContrast;
+  final double? touchTargetScale;
+  final bool? hapticFeedback;
+  final bool? watchHistoryEnabled;
+  final bool? appLockEnabled;
+  final bool? screenshotProtection;
+
   SettingsModal({
     this.megaSkipDuration,
     this.skipDuration,
@@ -111,6 +139,33 @@ class SettingsModal {
     this.enablePlayerGestures,
     this.useOldNavbar,
     this.locale,
+    this.accentColorValue,
+    this.fontFamily,
+    this.textScale,
+    this.reduceMotion,
+    this.listLayout,
+    this.cardScale,
+    this.heroBlur,
+    this.hardwareAcceleration,
+    this.bufferSizeMs,
+    this.resumePlayback,
+    this.autoPlayNext,
+    this.autoPlayCountdown,
+    this.playerOrientation,
+    this.notifyNewEpisode,
+    this.notifyNews,
+    this.updateCheckFrequency,
+    this.notifyDownloadComplete,
+    this.maxCacheSizeMb,
+    this.autoClearCacheOnExit,
+    this.showAdultContent,
+    this.blockedGenres,
+    this.highContrast,
+    this.touchTargetScale,
+    this.hapticFeedback,
+    this.watchHistoryEnabled,
+    this.appLockEnabled,
+    this.screenshotProtection,
   });
 
   factory SettingsModal.fromMap(Map<dynamic, dynamic> map) {
@@ -141,6 +196,33 @@ class SettingsModal {
       enablePlayerGestures: map['enablePlayerGestures'] ?? false,
       useOldNavbar: map['useOldNavbar'] ?? false,
       locale: map['locale'] ?? 'en',
+      accentColorValue: map['accentColorValue'],
+      fontFamily: map['fontFamily'] ?? 'NotoSans',
+      textScale: (map['textScale'] as num?)?.toDouble() ?? 1.0,
+      reduceMotion: map['reduceMotion'] ?? false,
+      listLayout: map['listLayout'] ?? 'grid',
+      cardScale: (map['cardScale'] as num?)?.toDouble() ?? 1.0,
+      heroBlur: map['heroBlur'] ?? true,
+      hardwareAcceleration: map['hardwareAcceleration'] ?? true,
+      bufferSizeMs: map['bufferSizeMs'] ?? 120000,
+      resumePlayback: map['resumePlayback'] ?? true,
+      autoPlayNext: map['autoPlayNext'] ?? true,
+      autoPlayCountdown: map['autoPlayCountdown'] ?? 10,
+      playerOrientation: map['playerOrientation'] ?? 'auto',
+      notifyNewEpisode: map['notifyNewEpisode'] ?? false,
+      notifyNews: map['notifyNews'] ?? false,
+      updateCheckFrequency: map['updateCheckFrequency'] ?? 'off',
+      notifyDownloadComplete: map['notifyDownloadComplete'] ?? true,
+      maxCacheSizeMb: map['maxCacheSizeMb'] ?? 512,
+      autoClearCacheOnExit: map['autoClearCacheOnExit'] ?? false,
+      showAdultContent: map['showAdultContent'] ?? false,
+      blockedGenres: (map['blockedGenres'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      highContrast: map['highContrast'] ?? false,
+      touchTargetScale: (map['touchTargetScale'] as num?)?.toDouble() ?? 1.0,
+      hapticFeedback: map['hapticFeedback'] ?? true,
+      watchHistoryEnabled: map['watchHistoryEnabled'] ?? true,
+      appLockEnabled: map['appLockEnabled'] ?? false,
+      screenshotProtection: map['screenshotProtection'] ?? false,
     );
   }
 
@@ -172,6 +254,33 @@ class SettingsModal {
       'enablePlayerGestures': enablePlayerGestures,
       'useOldNavbar': useOldNavbar,
       'locale': locale,
+      'accentColorValue': accentColorValue,
+      'fontFamily': fontFamily,
+      'textScale': textScale,
+      'reduceMotion': reduceMotion,
+      'listLayout': listLayout,
+      'cardScale': cardScale,
+      'heroBlur': heroBlur,
+      'hardwareAcceleration': hardwareAcceleration,
+      'bufferSizeMs': bufferSizeMs,
+      'resumePlayback': resumePlayback,
+      'autoPlayNext': autoPlayNext,
+      'autoPlayCountdown': autoPlayCountdown,
+      'playerOrientation': playerOrientation,
+      'notifyNewEpisode': notifyNewEpisode,
+      'notifyNews': notifyNews,
+      'updateCheckFrequency': updateCheckFrequency,
+      'notifyDownloadComplete': notifyDownloadComplete,
+      'maxCacheSizeMb': maxCacheSizeMb,
+      'autoClearCacheOnExit': autoClearCacheOnExit,
+      'showAdultContent': showAdultContent,
+      'blockedGenres': blockedGenres,
+      'highContrast': highContrast,
+      'touchTargetScale': touchTargetScale,
+      'hapticFeedback': hapticFeedback,
+      'watchHistoryEnabled': watchHistoryEnabled,
+      'appLockEnabled': appLockEnabled,
+      'screenshotProtection': screenshotProtection,
     };
   }
 }
