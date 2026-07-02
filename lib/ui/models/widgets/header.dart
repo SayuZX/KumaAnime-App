@@ -13,7 +13,6 @@ Container buildHeader(String title, BuildContext context, {void Function()? afte
           title,
           style: TextStyle(
             color: appTheme.textMainColor,
-            fontFamily: "Rubik",
             fontWeight: FontWeight.bold,
             fontSize: 30,
           ),
