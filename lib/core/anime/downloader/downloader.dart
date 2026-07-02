@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:animestream/core/commons/extractQuality.dart';
+import 'package:kumaanime/core/commons/extractQuality.dart';
 import 'package:collection/collection.dart';
 
-import 'package:animestream/core/anime/downloader/downloadManager.dart';
-import 'package:animestream/core/anime/downloader/downloaderCore.dart';
-import 'package:animestream/core/anime/downloader/downloaderHelper.dart';
-import 'package:animestream/core/anime/downloader/types.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/extensions.dart';
-import 'package:animestream/core/data/downloadHistory.dart';
+import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
+import 'package:kumaanime/core/anime/downloader/downloaderCore.dart';
+import 'package:kumaanime/core/anime/downloader/downloaderHelper.dart';
+import 'package:kumaanime/core/anime/downloader/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/extensions.dart';
+import 'package:kumaanime/core/data/downloadHistory.dart';
 
 enum _DownloadType { stream, video, image, mock }
 
