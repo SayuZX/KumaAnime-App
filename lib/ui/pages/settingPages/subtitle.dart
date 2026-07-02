@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
@@ -65,14 +66,14 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
     print("Sub preference saved!");
   }
 
-  List<String> sentences = [
-    "It was a really tiring day...",
-    "I've seen this before, almost as if I've lived here before.",
-    "Something's really strange. Better check it out alone when its night.",
-  ];
+  List<String> _sentences(AppLocalizations loc) => [
+        loc.subSample1,
+        loc.subSample2,
+        loc.subSample3,
+      ];
 
-  String getSentence(int index) {
-    return sentences[index];
+  String getSentence(int index, AppLocalizations loc) {
+    return _sentences(loc)[index];
   }
 
   int ind = 0;
@@ -99,6 +100,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return PopScope(
       canPop: !previewMode,
       onPopInvokedWithResult: (didPop, result) {
@@ -155,7 +157,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                   width: MediaQuery.of(context).size.width / 1.6,
                                   alignment: Alignment.bottomCenter,
                                   child: SubtitleText(
-                                    text: getSentence(ind),
+                                    text: getSentence(ind, loc),
                                     style: subTextStyle(),
                                     strokeColor: settings.strokeColor,
                                     strokeWidth: settings.strokeWidth,
@@ -186,7 +188,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                               padding: EdgeInsets.only(bottom: 40),
                               shrinkWrap: true,
                               children: [
-                                _itemTitle("Font Family"),
+                                _itemTitle(loc.subFontFamily),
                                 Container(
                                   margin: EdgeInsets.only(bottom: 20),
                                   height: 220,
@@ -232,7 +234,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                   ),
                                 ),
                                 ToggleItem(
-                                    label: "Bold",
+                                    label: loc.subBold,
                                     value: settings.bold,
                                     onTapFunction: () {
                                       setState(() {
@@ -241,7 +243,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                       });
                                     }),
                                 ToggleItem(
-                                    label: "Shadows",
+                                    label: loc.subShadows,
                                     value: settings.enableShadows,
                                     onTapFunction: () {
                                       setState(() {
@@ -249,7 +251,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                         saveSubSettings();
                                       });
                                     }),
-                                _itemTitle("Font Size"),
+                                _itemTitle(loc.subFontSize),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
                                   child: CustomSlider(
@@ -267,7 +269,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: (30 - 15),
                                   ),
                                 ),
-                                _itemTitle("Stroke Width"),
+                                _itemTitle(loc.subStrokeWidth),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
                                   child: CustomSlider(
@@ -285,7 +287,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: 10,
                                   ),
                                 ),
-                                _itemTitle("Background Opacity"),
+                                _itemTitle(loc.subBackgroundOpacity),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
                                   child: CustomSlider(
@@ -304,7 +306,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: 10,
                                   ),
                                 ),
-                                _itemTitle("Bottom margin"),
+                                _itemTitle(loc.subBottomMargin),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 20,
@@ -337,6 +339,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
   }
 
   Widget _preview() {
+    final loc = AppLocalizations.of(context);
     return Stack(children: [
       Container(
         alignment: Alignment.bottomCenter,
@@ -349,7 +352,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
           width: MediaQuery.of(context).size.width / 1.6,
           alignment: Alignment.bottomCenter,
           child: SubtitleText(
-            text: getSentence(ind),
+            text: getSentence(ind, loc),
             style: subTextStyle(),
             strokeColor: settings.strokeColor,
             strokeWidth: settings.strokeWidth,
@@ -372,7 +375,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Preview Mode",
+                  loc.subPreviewMode,
                   style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
@@ -395,7 +398,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
             ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: sentences.length,
+              itemCount: _sentences(loc).length,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) {
                 return Container(
