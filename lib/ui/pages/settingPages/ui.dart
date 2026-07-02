@@ -1,18 +1,18 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/settings.dart';
-import 'package:animestream/core/data/theme.dart';
-import 'package:animestream/core/data/types.dart';
-import 'package:animestream/ui/models/popup.dart';
-import 'package:animestream/ui/models/widgets/clickableItem.dart';
-import 'package:animestream/ui/models/widgets/slider.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/toggleItem.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/models/providers/appProvider.dart';
-import 'package:animestream/ui/theme/themes.dart';
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/settings.dart';
+import 'package:kumaanime/core/data/theme.dart';
+import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/popup.dart';
+import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
+import 'package:kumaanime/ui/models/widgets/slider.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/models/providers/appProvider.dart';
+import 'package:kumaanime/ui/theme/themes.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -172,7 +172,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
                               // });
                               await Settings().writeSettings(SettingsModal(amoledBackground: AMOLEDBackgroundEnabled));
                               appTheme = darkMode
-                                  ? AnimeStreamTheme(
+                                  ? KumaAnimeTheme(
                                       accentColor: thm.theme.accentColor,
                                       backgroundColor:
                                           AMOLEDBackgroundEnabled ? Colors.black : thm.theme.backgroundColor,
