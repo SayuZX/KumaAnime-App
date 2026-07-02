@@ -52,7 +52,6 @@ class CustomSliderState extends State<CustomSlider> {
         trackShape: MarginedTrack(),
         valueIndicatorTextStyle: TextStyle(
           color: appTheme.backgroundColor,
-          fontFamily: "NotoSans",
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
