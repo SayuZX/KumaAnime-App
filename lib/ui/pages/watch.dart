@@ -7,6 +7,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/core/social/socialService.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/bottomSheets/watchSocialSheet.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
@@ -290,23 +291,23 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     if (!mounted || _handlingError || widget.localSource) return;
     _handlingError = true;
 
+    final loc = AppLocalizations.of(context);
     final lower = (message ?? '').toLowerCase();
     final is403 = lower.contains("403") || lower.contains("source error") || lower.contains("forbidden");
     Logs.player.log("Playback error: $message");
-    floatingSnackBar(is403
-        ? "Server menolak akses (403). Mencoba server lain..."
-        : "Gagal memutar video. Mencoba server lain...");
+    floatingSnackBar(is403 ? loc.watchServerDenied403 : loc.watchPlaybackFailed);
 
     _tryFallbackStream().whenComplete(() => _handlingError = false);
   }
 
   Future<void> _tryFallbackStream() async {
     if (!mounted) return;
+    final loc = AppLocalizations.of(context);
     final dataProvider = context.read<PlayerDataProvider>();
     final candidates = dataProvider.state.streams.where((s) => !_triedStreamUrls.contains(s.url)).toList();
 
     if (candidates.isEmpty) {
-      floatingSnackBar("Tidak ada server lain yang tersedia untuk episode ini.");
+      floatingSnackBar(loc.watchNoOtherServers);
       return;
     }
 
@@ -319,7 +320,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
       await controller.initiateVideo(next.url, headers: next.customHeaders);
       if (!mounted) return;
       setState(() => _isPlayerReady = true);
-      floatingSnackBar("Beralih ke server ${next.server}");
+      floatingSnackBar(loc.watchSwitchedToServer(next.server));
     } catch (e) {
       Logs.player.log("Fallback stream failed: $e");
     }
@@ -688,7 +689,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
       subtitleUrl: stream.subtitle,
       customHeaders: stream.customHeaders ?? const {},
     );
-    floatingSnackBar("Mengunduh episode ke folder unduhan");
+    floatingSnackBar(AppLocalizations.of(context).watchDownloadingEpisode);
   }
 
   Widget _buildVolumeBrightnessIndicators() {
