@@ -283,6 +283,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
   }
 
   Widget _metaRow(SubIndoAnimeDetail detail) {
+    final loc = AppLocalizations.of(context);
     final items = <Widget>[];
     void add(IconData icon, String? value, {Color? iconColor}) {
       if (value == null || value.trim().isEmpty) return;
@@ -299,7 +300,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     add(Icons.star_rounded, detail.score, iconColor: const Color(0xFFF5C518));
     add(Icons.live_tv_rounded, detail.type);
     add(Icons.podcasts_rounded, detail.status);
-    add(Icons.confirmation_num_outlined, detail.episodes != null ? "${detail.episodes} eps" : null);
+    add(Icons.confirmation_num_outlined, detail.episodes != null ? loc.sidEpisodesCount(detail.episodes!) : null);
     add(Icons.timer_outlined, detail.duration);
 
     return Wrap(spacing: 16, runSpacing: 8, children: items);
@@ -553,7 +554,7 @@ class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
         backgroundColor: appTheme.modalSheetBackgroundColor,
         content: Text(loc.resetProgressConfirm, style: TextStyle(color: appTheme.textMainColor)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("No")),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(loc.sidNo)),
           TextButton(
             onPressed: () async {
               await SubIndoWatched.reset(widget.animeId);
