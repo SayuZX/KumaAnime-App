@@ -197,7 +197,7 @@ class _KumaAnimeState extends State<KumaAnime> {
       onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.top]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
