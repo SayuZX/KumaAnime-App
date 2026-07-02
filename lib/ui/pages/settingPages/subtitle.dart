@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subtitleText.dart';
@@ -40,7 +41,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
   @override
   void dispose() {
     if (widget.fromWatchPage) {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+      SystemChrome.setPreferredOrientations(watchPreferredOrientations());
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     } else {
       SystemChrome.setPreferredOrientations(
