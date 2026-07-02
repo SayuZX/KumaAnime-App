@@ -34,7 +34,6 @@ class ContinueWatchingSideBox extends StatelessWidget {
               "Continue Watching",
               style: TextStyle(
                 color: appTheme.textMainColor,
-                fontFamily: "Poppins",
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.3,
@@ -196,7 +195,6 @@ class ContinueWatchingSideBox extends StatelessWidget {
                                     "${provider.started ? 'Continue' : 'Start'}",
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontFamily: "Poppins",
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.3,
@@ -207,7 +205,6 @@ class ContinueWatchingSideBox extends StatelessWidget {
                                     "Episode ${provider.watched >= provider.epLinks.length ? provider.watched : provider.watched + 1}",
                                     style: TextStyle(
                                       color: Colors.white.withAlpha(204),
-                                      fontFamily: "Poppins",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -233,7 +230,6 @@ class ContinueWatchingSideBox extends StatelessWidget {
                             "Your Progress",
                             style: TextStyle(
                               color: appTheme.textMainColor,
-                              fontFamily: "Poppins",
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -248,7 +244,6 @@ class ContinueWatchingSideBox extends StatelessWidget {
                               "${(watchedProgress).toInt()}%",
                               style: TextStyle(
                                 color: appTheme.accentColor,
-                                fontFamily: "Poppins",
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -400,7 +395,6 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                       "Continue Episode ${provider.watched >= provider.epLinks.length ? provider.watched : provider.watched + 1}",
                       style: TextStyle(
                         color: appTheme.textMainColor,
-                        fontFamily: "Poppins",
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.6,
@@ -443,7 +437,6 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                                     "Your progress",
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(204),
-                                      fontFamily: "Poppins",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -458,7 +451,6 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                                       "$watchedProgress%",
                                       style: TextStyle(
                                         color: appTheme.accentColor,
-                                        fontFamily: "Poppins",
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -542,7 +534,6 @@ class ContinueWatchingBodyBox extends StatelessWidget {
                             Text(
                               "Continue Watching",
                               style: TextStyle(
-                                fontFamily: "Poppins",
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.3,
