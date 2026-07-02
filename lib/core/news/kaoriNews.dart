@@ -127,8 +127,11 @@ class KaoriNews implements NewsService {
     for (final selector in containerSelectors) {
       final container = document.querySelector(selector);
       if (container == null) continue;
-      final paragraphs =
-          container.querySelectorAll('p').map((p) => p.text.trim()).where((t) => t.isNotEmpty).toList();
+      final paragraphs = container
+          .querySelectorAll('p')
+          .map((p) => p.text.replaceAll(RegExp(r'<[^>]*>'), '').trim())
+          .where((t) => t.isNotEmpty)
+          .toList();
       if (paragraphs.length >= 2) {
         body = paragraphs.join('\n\n');
         break;
