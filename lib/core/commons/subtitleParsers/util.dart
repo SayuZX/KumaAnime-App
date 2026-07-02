@@ -1,4 +1,4 @@
-import 'package:animestream/ui/models/widgets/subtitles/subtitle.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitle.dart';
 
 class SubtitleParserUtil {
    static SubtitleAlignment getAlignmentFromNumber(int number) {
