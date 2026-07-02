@@ -191,23 +191,6 @@ class _SubIndoPageState extends State<SubIndoPage> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Container(width: 22, height: 1, color: cream.withValues(alpha: 0.5)),
-                    const SizedBox(width: 8),
-                    Text(
-                      loc.subIndoTagline.toUpperCase(),
-                      style: TextStyle(
-                        color: cream.withValues(alpha: 0.65),
-                        fontFamily: "NotoSans",
-                        fontSize: 10,
-                        letterSpacing: 3,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
                 Text(
                   loc.subIndo,
                   style: const TextStyle(
@@ -391,7 +374,7 @@ class _SubIndoPageState extends State<SubIndoPage> {
       onTap: () => _openDetail(anime),
       child: Container(
         height: 200,
-        margin: const EdgeInsets.symmetric(horizontal: 15),
+        margin: const EdgeInsets.only(left: 15, right: 15, top: 16),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         child: Stack(
