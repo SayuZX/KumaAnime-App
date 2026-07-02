@@ -1,4 +1,4 @@
-name: animestream
+name: kumaanime
 description: "A app made to stream and download anime!"
 publish_to: "none" #Dont remove this!
 
@@ -84,7 +84,7 @@ dev_dependencies:
 inno_bundle:
   id: "59cae0c0-fb9d-11ef-b95e-5f3937b12ea5"
   publisher: "FrostNova"
-  name: "animestream"
+  name: "Kuma Anime"
   languages:
     - english
 
