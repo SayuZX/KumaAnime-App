@@ -33,9 +33,9 @@ List<ThemeItem> availableThemes = [
 // Represents a generic light theme (used only for its values)
 KumaAnimeTheme lightModeValues = KumaAnimeTheme(
   textMainColor: Color(0xff1A1A1A),
-  textSubColor: Color(0xff5F5F5F),
-  backgroundColor: Colors.white,
-  backgroundSubColor: Color(0xffEDEDED),
+  textSubColor: Color(0xff707070),
+  backgroundColor: Color(0xffF0F0F0),
+  backgroundSubColor: Colors.white,
   modalSheetBackgroundColor: Colors.white,
   accentColor: Colors.black, // ignore this field
   onAccent: Colors.white
