@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitleSettings.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
 
 class SettingsModal {
   /// Skip duration in seconds for the player [defaults to 10 seconds]
