@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:animestream/ui/models/providers/mainNavProvider.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCard.dart';
-import 'package:animestream/ui/models/widgets/infoPageWidgets/scrollingList.dart';
+import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
+import 'package:kumaanime/ui/models/widgets/infoPageWidgets/scrollingList.dart';
 import 'package:flutter/material.dart';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/widgets/header.dart';
-import 'package:animestream/ui/pages/genres.dart';
-import 'package:animestream/ui/pages/info.dart';
-import 'package:animestream/ui/pages/news.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/header.dart';
+import 'package:kumaanime/ui/pages/genres.dart';
+import 'package:kumaanime/ui/pages/info.dart';
+import 'package:kumaanime/ui/pages/news.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Discover extends StatefulWidget {
