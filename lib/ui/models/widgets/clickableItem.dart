@@ -1,5 +1,5 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:flutter/material.dart';
 
 // Represents the button tiles which are clickable in setting screen
