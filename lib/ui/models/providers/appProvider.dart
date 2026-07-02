@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/theme.dart';
-import 'package:animestream/ui/theme/themes.dart';
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/theme.dart';
+import 'package:kumaanime/ui/theme/themes.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 // Handles app wide settings (themes, plugin sources etc..)
 class AppProvider with ChangeNotifier {
-  AnimeStreamTheme _theme = appTheme;
+  KumaAnimeTheme _theme = appTheme;
 
   bool _isDark = currentUserSettings?.darkMode ?? false;
 
-  AnimeStreamTheme get theme => _theme;
+  KumaAnimeTheme get theme => _theme;
 
   bool get isDark => _isDark;
 
@@ -21,7 +21,7 @@ class AppProvider with ChangeNotifier {
 
   bool get isFullScreen => _isFullScreen;
 
-  String _windowTitle = "animestream";
+  String _windowTitle = "Kuma Anime";
 
   String get windowTitle => _windowTitle;
 
@@ -49,12 +49,12 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  set theme(AnimeStreamTheme selectedTheme) {
+  set theme(KumaAnimeTheme selectedTheme) {
     _theme = selectedTheme;
 
     final dark = currentUserSettings?.darkMode ?? true;
 
-    appTheme = AnimeStreamTheme(
+    appTheme = KumaAnimeTheme(
       accentColor: selectedTheme.accentColor,
       //set background color only if dark theme and amoled bg are true, otherwise set respective theme's default bg
       backgroundColor:
@@ -80,7 +80,7 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void applyTheme(AnimeStreamTheme t) {
+  void applyTheme(KumaAnimeTheme t) {
     theme = t;
   }
 
@@ -90,7 +90,7 @@ class AppProvider with ChangeNotifier {
     final theme = availableThemes.firstWhere((thm) => thm.id == themeId, orElse: () => availableThemes[0]);
 
     if (dark) {
-      appTheme = AnimeStreamTheme(
+      appTheme = KumaAnimeTheme(
         accentColor: theme.theme.accentColor,
         backgroundColor: (currentUserSettings?.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor,
         backgroundSubColor: theme.theme.backgroundSubColor,
@@ -100,7 +100,7 @@ class AppProvider with ChangeNotifier {
         onAccent: theme.theme.onAccent,
       );
     } else {
-      appTheme = AnimeStreamTheme(
+      appTheme = KumaAnimeTheme(
         accentColor: theme.lightVariant.accentColor,
         backgroundColor: theme.lightVariant.backgroundColor,
         backgroundSubColor: theme.lightVariant.backgroundSubColor,
