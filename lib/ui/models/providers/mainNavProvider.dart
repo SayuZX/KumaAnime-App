@@ -1,18 +1,18 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/commons/enums/loadingState.dart';
-import 'package:animestream/core/commons/types.dart';
-import 'package:animestream/core/data/watching.dart';
-import 'package:animestream/core/database/anilist/anilist.dart';
-import 'package:animestream/core/database/anilist/login.dart';
-import 'package:animestream/core/database/anilist/queries.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/cards.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCard.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/enums/loadingState.dart';
+import 'package:kumaanime/core/commons/types.dart';
+import 'package:kumaanime/core/data/watching.dart';
+import 'package:kumaanime/core/database/anilist/anilist.dart';
+import 'package:kumaanime/core/database/anilist/login.dart';
+import 'package:kumaanime/core/database/anilist/queries.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
