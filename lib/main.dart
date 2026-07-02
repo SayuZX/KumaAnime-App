@@ -15,7 +15,6 @@ import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:kumaanime/core/anime/providers/animeonsen.dart';
-import 'package:kumaanime/core/app/dohResolver.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/app/version.dart';
@@ -42,14 +41,7 @@ import 'package:fvp/fvp.dart' as fvp;
 class _HttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    final client = super.createHttpClient(context)..userAgent = AppValues.defaultClientUserAgent;
-    client.connectionFactory = (uri, proxyHost, proxyPort) {
-      if (proxyHost != null) return Socket.startConnect(proxyHost, proxyPort ?? uri.port);
-      final dns = currentUserSettings?.dnsProvider ?? 'off';
-      if (dns == 'off') return Socket.startConnect(uri.host, uri.port);
-      return DohResolver.resolve(uri.host, provider: dns).then((ip) => Socket.startConnect(ip ?? uri.host, uri.port));
-    };
-    return client;
+    return super.createHttpClient(context)..userAgent = AppValues.defaultClientUserAgent;
   }
 }
 
