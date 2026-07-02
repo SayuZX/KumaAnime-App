@@ -101,7 +101,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text(
                   loc.settingsTitle,
                   style: TextStyle(
-                    fontFamily: "Rubik",
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: appTheme.textMainColor,
@@ -166,7 +165,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       Text(
                         item.label,
                         style: TextStyle(
-                          fontFamily: "NotoSans",
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: appTheme.textMainColor,
@@ -175,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       const SizedBox(height: 2),
                       Text(
                         item.description,
-                        style: TextStyle(fontFamily: "NunitoSans", fontSize: 13, color: appTheme.textSubColor),
+                        style: TextStyle(fontSize: 13, color: appTheme.textSubColor),
                       ),
                     ],
                   ),
