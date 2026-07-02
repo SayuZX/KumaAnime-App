@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:animestream/core/anime/extractors/vidtube.dart';
-import 'package:animestream/core/anime/providers/animeProvider.dart';
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/logging.dart';
+import 'package:kumaanime/core/anime/extractors/vidtube.dart';
+import 'package:kumaanime/core/anime/providers/animeProvider.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 
