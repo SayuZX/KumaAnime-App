@@ -470,8 +470,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                                                 dataProvider.state.currentQuality.url
                                             ? appTheme.onAccent
                                             : appTheme.textMainColor,
-                                        fontFamily: "Poppins",
-                                      ),
+                                        ),
                                     ),
                                   ),
                                 ),
@@ -523,8 +522,7 @@ class _DesktopControlsState extends State<DesktopControls> {
                                                 sources[index].quality == current.quality
                                             ? appTheme.onAccent
                                             : appTheme.textMainColor,
-                                        fontFamily: "Poppins",
-                                      ),
+                                        ),
                                     ),
                                   ),
                                 ),
