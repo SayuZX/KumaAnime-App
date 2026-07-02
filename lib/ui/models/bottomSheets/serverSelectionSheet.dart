@@ -8,6 +8,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/extractQuality.dart';
 import 'package:kumaanime/core/data/watching.dart';
 import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
@@ -54,6 +55,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
           dub: provider.preferDubs,
           metadata: provider.epLinks[widget.episodeIndex].metadata,
           (list, finished) {
+            final loc = AppLocalizations.of(context);
             if (mounted)
               setState(() {
                 if (finished) {
@@ -64,7 +66,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
                   list.forEach((element) async {
                     qualities.add({
                       'url': element.url,
-                      'server': "${element.server}  ${element.backup ? "- backup" : ""}",
+                      'server': "${element.server}  ${element.backup ? "- ${loc.sssBackup}" : ""}",
                       'quality': "${element.quality}",
                       'headers': jsonEncode(element.customHeaders),
                       'subtitle': element.subtitle ?? "",
@@ -87,6 +89,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
       await src.getStreams(
           widget.provider.selectedSource.identifier, widget.provider.epLinks[widget.episodeIndex].episodeLink,
           dub: provider.preferDubs, metadata: provider.epLinks[widget.episodeIndex].metadata, (list, finished) {
+        final loc = AppLocalizations.of(context);
         if (mounted)
           setState(() {
             if (finished) {
@@ -101,7 +104,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
                 } else {
                   qualities.add({
                     'url': element.url,
-                    'server': "${element.server}  ${element.backup ? "- backup" : ""}",
+                    'server': "${element.server}  ${element.backup ? "- ${loc.sssBackup}" : ""}",
                     'quality': "${element.quality}",
                     'headers': jsonEncode(element.customHeaders ?? {}),
                     'subtitle': element.subtitle ?? "",
@@ -119,6 +122,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
   }
 
   Future<void> getQualities(VideoStream source) async {
+    final loc = AppLocalizations.of(context);
     List<Map<String, String>> mainList = [];
 
     final ParsedHlsMaster list = await parseMasterPlaylist(source.url, customHeader: source.customHeaders).catchError((e) {
@@ -128,7 +132,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
     list.qualityStreams.forEach((element) {
       final map = element.toMap();
       map['bandwidth'] = map['bandwidth']?.toString();
-      map['server'] = "${source.server} ${source.backup ? "- backup" : ""}";
+      map['server'] = "${source.server} ${source.backup ? "- ${loc.sssBackup}" : ""}";
       map['subtitle'] = source.subtitle ?? "";
       map['headers'] = jsonEncode(source.customHeaders ?? {});
       mainList.add(map.cast());
@@ -152,6 +156,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: MediaQuery.of(context).padding.bottom),
       width: double.infinity,
@@ -166,11 +171,11 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "Select Server",
+                  loc.sssSelectServer,
                   style: textStyle().copyWith(fontSize: 23),
                 ),
                 Text(
-                  "Episode ${widget.episodeIndex + 1}",
+                  loc.sssEpisodeNumber(widget.episodeIndex + 1),
                  style: TextStyle(color: appTheme.textSubColor, )
                 ),
               ],
@@ -205,7 +210,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
                       padding: EdgeInsets.only(bottom: 10, top: 20),
                       child: Center(
                         child: Text(
-                          "Woah! empty list of servers!",
+                          loc.sssEmptyServers,
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
@@ -343,7 +348,7 @@ class _DownloadTile extends StatelessWidget {
             floatingSnackBar("$err");
           });
           Navigator.of(context).pop();
-          floatingSnackBar("Downloading the episode to your downloads folder");
+          floatingSnackBar(AppLocalizations.of(context).sssDownloadingEpisode);
         },
         style: ElevatedButton.styleFrom(
           elevation: 0,
