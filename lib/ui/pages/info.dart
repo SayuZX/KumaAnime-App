@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:animestream/ui/models/providers/infoProvider.dart';
-import 'package:animestream/ui/pages/info/infoDesktop.dart';
-import 'package:animestream/ui/pages/info/infoMobile.dart';
+import 'package:kumaanime/ui/models/providers/infoProvider.dart';
+import 'package:kumaanime/ui/pages/info/infoDesktop.dart';
+import 'package:kumaanime/ui/pages/info/infoMobile.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
