@@ -1,9 +1,9 @@
-import 'package:animestream/core/anime/downloader/downloader.dart';
-import 'package:animestream/core/anime/downloader/downloaderHelper.dart';
-import 'package:animestream/core/anime/downloader/types.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/snackBar.dart';
+import 'package:kumaanime/core/anime/downloader/downloader.dart';
+import 'package:kumaanime/core/anime/downloader/downloaderHelper.dart';
+import 'package:kumaanime/core/anime/downloader/types.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:flutter/widgets.dart';
 
 /// Manages and Keeps track of downloads.
