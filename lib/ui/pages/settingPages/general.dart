@@ -37,7 +37,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
       fasterDownloads = settings.fasterDownloads!;
       useQueuedDownloads = settings.useQueuedDownloads!;
       enableLogging = settings.enableLogging!;
-      dnsProvider = settings.dnsProvider ?? 'auto';
+      dnsProvider = settings.dnsProvider ?? 'off';
     });
   }
 
@@ -209,7 +209,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                         );
                       },
                       label: "Secure DNS",
-                      description: _dnsOptions[dnsProvider] ?? 'Automatic',
+                      description: _dnsOptions[dnsProvider] ?? 'Off',
                       suffixIcon: Icon(Icons.arrow_drop_down),
                     )
                   ],
@@ -295,15 +295,8 @@ class _GeneralSettingState extends State<GeneralSetting> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Text("Secure DNS", style: textStyle().copyWith(fontSize: 23)),
-            ),
-            Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                "Untuk aplikasi ini saja. Melewati blokir ISP saat streaming, scraping, dan upload.",
-                style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12),
-              ),
+              child: Text("Secure DNS", style: textStyle().copyWith(fontSize: 23)),
             ),
             ListView(
               shrinkWrap: true,
