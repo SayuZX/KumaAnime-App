@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
