@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "kuma_asm.h"
+
 #define KUMA_XOR_KEY 0x5A
 
 __attribute__((used, section(".kuma_cr")))
@@ -15,17 +17,7 @@ static const unsigned char kuma_cr_obf[] = {
 static const int kuma_cr_len = 29;
 
 static unsigned char kuma_xor_byte(unsigned char b, unsigned char k) {
-#if defined(__aarch64__)
-    unsigned int r;
-    __asm__ volatile("eor %w0, %w1, %w2" : "=r"(r) : "r"((unsigned int)b), "r"((unsigned int)k));
-    return (unsigned char)r;
-#elif defined(__x86_64__)
-    unsigned char r = b;
-    __asm__ volatile("xorb %1, %0" : "+r"(r) : "r"(k));
-    return r;
-#else
-    return (unsigned char)(b ^ k);
-#endif
+    return (unsigned char)(kuma_asm_xor((unsigned int)b, (unsigned int)k) & 0xFF);
 }
 
 static uint64_t kuma_rotl(uint64_t x, unsigned r) {
@@ -36,26 +28,6 @@ static uint64_t kuma_rotl(uint64_t x, unsigned r) {
     return res;
 #else
     return (x << r) | (x >> (64u - r));
-#endif
-}
-
-static long kuma_sys_getpid(void) {
-#if defined(__aarch64__)
-    register long x8 __asm__("x8") = 172;
-    register long x0 __asm__("x0");
-    __asm__ volatile("svc #0" : "=r"(x0) : "r"(x8) : "memory");
-    return x0;
-#elif defined(__x86_64__)
-    long ret;
-    __asm__ volatile("syscall" : "=a"(ret) : "a"(39) : "rcx", "r11", "memory");
-    return ret;
-#elif defined(__arm__)
-    register long r7 __asm__("r7") = 20;
-    register long r0 __asm__("r0");
-    __asm__ volatile("svc #0" : "=r"(r0) : "r"(r7) : "memory");
-    return r0;
-#else
-    return getpid();
 #endif
 }
 
@@ -92,7 +64,7 @@ uint32_t kuma_self_checksum(void) {
 
 __attribute__((visibility("default")))
 uint64_t kuma_session_token(uint64_t hw_seed, uint64_t timestamp) {
-    uint64_t t = hw_seed ^ 0xA5A5A5A5A5A5A5A5ull;
+    uint64_t t = kuma_asm_mix(hw_seed, 0xA5A5A5A5A5A5A5A5ull);
     t = kuma_rotl(t, 13) + timestamp;
     t ^= kuma_rotl(timestamp, 27);
     t *= 0x100000001B3ull;
@@ -106,7 +78,7 @@ int kuma_validate_token(uint64_t token, uint64_t hw_seed, uint64_t timestamp) {
 
 __attribute__((visibility("default")))
 int kuma_anti_debug(void) {
-    volatile long pid = kuma_sys_getpid();
+    volatile long pid = kuma_asm_getpid();
     (void)pid;
 
     int fd = open("/proc/self/status", O_RDONLY);
