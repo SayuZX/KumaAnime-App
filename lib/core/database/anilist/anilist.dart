@@ -378,7 +378,12 @@ class Anilist extends Database {
           final serverErr = err.linkException as ServerException;
           final parsed = serverErr.parsedResponse;
           if (parsed != null) {
-            if (parsed.data != null) return parsed.data!;
+            if (parsed.data != null) {
+              final partial = parsed.data!;
+              if (type == RequestType.media) return partial['Page']?['media'];
+              if (type == RequestType.recentlyUpdatedAnime) return partial['Page']?['airingSchedules'];
+              return partial;
+            }
             if (parsed.errors != null && parsed.errors!.isNotEmpty) {
               throw AnilistApiException("GraphQL error: ${_collectMessages(parsed.errors!)}", statusCode: statusCode);
             }
