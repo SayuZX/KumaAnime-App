@@ -15,6 +15,7 @@ import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/fileExplorer.dart';
 import 'package:kumaanime/ui/pages/settingPages/logs.dart';
 import 'package:kumaanime/ui/pages/watch.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
         floatingActionButton: kDebugMode
             ? FloatingActionButton(
@@ -66,7 +68,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
             : null,
         appBar: AppBar(
           title: Text(
-            "Downloads",
+            loc.dlTitle,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
           leading: IconButton(
@@ -89,7 +91,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                 size: 28,
                 color: appTheme.textMainColor,
               ),
-              tooltip: "Logs",
+              tooltip: loc.dlLogsTooltip,
             ),
           ],
           surfaceTintColor: Colors.transparent,
@@ -110,7 +112,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                 labelStyle: TextStyle(
                   fontWeight: FontWeight.bold,
                   ),
-                tabs: [_tabBarItem("Active"), _tabBarItem("History"), _tabBarItem("Downloads")],
+                tabs: [_tabBarItem(loc.dlTabActive), _tabBarItem(loc.dlTabHistory), _tabBarItem(loc.dlTabDownloads)],
               ),
               Expanded(
                 child: Padding(
@@ -129,11 +131,12 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
   }
 
   Widget _buildActive() {
+    final loc = AppLocalizations.of(context);
     return ValueListenableBuilder(
       valueListenable: DownloadManager.downloadsCount,
       builder: (ctx, val, child) => (val == 0)
           ? Center(
-              child: Text("Start a download!!"),
+              child: Text(loc.dlStartDownload),
             )
           : ListView.builder(
               itemCount: DownloadManager.downloadsCount.value,
@@ -153,13 +156,14 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
   }
 
   Widget _buildHistory() {
+    final loc = AppLocalizations.of(context);
     return ValueListenableBuilder(
         valueListenable: _boxListenable,
         builder: (context, box, child) {
           final values = DownloadHistory.getDownloadHistory(status: DownloadStatus.completed);
           return values.length == 0
               ? Center(
-                  child: Text("Just like the search history!"),
+                  child: Text(loc.dlEmptyHistory),
                 )
               : ListView.builder(
                   itemCount: values.length,
@@ -190,6 +194,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
   }
 
   Widget _downloadedItem(DownloadHistoryItem item) {
+    final loc = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(12)),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -225,7 +230,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Text(
-                      item.status.name + " • ${_toMegs(item.size)} MB",
+                      item.status.name + loc.dlDownloadSize(_toMegs(item.size)),
                       style: TextStyle(color: appTheme.textSubColor),
                     ),
                   ),
@@ -243,7 +248,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                                 children: [
                                   Icon(Icons.open_in_new),
                                   Text(
-                                    "Open",
+                                    loc.dlOpen,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold, color: appTheme.onAccent),
                                   )
@@ -261,7 +266,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                               children: [
                                 Icon(Icons.delete),
                                 Text(
-                                  "Delete",
+                                  loc.dlDelete,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold, color: appTheme.onAccent),
                                 ),
@@ -281,16 +286,17 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
   }
 
   void _deleteDialog(String filepath, int? id) {
+    final loc = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("You Sure?"),
+        title: Text(loc.dlDeleteTitle),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("no"),
+            child: Text(loc.dlNo),
           ),
           TextButton(
             onPressed: () async {
@@ -301,12 +307,12 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
               backgroundColor: appTheme.accentColor,
               foregroundColor: appTheme.onAccent,
             ),
-            child: Text("Yes"),
+            child: Text(loc.dlYes),
           ),
         ],
         content: Padding(
           padding: const EdgeInsets.all(5),
-          child: Text('Are you sure to delete "${filepath.split("/").last}" from your device?'),
+          child: Text(loc.dlDeleteConfirm(filepath.split("/").last)),
         ),
       ),
     );
@@ -314,7 +320,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
 
   void _playVideo(String filepath) {
     if (!File(filepath).existsSync()) {
-      floatingSnackBar("File Not Found!");
+      floatingSnackBar(AppLocalizations.of(context).dlFileNotFound);
       return;
     }
     final controller = Platform.isAndroid ? BetterPlayerWrapper() : FvpWrapper();
