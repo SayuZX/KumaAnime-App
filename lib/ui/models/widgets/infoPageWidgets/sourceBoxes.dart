@@ -86,7 +86,6 @@ class SourceSideWidget extends StatelessWidget {
                                 "Select Source",
                                 style: TextStyle(
                                   color: appTheme.textMainColor.withAlpha(220),
-                                  fontFamily: "Rubik",
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -139,7 +138,6 @@ class SourceSideWidget extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(14),
                                 style: TextStyle(
                                   color: appTheme.textMainColor,
-                                  fontFamily: "Poppins",
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -215,7 +213,6 @@ class SourceSideWidget extends StatelessWidget {
                                     "Source Status",
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(150),
-                                      fontFamily: "Poppins",
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -225,7 +222,6 @@ class SourceSideWidget extends StatelessWidget {
                                     sourceMatchString,
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(230),
-                                      fontFamily: "Poppins",
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -282,7 +278,6 @@ class SourceSideWidget extends StatelessWidget {
                             label: Text(
                               "Manual Search",
                               style: TextStyle(
-                                fontFamily: "Poppins",
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                                 letterSpacing: 0.3,
@@ -318,7 +313,6 @@ class SourceSideWidget extends StatelessWidget {
                                     "Use manual search if automatic matching fails",
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(130),
-                                      fontFamily: "Poppins",
                                       fontSize: 12,
                                       fontStyle: FontStyle.italic,
                                     ),
@@ -419,7 +413,6 @@ class SourceBodyWidget extends StatelessWidget {
                         "Source Selection",
                         style: TextStyle(
                           color: appTheme.textMainColor,
-                          fontFamily: "Poppins",
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.6,
@@ -461,7 +454,6 @@ class SourceBodyWidget extends StatelessWidget {
                               "Select Source",
                               style: TextStyle(
                                 color: appTheme.textMainColor.withAlpha(204),
-                                fontFamily: "Poppins",
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -489,7 +481,6 @@ class SourceBodyWidget extends StatelessWidget {
                                         : "Searching",
                                     style: TextStyle(
                                       color: statusColor,
-                                      fontFamily: "Poppins",
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -538,7 +529,6 @@ class SourceBodyWidget extends StatelessWidget {
                               borderRadius: BorderRadius.circular(14),
                               style: TextStyle(
                                 color: appTheme.textMainColor,
-                                fontFamily: "Poppins",
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -615,7 +605,6 @@ class SourceBodyWidget extends StatelessWidget {
                       label: Text(
                         "Manual Search",
                         style: TextStyle(
-                          fontFamily: "Poppins",
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           letterSpacing: 0.3,
@@ -651,7 +640,6 @@ class SourceBodyWidget extends StatelessWidget {
                               "Use manual search if automatic matching fails",
                               style: TextStyle(
                                 color: appTheme.textMainColor.withAlpha(130),
-                                fontFamily: "Poppins",
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
                               ),
