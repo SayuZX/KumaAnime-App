@@ -236,14 +236,22 @@ class _SubIndoPageState extends State<SubIndoPage> {
       style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans"),
       decoration: InputDecoration(
         hintText: loc.subIndoSearchHint,
-        hintStyle: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans"),
-        prefixIcon: Icon(Icons.search_rounded, color: appTheme.textSubColor),
+        hintStyle: const TextStyle(color: Color(0xff666666), fontFamily: "NotoSans"),
+        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xff888888), size: 22),
         filled: true,
-        fillColor: appTheme.backgroundSubColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        fillColor: const Color(0xff1E1E1E),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: const BorderSide(color: Color(0xff333333), width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: appTheme.accentColor, width: 1.2),
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(24),
+          borderSide: const BorderSide(color: Color(0xff333333), width: 1),
         ),
       ),
     );
