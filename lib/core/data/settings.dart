@@ -33,4 +33,26 @@ class Settings {
     await box.put(HiveKey.settings.name, currentSettings);
     if (box.isOpen) await box.close;
   }
+
+  Future<void> resetToDefaults() async {
+    var box = await Hive.openBox(_boxName);
+    if (!box.isOpen) box = await Hive.openBox(_boxName);
+    final defaults = SettingsModal.fromMap({}).toMap();
+    currentUserSettings = SettingsModal.fromMap(defaults);
+    await box.put(HiveKey.settings.name, defaults);
+    if (box.isOpen) await box.close();
+  }
+
+  Future<void> resetKeys(List<String> keys) async {
+    var box = await Hive.openBox(_boxName);
+    if (!box.isOpen) box = await Hive.openBox(_boxName);
+    final defaults = SettingsModal.fromMap({}).toMap();
+    final current = (await getSettings(writing: true)).toMap();
+    for (final key in keys) {
+      if (defaults.containsKey(key)) current[key] = defaults[key];
+    }
+    currentUserSettings = SettingsModal.fromMap(current);
+    await box.put(HiveKey.settings.name, current);
+    if (box.isOpen) await box.close();
+  }
 }
