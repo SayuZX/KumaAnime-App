@@ -4,6 +4,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/app/update.dart';
 import 'package:kumaanime/core/commons/utils.dart';
 import 'package:kumaanime/core/data/downloadHistory.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
@@ -165,7 +166,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                           color: _barController.currentIndex == 0 ? appTheme.onAccent : appTheme.textMainColor,
                         ),
                         label: Text(
-                          "Home",
+                          AppLocalizations.of(context).navHome,
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
@@ -175,7 +176,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                           color: _barController.currentIndex == 1 ? appTheme.onAccent : appTheme.textMainColor,
                         ),
                         label: Text(
-                          "Discover",
+                          AppLocalizations.of(context).navDiscover,
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
@@ -183,7 +184,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                         icon: Icon(Icons.search_rounded,
                             color: _barController.currentIndex == 2 ? appTheme.onAccent : appTheme.textMainColor),
                         label: Text(
-                          "Search",
+                          AppLocalizations.of(context).navSearch,
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
@@ -237,9 +238,9 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                 accentColor: appTheme.accentColor,
                 backgroundColor: appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
                 items: [
-                  BottomBarItem(title: 'Home', icon: Icon(Icons.home)),
-                  BottomBarItem(title: 'Discover', icon: Icon(Icons.auto_awesome)),
-                  BottomBarItem(title: 'Search', icon: Icon(Icons.search))
+                  BottomBarItem(title: AppLocalizations.of(context).navHome, icon: Icon(Icons.home)),
+                  BottomBarItem(title: AppLocalizations.of(context).navDiscover, icon: Icon(Icons.auto_awesome)),
+                  BottomBarItem(title: AppLocalizations.of(context).navSearch, icon: Icon(Icons.search))
                 ],
                 controller: _barController,
               )
@@ -270,9 +271,9 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                     appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
                 // borderRadius: 12,
                 items: [
-                  FloatyBarItem(title: 'Home', icon: Icons.home),
-                  FloatyBarItem(title: 'Discover', icon: Icons.auto_awesome),
-                  FloatyBarItem(title: 'Search', icon: Icons.search),
+                  FloatyBarItem(title: AppLocalizations.of(context).navHome, icon: Icons.home),
+                  FloatyBarItem(title: AppLocalizations.of(context).navDiscover, icon: Icons.auto_awesome),
+                  FloatyBarItem(title: AppLocalizations.of(context).navSearch, icon: Icons.search),
                 ],
               )
             ],
