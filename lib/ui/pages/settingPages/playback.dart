@@ -100,7 +100,7 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 18, bottom: 4),
       child: Text(text,
-          style: TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 16, fontWeight: FontWeight.bold)),
+          style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
