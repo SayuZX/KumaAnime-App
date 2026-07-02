@@ -30,5 +30,17 @@
   "enableLogging": "Aktifkan Logging",
   "enableLoggingDesc": "Membantu proses debug",
   "language": "Bahasa",
-  "selectLanguage": "Pilih Bahasa"
+  "selectLanguage": "Pilih Bahasa",
+  "subIndo": "Sub Indo",
+  "subIndoOngoing": "Sedang Tayang",
+  "subIndoCompleted": "Selesai",
+  "subIndoGenres": "Genre",
+  "subIndoSearchHint": "Cari anime sub indo...",
+  "subIndoEpisodes": "Episode",
+  "subIndoSynopsis": "Sinopsis",
+  "subIndoSelectServer": "Pilih Server",
+  "subIndoEmpty": "Tidak ada hasil",
+  "subIndoLoadError": "Gagal memuat. Periksa URL API Sub Indo di konfigurasi build.",
+  "retry": "Coba Lagi",
+  "loadMore": "Muat lagi"
 }
