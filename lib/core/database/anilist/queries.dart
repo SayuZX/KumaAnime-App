@@ -1,7 +1,7 @@
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/anilist/anilist.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/anilist/anilist.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/core/commons/enums.dart';
 
 class AnilistQueries {
   Future<List<UserAnimeList>> getUserAnimeList(String userName, {MediaStatus? status}) async {
