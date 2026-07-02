@@ -2,9 +2,9 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/notification.dart';
-import 'package:animestream/ui/models/snackBar.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/notification.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:http/http.dart';
@@ -68,7 +68,7 @@ class DownloaderHelper {
         // Default fallback
         defDownloadPath = '${Platform.environment['USERPROFILE']}\\Downloads';
       }
-      return Platform.isWindows ? defDownloadPath : '/storage/emulated/0/Download/animestream';
+      return Platform.isWindows ? defDownloadPath : '/storage/emulated/0/Download/KumaAnime';
     }
   }
 
