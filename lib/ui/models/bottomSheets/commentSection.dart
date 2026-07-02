@@ -133,14 +133,13 @@ class _CommentsectionState extends State<Commentsection> {
                           replyMode ? "Replies" : "Comments",
                           style: TextStyle(
                             color: appTheme.textMainColor,
-                            fontFamily: "Rubik",
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           "${replyMode ? comments[activeCommentIndex!].replies.length : totalComments ?? comments.length} items",
-                          style: TextStyle(color: appTheme.textSubColor, fontFamily: "Rubik"),
+                          style: TextStyle(color: appTheme.textSubColor, ),
                         ),
                       ],
                     ),
@@ -212,7 +211,7 @@ class _CommentsectionState extends State<Commentsection> {
                             hintText: replyMode
                                 ? "reply to @${comments[activeCommentIndex!].username}"
                                 : "comment as ${storedUserData!.name}",
-                            hintStyle: TextStyle(fontSize: 14, fontFamily: "NotoSans", color: appTheme.textSubColor),
+                            hintStyle: TextStyle(fontSize: 14, color: appTheme.textSubColor),
                             focusColor: appTheme.accentColor,
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -302,7 +301,7 @@ class _CommentsectionState extends State<Commentsection> {
           child: loggingIn
               ? Text(
                   "Logging in...",
-                  style: TextStyle(fontSize: 18, fontFamily: "Rubik"),
+                  style: TextStyle(fontSize: 18, ),
                 )
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -312,7 +311,7 @@ class _CommentsectionState extends State<Commentsection> {
                     ),
                     Text(
                       "Login to Commentum",
-                      style: TextStyle(fontSize: 18, fontFamily: "Poppins"),
+                      style: TextStyle(fontSize: 18, ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
