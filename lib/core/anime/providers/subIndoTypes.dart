@@ -8,13 +8,6 @@ class SubIndoGenre {
     required this.title,
     required this.genreId,
   });
-
-  factory SubIndoGenre.fromMap(Map<String, dynamic> map) {
-    return SubIndoGenre(
-      title: map['title']?.toString() ?? '',
-      genreId: map['genreId']?.toString() ?? '',
-    );
-  }
 }
 
 class SubIndoAnime {
@@ -25,7 +18,6 @@ class SubIndoAnime {
   final String? score;
   final String? status;
   final String? releaseDay;
-  final String? latestReleaseDate;
   final List<SubIndoGenre> genres;
 
   SubIndoAnime({
@@ -36,25 +28,8 @@ class SubIndoAnime {
     this.score,
     this.status,
     this.releaseDay,
-    this.latestReleaseDate,
     this.genres = const [],
   });
-
-  factory SubIndoAnime.fromMap(Map<String, dynamic> map) {
-    return SubIndoAnime(
-      animeId: map['animeId']?.toString() ?? '',
-      title: map['title']?.toString() ?? '',
-      poster: map['poster']?.toString() ?? '',
-      episodes: map['episodes']?.toString(),
-      score: map['score']?.toString(),
-      status: map['status']?.toString(),
-      releaseDay: map['releaseDay']?.toString(),
-      latestReleaseDate: (map['latestReleaseDate'] ?? map['lastReleaseDate'])?.toString(),
-      genres: ((map['genreList'] ?? []) as List)
-          .map((e) => SubIndoGenre.fromMap(Map<String, dynamic>.from(e)))
-          .toList(),
-    );
-  }
 }
 
 class SubIndoAnimeDetail {
@@ -89,44 +64,6 @@ class SubIndoAnimeDetail {
     this.genres = const [],
     this.episodeList = const [],
   });
-
-  factory SubIndoAnimeDetail.fromMap(Map<String, dynamic> map) {
-    final rawEpisodes = ((map['episodeList'] ?? []) as List)
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
-
-    // The API lists newest episodes first, so numbers fall back to reverse order
-    final episodeList = <EpisodeDetails>[];
-    for (var i = 0; i < rawEpisodes.length; i++) {
-      final raw = rawEpisodes[i];
-      final title = raw['title']?.toString() ?? '';
-      final parsedNumber = RegExp(r'[Ee]pisode\s*(\d+)').firstMatch(title)?.group(1);
-      episodeList.add(EpisodeDetails(
-        episodeLink: raw['episodeId']?.toString() ?? '',
-        episodeNumber: int.tryParse(parsedNumber ?? '') ?? (rawEpisodes.length - i),
-        episodeTitle: title,
-      ));
-    }
-    episodeList.sort((a, b) => a.episodeNumber.compareTo(b.episodeNumber));
-
-    return SubIndoAnimeDetail(
-      title: map['title']?.toString() ?? '',
-      japanese: map['japanese']?.toString(),
-      score: map['score']?.toString(),
-      type: map['type']?.toString(),
-      status: map['status']?.toString(),
-      episodes: map['episodes']?.toString(),
-      duration: map['duration']?.toString(),
-      aired: map['aired']?.toString(),
-      studios: map['studios']?.toString(),
-      poster: map['poster']?.toString() ?? '',
-      synopsis: ((map['synopsis']?['paragraphList'] ?? []) as List).join("\n\n"),
-      genres: ((map['genreList'] ?? []) as List)
-          .map((e) => SubIndoGenre.fromMap(Map<String, dynamic>.from(e)))
-          .toList(),
-      episodeList: episodeList,
-    );
-  }
 }
 
 class SubIndoPagedResult {
