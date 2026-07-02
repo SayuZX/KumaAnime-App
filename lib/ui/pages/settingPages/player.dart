@@ -6,6 +6,7 @@ import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -74,6 +75,7 @@ class PlayerSettingState extends State<PlayerSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -83,7 +85,7 @@ class PlayerSettingState extends State<PlayerSetting> {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    settingPagesTitleHeader(context, "Player"),
+                    settingPagesTitleHeader(context, loc.plrPlayer),
                     Container(
                       // padding: EdgeInsets.only(left: 20, right: 20, top: 0),
                       child: Column(
@@ -96,7 +98,7 @@ class PlayerSettingState extends State<PlayerSetting> {
                                 Padding(
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: Text(
-                                    "Skip duration",
+                                    loc.plrSkipDuration,
                                     style: textStyle(),
                                   ),
                                 ),
@@ -143,7 +145,7 @@ class PlayerSettingState extends State<PlayerSetting> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Text(
-                                    "Mega skip duration",
+                                    loc.plrMegaSkipDuration,
                                     style: textStyle(),
                                   ),
                                 ),
@@ -185,8 +187,8 @@ class PlayerSettingState extends State<PlayerSetting> {
                             ),
                           ),
                           ToggleItem(
-                            label: "Show skip button",
-                            description: "The +$megaSkipDuration button on the player",
+                            label: loc.plrShowSkipButton,
+                            description: loc.plrShowSkipButtonDesc(megaSkipDuration ?? 85),
                             value: enableMegaSkip,
                             onTapFunction: () {
                               enableMegaSkip = !enableMegaSkip;
@@ -207,11 +209,11 @@ class PlayerSettingState extends State<PlayerSetting> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Subtitle settings",
+                                        loc.plrSubtitleSettings,
                                         style: textStyle(),
                                       ),
                                       Text(
-                                        "customize the subtitles",
+                                        loc.plrCustomizeSubtitles,
                                         style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12),
                                       ),
                                     ],
@@ -222,9 +224,9 @@ class PlayerSettingState extends State<PlayerSetting> {
                             ),
                           ),
                           ToggleItem(
-                              label: "Enable super speeds",
+                              label: loc.plrEnableSuperSpeeds,
                               value: enableSuperSpeeds,
-                              description: "Enable extra player speeds",
+                              description: loc.plrEnableSuperSpeedsDesc,
                               onTapFunction: () {
                                 enableSuperSpeeds = !enableSuperSpeeds;
                                 writeSettings(SettingsModal(enableSuperSpeeds: enableSuperSpeeds));
@@ -234,14 +236,14 @@ class PlayerSettingState extends State<PlayerSetting> {
                                 doubleTapToSkip = !doubleTapToSkip;
                                 writeSettings(SettingsModal(doubleTapToSkip: doubleTapToSkip));
                               },
-                              label: "Double tap to seek",
-                              description: "Double tap left/right to jump $skipDuration seconds",
+                              label: loc.plrDoubleTapToSeek,
+                              description: loc.plrDoubleTapToSeekDesc(skipDuration ?? 10),
                               value: doubleTapToSkip,
                               mobileOnly: true,
                             ),
                           ToggleItem(
-                            label: "Auto Picture-in-Picture",
-                            description: "Enter PiP automatically when minimized",
+                            label: loc.plrAutoPip,
+                            description: loc.plrAutoPipDesc,
                             value: enablePipOnMinimize,
                             onTapFunction: () {
                               enablePipOnMinimize = !enablePipOnMinimize;
@@ -249,8 +251,8 @@ class PlayerSettingState extends State<PlayerSetting> {
                             },
                           ),
                           ToggleItem(
-                            label: "Auto Op/Ed Skip",
-                            description: "Auto skip opening and ending themes",
+                            label: loc.plrAutoOpEdSkip,
+                            description: loc.plrAutoOpEdSkipDesc,
                             value: autoOpEdSkip,
                             onTapFunction: () {
                               autoOpEdSkip = !autoOpEdSkip;
@@ -262,8 +264,8 @@ class PlayerSettingState extends State<PlayerSetting> {
                               enableHoldToSpeedUp = !enableHoldToSpeedUp;
                               writeSettings(SettingsModal(enableHoldToSpeedUp: enableHoldToSpeedUp));
                             },
-                            label: "Hold to Speed Up",
-                            description: "Long press the player to speed up the video",
+                            label: loc.plrHoldToSpeedUp,
+                            description: loc.plrHoldToSpeedUpDesc,
                             value: enableHoldToSpeedUp,
                           ),
                           ToggleItem(
@@ -271,8 +273,8 @@ class PlayerSettingState extends State<PlayerSetting> {
                               enablePlayerGestures = !enablePlayerGestures;
                               writeSettings(SettingsModal(enablePlayerGestures: enablePlayerGestures));
                             },
-                            label: "Player Gestures",
-                            description: "Gestures for brightness & volume controls",
+                            label: loc.plrPlayerGestures,
+                            description: loc.plrPlayerGesturesDesc,
                             value: enablePlayerGestures,
                             mobileOnly: true,
                             )
