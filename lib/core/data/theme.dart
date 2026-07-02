@@ -1,7 +1,7 @@
-import 'package:animestream/core/commons/enums/hiveEnums.dart';
+import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:hive/hive.dart';
 
-final String _boxName = HiveBox.animestream.boxName;
+final String _boxName = HiveBox.kumaanime.boxName;
 
 Future<int> getTheme() async {
   var box = await Hive.openBox(_boxName);
