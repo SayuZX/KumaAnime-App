@@ -4,6 +4,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/theme.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/popup.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
 import 'package:kumaanime/ui/models/widgets/slider.dart';
@@ -76,6 +77,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       // backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -83,19 +85,19 @@ class _ThemeSettingState extends State<ThemeSetting> {
           padding: pagePadding(context, bottom: true),
           child: Column(
             children: [
-              settingPagesTitleHeader(context, "UI"),
+              settingPagesTitleHeader(context, loc.uiTitle),
               Container(
                 child: currentThemeId != null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ToggleItem(
-                              label: "Material Theme",
+                              label: loc.uiMaterialTheme,
                               value: materialTheme,
-                              description: "wallpaper dependent theme",
+                              description: loc.uiMaterialThemeDesc,
                               onTapFunction: () async {
                                 //the package just wont work if <android 12!!!
-                                if (!isAboveAndroid12) return floatingSnackBar("Android 12 or greater is required");
+                                if (!isAboveAndroid12) return floatingSnackBar(loc.uiAndroid12Required);
                                 materialTheme = !materialTheme;
                                 await Settings().writeSettings(SettingsModal(materialTheme: materialTheme));
                                 setState(() {});
@@ -114,7 +116,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Theme Mode",
+                                  loc.uiThemeMode,
                                   style: textStyle(),
                                 ),
                                 SegmentedButton(
@@ -159,11 +161,11 @@ class _ThemeSettingState extends State<ThemeSetting> {
                               await Settings().writeSettings(SettingsModal(nativeTitle: nativeTitle));
                               Provider.of<AppProvider>(context, listen: false).justRefresh();
                             },
-                            label: "Prefer Native Titles",
+                            label: loc.uiPreferNativeTitles,
                             value: nativeTitle,
                           ),
                           ToggleItem(
-                            label: "AMOLED Background",
+                            label: loc.uiAmoledBackground,
                             value: AMOLEDBackgroundEnabled,
                             onTapFunction: () async {
                               final thm = availableThemes.firstWhere((i) => i.id == currentThemeId);
@@ -187,7 +189,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
                               Provider.of<AppProvider>(context, listen: false).justRefresh();
                               setState(() {});
                             },
-                            description: "Full black background",
+                            description: loc.uiAmoledBackgroundDesc,
                           ),
                           ToggleItem(
                             onTapFunction: () async {
@@ -197,7 +199,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
                               await Settings().writeSettings(SettingsModal(useOldNavbar: useOldNavbar));
                               Provider.of<AppProvider>(context, listen: false).justRefresh();
                             },
-                            label: "Use Old Navbar",
+                            label: loc.uiUseOldNavbar,
                             value: useOldNavbar,
                             mobileOnly: true,
                           ),
@@ -205,10 +207,10 @@ class _ThemeSettingState extends State<ThemeSetting> {
                           if (Platform.isAndroid && useOldNavbar)
                             Padding(
                               padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                              child: _sliderItem("Navbar Transparency", navbarTranslucency,
+                              child: _sliderItem(loc.uiNavbarTransparency, navbarTranslucency,
                                   min: 0,
                                   max: 1,
-                                  description: "Transparency of the navbar",
+                                  description: loc.uiNavbarTransparencyDesc,
                                   onChangedFunction: (val) {
                                     setState(() {
                                       navbarTranslucency = val;
@@ -278,9 +280,10 @@ class _ThemeSettingState extends State<ThemeSetting> {
   }
 
   Widget _themes() {
+    final loc = AppLocalizations.of(context);
     return ClickableItem(
-      label: "Themes",
-      description: "Change your themes",
+      label: loc.uiThemes,
+      description: loc.uiChangeThemes,
       suffixIcon: Icon(
         Icons.keyboard_arrow_down_rounded,
         color: appTheme.textMainColor,
@@ -306,7 +309,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 20),
                   child: Text(
-                    "Select Theme",
+                    loc.uiSelectTheme,
                     style: textStyle().copyWith(
                       fontSize: 23,
                     ),
