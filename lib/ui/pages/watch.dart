@@ -6,6 +6,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/player/controls.dart';
 import 'package:kumaanime/ui/models/widgets/player/gestureOverlay.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subViewer.dart';
@@ -136,12 +137,23 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
 
     if (mounted) context.read<PlayerProvider>().toggleSubs(action: dataProvider.state.currentStream.subtitle != null);
 
+    _triedStreamUrls.add(dataProvider.state.currentStream.url);
+
     // Placed here for safety. placing it above might cause issues with custom controls functions
     setState(() {
       isInitiated = true;
+      _isPlayerReady = true;
     });
 
     controller.addListener(_listener);
+
+    if (controller is BetterPlayerWrapper) {
+      (controller as BetterPlayerWrapper).controller.addEventsListener((ev) {
+        if (ev.betterPlayerEventType == BetterPlayerEventType.exception) {
+          _handlePlaybackError(ev.parameters?["exception"]?.toString() ?? ev.parameters?.toString());
+        }
+      });
+    }
 
     // Since pip is only for android! (f* IOS)
     if (Platform.isAndroid) {
@@ -254,6 +266,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
   bool get isDesktop => Platform.isWindows || Platform.isLinux;
 
   void hideControlsOnTimeout(PlayerDataProvider dp, PlayerProvider pp, {int timeoutSeconds = 5}) {
+    if (!_isPlayerReady || !(controller.isInitialized ?? false)) return;
     if (_controlsTimer == null && (controller.isPlaying ?? false)) {
       _controlsTimer = Timer(Duration(seconds: timeoutSeconds), () {
         if (controller.isPlaying ?? false) {
@@ -264,12 +277,55 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     }
   }
 
+  void _handlePlaybackError(String? message) {
+    if (!mounted || _handlingError || widget.localSource) return;
+    _handlingError = true;
+
+    final lower = (message ?? '').toLowerCase();
+    final is403 = lower.contains("403") || lower.contains("source error") || lower.contains("forbidden");
+    Logs.player.log("Playback error: $message");
+    floatingSnackBar(is403
+        ? "Server menolak akses (403). Mencoba server lain..."
+        : "Gagal memutar video. Mencoba server lain...");
+
+    _tryFallbackStream().whenComplete(() => _handlingError = false);
+  }
+
+  Future<void> _tryFallbackStream() async {
+    if (!mounted) return;
+    final dataProvider = context.read<PlayerDataProvider>();
+    final candidates = dataProvider.state.streams.where((s) => !_triedStreamUrls.contains(s.url)).toList();
+
+    if (candidates.isEmpty) {
+      floatingSnackBar("Tidak ada server lain yang tersedia untuk episode ini.");
+      return;
+    }
+
+    final next = candidates.first;
+    _triedStreamUrls.add(next.url);
+    _isPlayerReady = false;
+    dataProvider.update(dataProvider.state.copyWith(currentStream: next));
+
+    try {
+      await controller.initiateVideo(next.url, headers: next.customHeaders);
+      if (!mounted) return;
+      setState(() => _isPlayerReady = true);
+      floatingSnackBar("Beralih ke server ${next.server}");
+    } catch (e) {
+      Logs.player.log("Fallback stream failed: $e");
+    }
+  }
+
   Timer? _controlsTimer = null;
 
   Timer? pointerHideTimer = null;
 
   // This is required to avoid *controller is not initiate error*
   bool isInitiated = false;
+
+  bool _isPlayerReady = false;
+  bool _handlingError = false;
+  final Set<String> _triedStreamUrls = {};
 
   // Just a smol logic to handle taps since gesture dectector doesnt do the job with double taps
   Timer? _tapTimer;
