@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCardExtended.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCard.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCardExtended.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
 import 'package:flutter/material.dart';
 
 class Cards {
