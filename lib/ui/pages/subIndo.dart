@@ -284,23 +284,28 @@ class _SubIndoPageState extends State<SubIndoPage> {
 
   Widget _chip({required String label, required bool selected, required void Function() onTap}) {
     return Container(
-      margin: const EdgeInsets.only(right: 10),
-      child: InkWell(
+      margin: const EdgeInsets.only(right: 8),
+      child: Material(
+        color: selected ? appTheme.accentColor : const Color(0xff1E1E1E),
         borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? appTheme.accentColor : appTheme.backgroundSubColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? appTheme.onAccent : appTheme.textMainColor,
-              fontFamily: "NotoSans",
-              fontWeight: FontWeight.bold,
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: selected ? Colors.transparent : const Color(0xff333333)),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                color: selected ? appTheme.onAccent : const Color(0xffAAAAAA),
+                fontFamily: "NotoSans",
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
           ),
         ),
