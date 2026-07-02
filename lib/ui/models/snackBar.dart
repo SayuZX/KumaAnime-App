@@ -10,7 +10,7 @@ void floatingSnackBar(String message, {int? duration, bool waitForPreviousToFini
   KumaAnime.snackbarKey.currentState?.showSnackBar(
       SnackBar(
         content: Center(
-          child: Text(message, style: TextStyle(fontFamily: "NotoSans", color: Colors.white, fontSize: 14)),
+          child: Text(message, style: TextStyle(color: Colors.white, fontSize: 14)),
         ),
         duration: Duration(seconds: duration != null ? duration : 3),
         backgroundColor: Color.fromARGB(244, 61, 61, 61),
