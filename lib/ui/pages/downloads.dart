@@ -67,7 +67,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
         appBar: AppBar(
           title: Text(
             "Downloads",
-            style: TextStyle(fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 24),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
           leading: IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
@@ -109,8 +109,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                 unselectedLabelColor: appTheme.textSubColor,
                 labelStyle: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontFamily: "NotoSans",
-                ),
+                  ),
                 tabs: [_tabBarItem("Active"), _tabBarItem("History"), _tabBarItem("Downloads")],
               ),
               Expanded(
@@ -183,7 +182,6 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
       child: Text(
         label,
         style: TextStyle(
-          fontFamily: "NunitoSans",
           fontWeight: FontWeight.w700,
           fontSize: 17,
         ),
@@ -228,7 +226,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Text(
                       item.status.name + " • ${_toMegs(item.size)} MB",
-                      style: TextStyle(fontFamily: "NotoSans", color: appTheme.textSubColor),
+                      style: TextStyle(color: appTheme.textSubColor),
                     ),
                   ),
                   Container(
@@ -247,7 +245,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                                   Text(
                                     "Open",
                                     style: TextStyle(
-                                        fontFamily: "NotoSans", fontWeight: FontWeight.bold, color: appTheme.onAccent),
+                                        fontWeight: FontWeight.bold, color: appTheme.onAccent),
                                   )
                                 ],
                               ),
@@ -265,7 +263,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                                 Text(
                                   "Delete",
                                   style: TextStyle(
-                                      fontFamily: "NotoSans", fontWeight: FontWeight.bold, color: appTheme.onAccent),
+                                      fontWeight: FontWeight.bold, color: appTheme.onAccent),
                                 ),
                               ],
                             ),
@@ -384,7 +382,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                       ),
                       Text(
                         "$progress%",
-                        style: TextStyle(fontFamily: "NotoSans", fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -413,7 +411,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
                       child: Text(
                         item.status.name,
                         // + " • ?? MB",
-                        style: TextStyle(fontFamily: "Rubik", color: appTheme.textSubColor),
+                        style: TextStyle(color: appTheme.textSubColor),
                       ),
                     ),
                     Container(
@@ -457,7 +455,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
 
   String _toMegs(int sizeInBytes) => (sizeInBytes / (1024 * 1024)).toStringAsFixed(1);
 
-  TextStyle _titleStyle() => TextStyle(fontFamily: "NunitoSans", fontWeight: FontWeight.bold, fontSize: 18);
+  TextStyle _titleStyle() => TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
 
   ButtonStyle _iconButtonStyle() => IconButton.styleFrom(
         shape: RoundedRectangleBorder(
