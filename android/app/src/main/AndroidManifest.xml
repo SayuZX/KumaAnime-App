@@ -17,6 +17,7 @@
         android:banner="@drawable/banner"
         android:extractNativeLibs="true"
         android:requestLegacyExternalStorage="true"
+        android:enableOnBackInvokedCallback="true"
         android:allowBackup="false">
         <activity
             android:name=".MainActivity"
