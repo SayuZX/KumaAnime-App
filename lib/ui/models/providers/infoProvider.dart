@@ -293,55 +293,55 @@ class InfoProvider extends ChangeNotifier {
     // _currentPageIndex = _currentPageIndex >= _visibleEpList.length ? _visibleEpList.length-1 : _currentPageIndex;
   }
 
-  Future<void> _search(String query) async {
-    final sr = await sourceManager.searchInSource(selectedSource.identifier, query);
-    //to find a exact match
-    List<Map<String, String?>> match = sr
-        .where(
-          (e) => e['name'] == query,
-        )
-        .toList();
+  Future<List<EpisodeDetails>?> _searchEpisodesIn(ProviderDetails source, String query) async {
+    sourceManager.useInbuiltProviders = source.version == "0.0.0.0";
+    final sr = await sourceManager.searchInSource(source.identifier, query);
+    if (sr.isEmpty) return null;
+    List<Map<String, String?>> match = sr.where((e) => e['name'] == query).toList();
     if (match.isEmpty) match = sr;
-    final links = await sourceManager.getAnimeEpisodes(selectedSource.identifier, match[0]['alias']!);
-    paginate(links);
+    final links = await sourceManager.getAnimeEpisodes(source.identifier, match[0]['alias']!);
+    if (links.isEmpty) return null;
     _foundName = match[0]['name'];
-    notifyListeners();
+    return links;
   }
 
   Future<void> getEpisodes() async {
     _foundName = null;
     _epSearcherror = false;
-    try {
-      String searchTitle = data.title['english'] ?? data.title['romaji'] ?? '';
-      if (_manualSearchQuery != null) {
-        searchTitle = _manualSearchQuery!;
-      }
-      await _search(searchTitle);
-      notifyListeners();
-    } catch (err) {
-      Logs.app.log(err.toString());
+    notifyListeners();
 
-      // try again with romaji title if english title failed
+    final primaryTitle = _manualSearchQuery ?? data.title['english'] ?? data.title['romaji'] ?? '';
+    final romaji = data.title['romaji'] ?? '';
+    final queries = <String>[
+      primaryTitle,
+      if (_manualSearchQuery == null && romaji.isNotEmpty && romaji != primaryTitle) romaji,
+    ];
 
-      final hasEnglishTitle = data.title['english'] != null;
-      final didUseManualQuery = _manualSearchQuery != null;
+    final seen = <String>{};
+    final candidates = <ProviderDetails>[selectedSource, ...sourceManager.sources, ...sourceManager.inbuiltSources]
+        .where((s) => seen.add(s.identifier))
+        .toList();
 
-      if (hasEnglishTitle && !didUseManualQuery) {
-        // try once more with romaji title if english title failed
+    for (final source in candidates) {
+      for (final query in queries) {
+        if (query.trim().isEmpty) continue;
         try {
-          await _search(data.title['romaji'] ?? '');
+          final links = await _searchEpisodesIn(source, query);
+          if (links == null) continue;
+          if (selectedSource.identifier != source.identifier) selectedSource = source;
+          paginate(links);
           notifyListeners();
           return;
-        } catch (e) {
-          Logs.app.log(e.toString());
+        } catch (err) {
+          Logs.app.log("[INFO] source ${source.identifier} failed for \"$query\": ${err.toString()}");
         }
       }
+    }
 
-      _epSearcherror = true;
-      notifyListeners();
-      if (currentUserSettings!.showErrors != null && currentUserSettings!.showErrors!) {
-        floatingSnackBar(err.toString());
-      }
+    _epSearcherror = true;
+    notifyListeners();
+    if (currentUserSettings?.showErrors ?? false) {
+      floatingSnackBar("No source returned episodes for this title.");
     }
   }
 
