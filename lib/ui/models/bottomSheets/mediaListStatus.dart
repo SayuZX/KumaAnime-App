@@ -44,7 +44,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
             textStyle: WidgetStatePropertyAll(
               TextStyle(
                 color: appTheme.textMainColor,
-                fontFamily: "Rubik",
                 fontSize: 16,
               ),
             ),
@@ -118,7 +117,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                 "Update Progress",
                 style: TextStyle(
                   color: appTheme.textMainColor,
-                  fontFamily: "Rubik",
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
@@ -130,7 +128,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
               "Status",
               style: TextStyle(
                 color: appTheme.textMainColor.withAlpha(204),
-                fontFamily: "Poppins",
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -149,7 +146,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                       child: markedDelete
                           ? Text(
                               "REMOVED",
-                              style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Poppins", fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             )
                           : LayoutBuilder(
                             builder:(context, constraints) => DropdownMenu(
@@ -175,7 +172,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                                 ),
                                 textStyle: TextStyle(
                                   color: appTheme.textMainColor,
-                                  fontFamily: "Poppins",
                                   fontSize: 16,
                                 ),
                                 inputDecorationTheme: InputDecorationTheme(
@@ -248,7 +244,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
               "Progress",
               style: TextStyle(
                 color: appTheme.textMainColor.withAlpha(204),
-                fontFamily: "Poppins",
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -308,7 +303,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                           ),
                           style: TextStyle(
                             color: appTheme.textMainColor,
-                            fontFamily: "Rubik",
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
                           ),
@@ -321,7 +315,6 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                           "of ${provider.data.episodes ?? 0}",
                           style: TextStyle(
                             color: appTheme.textMainColor.withAlpha(178),
-                            fontFamily: "Rubik",
                             fontSize: 16,
                           ),
                         ),
@@ -489,7 +482,6 @@ class _ActionButton extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontFamily: "Poppins",
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
