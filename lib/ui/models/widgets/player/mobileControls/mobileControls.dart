@@ -149,7 +149,8 @@ class _MobileControlsState extends State<MobileControls> {
                                 if (!dataProvider.state.controlsLocked)
                                   Row(
                                     children: [
-                                      if (megaSkipDuration != null) megaSkipButton(),
+                                      if (megaSkipDuration != null && (currentUserSettings?.enableMegaSkip ?? true))
+                                        megaSkipButton(),
                                       _fullscreenButton(isMini),
                                     ],
                                   ),
