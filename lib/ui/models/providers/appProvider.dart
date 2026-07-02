@@ -105,15 +105,9 @@ class AppProvider with ChangeNotifier {
         onAccent: theme.theme.onAccent,
       );
     } else {
-      appTheme = KumaAnimeTheme(
-        accentColor: _accentFor(Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor)),
-        backgroundColor: lightModeValues.backgroundColor,
-        backgroundSubColor: lightModeValues.backgroundSubColor,
-        textMainColor: lightModeValues.textMainColor,
-        textSubColor: lightModeValues.textSubColor,
-        modalSheetBackgroundColor: lightModeValues.modalSheetBackgroundColor,
-        onAccent: theme.lightVariant.onAccent,
-      );
+      final accent = Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
+      appTheme = lightThemeFor(accent, theme.lightVariant.onAccent);
+      appTheme.accentColor = _accentFor(accent);
     }
 
     notifyListeners();
