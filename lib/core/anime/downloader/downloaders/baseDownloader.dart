@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:animestream/core/anime/downloader/downloaderHelper.dart';
-import 'package:animestream/core/anime/downloader/types.dart';
+import 'package:kumaanime/core/anime/downloader/downloaderHelper.dart';
+import 'package:kumaanime/core/anime/downloader/types.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class BaseDownloader {
