@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:animestream/core/anime/providers/types.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/downloadHistory.dart';
-import 'package:animestream/ui/models/playerControllers/betterPlayer.dart';
-import 'package:animestream/ui/models/playerControllers/fvp.dart';
-import 'package:animestream/ui/models/providers/playerDataProvider.dart';
-import 'package:animestream/ui/models/providers/playerProvider.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/pages/watch.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/downloadHistory.dart';
+import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
+import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/pages/watch.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +33,7 @@ class _FileExplorerState extends State<FileExplorer> {
     }
   }
 
-  final _rootDir = (currentUserSettings?.downloadPath ?? "/storage/emulated/0/Download/animestream");
+  final _rootDir = (currentUserSettings?.downloadPath ?? "/storage/emulated/0/Download/KumaAnime");
 
   String _getFileName(String path) {
     return Platform.isWindows ? path.split("\\").last : path.split("/").last;
@@ -66,7 +66,7 @@ class _FileExplorerState extends State<FileExplorer> {
     );
   }
 
-  Directory currentDir = Directory(currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/animestream');
+  Directory currentDir = Directory(currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/KumaAnime');
 
   List<FileSystemEntity> entities = [];
 
