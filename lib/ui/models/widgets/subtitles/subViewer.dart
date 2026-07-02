@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/commons/subtitleParsers/subtitleParsers.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/playerControllers/videoController.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitle.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitleSettings.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitleText.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/subtitleParsers/subtitleParsers.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/playerControllers/videoController.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitle.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitleText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
