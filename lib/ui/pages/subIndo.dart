@@ -265,14 +265,14 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans"),
       decoration: InputDecoration(
         hintText: loc.subIndoSearchHint,
-        hintStyle: const TextStyle(color: Color(0xff666666), fontFamily: "NotoSans"),
-        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xff888888), size: 22),
+        hintStyle: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans"),
+        prefixIcon: Icon(Icons.search_rounded, color: appTheme.textSubColor, size: 22),
         filled: true,
-        fillColor: const Color(0xff1E1E1E),
+        fillColor: appTheme.backgroundSubColor,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: Color(0xff333333), width: 1),
+          borderSide: BorderSide(color: appTheme.textSubColor.withValues(alpha: 0.25), width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
@@ -280,7 +280,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: Color(0xff333333), width: 1),
+          borderSide: BorderSide(color: appTheme.textSubColor.withValues(alpha: 0.25), width: 1),
         ),
       ),
     );
@@ -312,11 +312,10 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   }
 
   Widget _chip({required String label, required bool selected, required void Function() onTap}) {
-    final activeBg = Color.alphaBlend(Colors.black.withValues(alpha: 0.62), appTheme.accentColor);
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? activeBg : const Color(0xff1A1A1A),
+        color: selected ? appTheme.accentColor : appTheme.backgroundSubColor,
         borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.hardEdge,
         child: InkWell(
@@ -327,14 +326,14 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: selected ? appTheme.accentColor : const Color(0xff2A2A2A),
+                color: selected ? appTheme.accentColor : appTheme.textSubColor.withValues(alpha: 0.25),
                 width: 1,
               ),
             ),
             child: Text(
               label,
               style: TextStyle(
-                color: selected ? const Color(0xffCCFFF0) : const Color(0xff888888),
+                color: selected ? appTheme.onAccent : appTheme.textSubColor,
                 fontFamily: "NotoSans",
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
