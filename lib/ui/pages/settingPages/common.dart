@@ -1,4 +1,4 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:flutter/material.dart';
 
 Widget topRow(BuildContext context, String title) {
