@@ -21,6 +21,7 @@ import 'package:kumaanime/core/app/version.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/theme.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/notification.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
@@ -312,6 +313,9 @@ class _KumaAnimeState extends State<KumaAnime> {
             title: 'Kuma Anime',
             navigatorKey: KumaAnime.navigatorKey,
             scaffoldMessengerKey: KumaAnime.snackbarKey,
+            locale: Locale(currentUserSettings?.locale ?? 'en'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             theme: ThemeData(
                 useMaterial3: true,
                 brightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
