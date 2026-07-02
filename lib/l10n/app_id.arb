@@ -45,5 +45,10 @@
   "subIndoEmpty": "Tidak ada hasil",
   "subIndoLoadError": "Gagal memuat. Periksa URL API Sub Indo di konfigurasi build.",
   "retry": "Coba Lagi",
-  "loadMore": "Muat lagi"
+  "loadMore": "Muat lagi",
+  "newsTitle": "Berita",
+  "newsSourceGlobal": "Global",
+  "newsSourceIndo": "Indonesia",
+  "newsLoadError": "Gagal memuat berita.",
+  "readFullArticle": "Baca artikel lengkap"
 }
