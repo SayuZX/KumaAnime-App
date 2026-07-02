@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/snackBar.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:http/http.dart';
@@ -40,7 +40,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
   String downloadPath = "";
 
   void downloadAndInstallUpdate() async {
-    final filename = "animestream_${widget.version}.${Platform.isWindows ? "exe" : "apk"}";
+    final filename = "kumaanime_${widget.version}.${Platform.isWindows ? "exe" : "apk"}";
     final tempPath = await getTemporaryDirectory();
     downloadPath = "${tempPath.path}/$filename";
 
@@ -89,7 +89,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
       // check and clean the old file (can pile up if not cleaned)
       // this is also cleanable with the "clear cache" option
       final oldVersion = File(
-          "${tempPath.path}/animestream_${(await PackageInfo.fromPlatform()).version}.${Platform.isWindows ? "exe" : "apk"}");
+          "${tempPath.path}/kumaanime_${(await PackageInfo.fromPlatform()).version}.${Platform.isWindows ? "exe" : "apk"}");
       if (oldVersion.existsSync()) {
         oldVersion.delete();
       }
@@ -182,7 +182,7 @@ class _UpdateSheetState extends State<UpdateSheet> {
                   IconButton(
                     onPressed: () async {
                       await launchUrl(
-                        Uri.parse("https://github.com/frostnova721/animestream/releases/latest"),
+                        Uri.parse("https://github.com/SayuZX/KumaAnime-App/releases/latest"),
                         mode: LaunchMode.externalApplication,
                       );
                     },
