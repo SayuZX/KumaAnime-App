@@ -395,16 +395,19 @@ class _WatchCommentsViewState extends State<WatchCommentsView> {
         CircleAvatar(
           radius: 18,
           backgroundColor: appTheme.accentColor.withValues(alpha: 0.2),
-          child: Text(
-            comment.avatar.isNotEmpty
-                ? comment.avatar
-                : (comment.nickname.isNotEmpty ? comment.nickname[0].toUpperCase() : "?"),
-            style: TextStyle(
-              color: appTheme.accentColor,
-              fontWeight: FontWeight.bold,
-              fontSize: comment.avatar.isNotEmpty ? 18 : 14,
-            ),
-          ),
+          backgroundImage: comment.avatar.startsWith('http') ? NetworkImage(comment.avatar) : null,
+          child: comment.avatar.startsWith('http')
+              ? null
+              : Text(
+                  comment.avatar.isNotEmpty
+                      ? comment.avatar
+                      : (comment.nickname.isNotEmpty ? comment.nickname[0].toUpperCase() : "?"),
+                  style: TextStyle(
+                    color: appTheme.accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: comment.avatar.isNotEmpty ? 18 : 14,
+                  ),
+                ),
         ),
         const SizedBox(width: 12),
         Expanded(
