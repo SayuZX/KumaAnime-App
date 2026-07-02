@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/scrollingList.dart';
 import 'package:flutter/material.dart';
@@ -102,9 +103,7 @@ class _DiscoverState extends State<Discover> {
                         ? _trendingAnimesPageView()
                         : Container(
                             child: Center(
-                              child: CircularProgressIndicator(
-                                color: appTheme.accentColor,
-                              ),
+                              child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                             ),
                           ),
                   ),
@@ -324,9 +323,7 @@ class _DiscoverState extends State<Discover> {
               itemBuilder: (context, index) => list[index],
             )
           : Center(
-              child: CircularProgressIndicator(
-                color: appTheme.accentColor,
-              ),
+              child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
             ),
     );
   }
