@@ -171,35 +171,46 @@ class _SubViewerState extends State<SubViewer> {
         list.sort((a, b) => a.start.compareTo(b.start));
     }
 
-    return Stack(
-      children: subsGrouped.entries.map((group) {
-        final alignment = group.key;
-        final subs = group.value;
+    final size = MediaQuery.of(context).size;
 
-        return Align(
-          alignment: getLineAlignment(alignment),
-          child: Container(
-            width: MediaQuery.of(context).size.width / 1.4,
-            margin: EdgeInsets.only(bottom: widget.settings.bottomMargin, top: widget.settings.bottomMargin),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: subs
-                  .map(
-                    (sub) => SubtitleText(
-                      text: areSubsLoading ? "Loading Subs" : sub.dialogue,
-                      style: subTextStyle(),
-                      strokeColor: widget.settings.strokeColor,
-                      strokeWidth: widget.settings.strokeWidth,
-                      backgroundColor: widget.settings.backgroundColor,
-                      backgroundTransparency: widget.settings.backgroundTransparency,
-                      enableShadows: widget.settings.enableShadows,
-                    ),
-                  )
-                  .toList(),
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+      child: Stack(
+        children: subsGrouped.entries.map((group) {
+          final alignment = group.key;
+          final subs = group.value;
+
+          return Align(
+            alignment: getLineAlignment(alignment),
+            child: Container(
+              margin: EdgeInsets.only(bottom: widget.settings.bottomMargin, top: widget.settings.bottomMargin),
+              constraints: BoxConstraints(maxWidth: size.width / 1.4, maxHeight: size.height * 0.7),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: SizedBox(
+                  width: size.width / 1.4,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: subs
+                        .map(
+                          (sub) => SubtitleText(
+                            text: areSubsLoading ? "Loading Subs" : sub.dialogue,
+                            style: subTextStyle(),
+                            strokeColor: widget.settings.strokeColor,
+                            strokeWidth: widget.settings.strokeWidth,
+                            backgroundColor: widget.settings.backgroundColor,
+                            backgroundTransparency: widget.settings.backgroundTransparency,
+                            enableShadows: widget.settings.enableShadows,
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
