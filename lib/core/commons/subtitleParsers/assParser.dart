@@ -53,7 +53,9 @@ class ASSRIPPER {
   }
 
   String _removeASSFormatting(String text) {
-    return text.replaceAll(RegExp(r'\{.*?\}'), '');
+    return text
+        .replaceAll(RegExp(r'\{[^}]*\\p[1-9]\d*[^}]*\}[^{]*'), '')
+        .replaceAll(RegExp(r'\{[^}]*\}'), '');
   }
 
   SubtitleAlignment _getAlignmentFromStyleName(String styleName) {
@@ -141,7 +143,11 @@ class ASSRIPPER {
     }
 
     // Clean formatting tags from dialogue and normalize explicit ASS newline markers
-    final dialogue = _removeASSFormatting(rawText).replaceAll(r"\N", "\n").trim();
+    final dialogue = _removeASSFormatting(rawText)
+        .replaceAll(r"\N", "\n")
+        .replaceAll(r"\n", "\n")
+        .replaceAll(r"\h", " ")
+        .trim();
 
     return Subtitle(dialogue: dialogue, end: end, start: start, alignment: alignment);
   }
