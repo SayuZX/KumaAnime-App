@@ -147,42 +147,39 @@ class BottomControls extends StatelessWidget {
                                     style: textStyle().copyWith(fontSize: 23),
                                   ),
                                 ),
-                                Container(
-                                  height: MediaQuery.of(context).size.height - 150,
-                                  child: GridView.builder(
-                                    itemCount: dataProvider.epLinks.length,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2, childAspectRatio: 4),
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.only(left: 10, right: 10),
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          if (index == dataProvider.state.currentEpIndex) return;
-                                          sheet2(index, context, playerProvider, dataProvider);
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.all(5),
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                              color: index == dataProvider.state.currentEpIndex
-                                                  ? appTheme.accentColor
-                                                  : appTheme.backgroundSubColor,
-                                              borderRadius: BorderRadius.circular(12)),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "Episode ${index + 1}",
-                                            style: TextStyle(
-                                              color: index == dataProvider.state.currentEpIndex
-                                                  ? appTheme.backgroundColor
-                                                  : appTheme.textMainColor,
-                                              fontSize: 20,
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    padding: EdgeInsets.only(left: 6, right: 6, bottom: 20),
+                                    child: Wrap(
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      children: List.generate(dataProvider.epLinks.length, (index) {
+                                        final isCurrent = index == dataProvider.state.currentEpIndex;
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            if (isCurrent) return;
+                                            sheet2(index, context, playerProvider, dataProvider);
+                                          },
+                                          child: Container(
+                                            width: 52,
+                                            height: 52,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                                color: isCurrent ? appTheme.accentColor : appTheme.backgroundSubColor,
+                                                borderRadius: BorderRadius.circular(12)),
+                                            child: Text(
+                                              "${index + 1}",
+                                              style: TextStyle(
+                                                color: isCurrent ? appTheme.onAccent : appTheme.textMainColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      }),
+                                    ),
                                   ),
                                 ),
                               ],
