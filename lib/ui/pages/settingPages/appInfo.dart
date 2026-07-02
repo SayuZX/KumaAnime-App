@@ -138,7 +138,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
           "Kuma Anime",
           style: TextStyle(
             color: appTheme.textMainColor,
-            fontFamily: "Poppins",
             fontSize: 28,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
@@ -155,7 +154,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
             "v$appVersion",
             style: TextStyle(
               color: appTheme.textSubColor,
-              fontFamily: "Rubik",
               fontSize: 14,
             ),
           ),
@@ -219,7 +217,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
         "Codename: ${AppVersion.instance.nickname}",
         style: TextStyle(
           color: appTheme.accentColor,
-          fontFamily: "Rubik",
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -270,7 +267,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                       'Buy me a coffee',
                       style: TextStyle(
                         fontSize: 14,
-                        fontFamily: "Poppins",
                         // fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -286,8 +282,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
           style: TextStyle(
             color: appTheme.textSubColor,
             fontSize: 12,
-            fontFamily: "Poppins",
-          ),
+            ),
         ),
       ],
     );
