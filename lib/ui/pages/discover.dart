@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
@@ -222,99 +221,86 @@ class _DiscoverState extends State<Discover> {
             },
             child: Container(
               child: Stack(
-                alignment: Alignment.center,
                 fit: StackFit.expand,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    child: ClipRRect(
-                      child: ImageFiltered(
-                        imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Image.network(
-                          trendingList[moddedIndex].banner ?? trendingList[moddedIndex].cover,
-                          alignment: Alignment((index - page).clamp(-1, 1).toDouble(), 1),
-                          opacity: AlwaysStoppedAnimation(0.5),
-                          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                            if (wasSynchronouslyLoaded) return child;
-                            return AnimatedOpacity(
-                              opacity: frame == null ? 0 : 1,
-                              duration: Duration(milliseconds: 150),
-                              child: child,
-                            );
-                          },
-                          height: 360,
-                          fit: BoxFit.cover,
-                        ),
+                  Image.network(
+                    trendingList[moddedIndex].banner ?? trendingList[moddedIndex].cover,
+                    alignment: Alignment((index - page).clamp(-1, 1).toDouble() * 0.6, 0),
+                    fit: BoxFit.cover,
+                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded) return child;
+                      return AnimatedOpacity(
+                        opacity: frame == null ? 0 : 1,
+                        duration: Duration(milliseconds: 250),
+                        curve: Curves.easeIn,
+                        child: child,
+                      );
+                    },
+                  ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          appTheme.backgroundColor.withValues(alpha: 0.55),
+                          Colors.transparent,
+                          appTheme.backgroundColor.withValues(alpha: 0.85),
+                          appTheme.backgroundColor,
+                        ],
+                        stops: const [0.0, 0.3, 0.75, 1.0],
                       ),
                     ),
-                    // ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20.0, top: MediaQuery.of(context).padding.top + 50),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 16,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            trendingList[moddedIndex].cover,
-                            height: 170,
-                            width: 120,
+                        Text(
+                          preferNative ? titles['native'] ?? title : title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Rubik',
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            height: 1.1,
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          width: 250,
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10.0),
-                                child: Text(
-                                  preferNative ? titles['native'] ?? title : title,
-                                  style: TextStyle(
-                                    color: appTheme.textMainColor,
-                                    fontFamily: 'NunitoSans',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  maxLines: 2,
-                                ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(Icons.star_rounded, color: const Color(0xFFF5C518), size: 18),
+                            const SizedBox(width: 3),
+                            Text(
+                              "${trendingList[moddedIndex].rating != null ? trendingList[moddedIndex].rating! / 10 : '??'}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: "Rubik",
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                trendingList[moddedIndex].genres.join(', '),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                trendingList[moddedIndex].genres.take(3).join(' • '),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    color: appTheme.textMainColor.withAlpha(145),
-                                    fontFamily: 'NunitoSans',
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    overflow: TextOverflow.ellipsis),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: appTheme.textMainColor,
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      "${trendingList[moddedIndex].rating != null ? trendingList[moddedIndex].rating! / 10 : '??'}",
-                                      style:
-                                          TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 17),
-                                    ),
-                                  ],
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontFamily: 'NotoSans',
+                                  fontSize: 13,
                                 ),
                               ),
-                            ],
-                          ),
-                        )
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
