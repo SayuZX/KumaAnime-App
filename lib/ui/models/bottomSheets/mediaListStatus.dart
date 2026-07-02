@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/utils.dart';
 import 'package:kumaanime/core/database/handler/syncHandler.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +76,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final provider = widget.provider;
     final isDialog = MediaQuery.of(context).size.width > 800;
 
@@ -114,7 +116,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
             Padding(
               padding: EdgeInsets.only(bottom: 20, top: isDialog ? 8 : 0),
               child: Text(
-                "Update Progress",
+                loc.mlsUpdateProgress,
                 style: TextStyle(
                   color: appTheme.textMainColor,
                   fontSize: 24,
@@ -125,7 +127,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
 
             // Status Dropdown
             Text(
-              "Status",
+              loc.mlsStatus,
               style: TextStyle(
                 color: appTheme.textMainColor.withAlpha(204),
                 fontSize: 16,
@@ -145,7 +147,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                       padding: EdgeInsets.only(right: 8),
                       child: markedDelete
                           ? Text(
-                              "REMOVED",
+                              loc.mlsRemoved,
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             )
                           : LayoutBuilder(
@@ -241,7 +243,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
             // Progress Section
             const SizedBox(height: 24),
             Text(
-              "Progress",
+              loc.mlsProgress,
               style: TextStyle(
                 color: appTheme.textMainColor.withAlpha(204),
                 fontSize: 16,
@@ -312,7 +314,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
-                          "of ${provider.data.episodes ?? 0}",
+                          loc.mlsOfCount(provider.data.episodes ?? 0),
                           style: TextStyle(
                             color: appTheme.textMainColor.withAlpha(178),
                             fontSize: 16,
@@ -347,7 +349,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                 children: [
                   Expanded(
                     child: _ActionButton(
-                      label: "Cancel",
+                      label: loc.mlsCancel,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -358,7 +360,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                   const SizedBox(width: 16),
                   Expanded(
                     child: _ActionButton(
-                      label: "Save",
+                      label: loc.mlsSave,
                       onPressed: () {
                         final int progress = int.parse(textEditingController.value.text);
                         if (markedDelete) {
@@ -368,7 +370,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                               .then((val) {
                             provider.refreshListStatus(null, 0);
                           });
-                          floatingSnackBar("Entry deleted!");
+                          floatingSnackBar(loc.mlsEntryDeleted);
                           if (mounted) Navigator.pop(context);
                           return;
                         }
@@ -384,7 +386,7 @@ class _MediaListStatusBottomSheetState extends State<MediaListStatusBottomSheet>
                               .then((value) {
                             initialSelection = selectedValue ?? initialSelection;
                             provider.refreshListStatus(selectedValue ?? initialSelection!, progress);
-                            floatingSnackBar("The list has been updated!");
+                            floatingSnackBar(loc.mlsListUpdated);
                             if (mounted) {
                               Navigator.of(context).pop();
                             }
