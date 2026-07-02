@@ -108,3 +108,72 @@ EdgeInsets pagePadding(BuildContext context, {bool bottom = false}) {
     bottom: bottom ? paddingQuery.bottom : 0,
   );
 }
+
+Widget resetCategoryButton(BuildContext context, String label, VoidCallback onReset) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onReset,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: appTheme.accentColor,
+          side: BorderSide(color: appTheme.accentColor),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        icon: const Icon(Icons.restart_alt_rounded),
+        label: Text(label),
+      ),
+    ),
+  );
+}
+
+Widget optionTile({required String label, required bool selected, required VoidCallback onTap, String? description}) {
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    clipBehavior: Clip.hardEdge,
+    decoration: BoxDecoration(
+      color: selected ? appTheme.accentColor : appTheme.backgroundSubColor,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: selected ? appTheme.onAccent : appTheme.textMainColor,
+                      fontFamily: "NotoSans",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  if (description != null)
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: selected ? appTheme.onAccent.withValues(alpha: 0.8) : appTheme.textSubColor,
+                        fontFamily: "NunitoSans",
+                        fontSize: 12,
+                      ),
+                    ),
+                ],
+              ),
+              if (selected) Icon(Icons.check_rounded, color: appTheme.onAccent),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
