@@ -439,7 +439,7 @@ class _InfoMobileState extends State<InfoMobile> {
               ),
               child: Text(
                 "$number",
-                style: TextStyle(color: fg, fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(color: fg, fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           );
