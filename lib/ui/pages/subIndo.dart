@@ -401,18 +401,24 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   }
 
   Widget _hero(SubIndoAnime anime) {
+    final loc = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () => _openDetail(anime),
       child: Container(
-        height: 200,
+        height: 214,
         margin: const EdgeInsets.only(left: 15, right: 15, top: 16),
         clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 18, offset: const Offset(0, 8)),
+          ],
+        ),
         child: Stack(
           fit: StackFit.expand,
           children: [
             ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              imageFilter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
               child: CachedNetworkImage(
                 imageUrl: anime.poster,
                 fit: BoxFit.cover,
@@ -425,7 +431,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Colors.black.withValues(alpha: 0.35), Colors.black.withValues(alpha: 0.85)],
+                  colors: [Colors.black.withValues(alpha: 0.4), Colors.black.withValues(alpha: 0.9)],
                 ),
               ),
             ),
@@ -433,14 +439,20 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 12, offset: const Offset(0, 4)),
+                      ],
+                    ),
+                    clipBehavior: Clip.hardEdge,
                     child: CachedNetworkImage(
                       imageUrl: anime.poster,
-                      width: 110,
+                      width: 112,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(color: appTheme.backgroundSubColor, width: 110),
-                      errorWidget: (context, url, error) => Container(color: appTheme.backgroundSubColor, width: 110),
+                      placeholder: (context, url) => Container(color: appTheme.backgroundSubColor, width: 112),
+                      errorWidget: (context, url, error) => Container(color: appTheme.backgroundSubColor, width: 112),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -449,43 +461,79 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: appTheme.accentColor,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context).subIndo.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              letterSpacing: 0.5,
-                              color: appTheme.onAccent,
-                              fontFamily: "NotoSans",
-                              fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Icon(Icons.local_fire_department_rounded, color: appTheme.accentColor, size: 17),
+                            const SizedBox(width: 5),
+                            Text(
+                              loc.subIndoPopular.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                letterSpacing: 1.2,
+                                color: appTheme.accentColor,
+                                fontFamily: "NotoSans",
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Text(
                           anime.title,
-                          maxLines: 3,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Colors.white,
                             fontFamily: "Rubik",
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            height: 1.15,
                           ),
                         ),
-                        if (anime.episodes != null && anime.episodes!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: Text(
-                              "${anime.episodes} ${AppLocalizations.of(context).subIndoEpisodes}",
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontFamily: "NotoSans"),
-                            ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            if (anime.score != null && anime.score!.trim().isNotEmpty) ...[
+                              const Icon(Icons.star_rounded, color: Color(0xFFF5C518), size: 15),
+                              const SizedBox(width: 3),
+                              Text(
+                                anime.score!,
+                                style: const TextStyle(
+                                    color: Colors.white, fontFamily: "Rubik", fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
+                            if (anime.episodes != null && anime.episodes!.isNotEmpty)
+                              Text(
+                                "${anime.episodes} ${loc.subIndoEpisodes}",
+                                style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontFamily: "NotoSans", fontSize: 12),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: appTheme.accentColor,
+                            borderRadius: BorderRadius.circular(20),
                           ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.play_arrow_rounded, color: appTheme.onAccent, size: 18),
+                              const SizedBox(width: 4),
+                              Text(
+                                loc.subIndoWatchNow,
+                                style: TextStyle(
+                                  color: appTheme.onAccent,
+                                  fontFamily: "Poppins",
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
