@@ -4,6 +4,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/social/rankSystem.dart';
 import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +21,7 @@ class _AccountSettingState extends State<AccountSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -28,7 +30,7 @@ class _AccountSettingState extends State<AccountSetting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              settingPagesTitleHeader(context, "Account"),
+              settingPagesTitleHeader(context, loc.accountTitle),
               _communityProfileCard(),
               _rankSection(),
             ],
@@ -45,6 +47,7 @@ class _AccountSettingState extends State<AccountSetting> {
   }
 
   Widget _communityProfileCard() {
+    final loc = AppLocalizations.of(context);
     final social = SocialService.instance;
     final avatar = social.avatar;
     final nickname = social.nickname;
@@ -56,7 +59,7 @@ class _AccountSettingState extends State<AccountSetting> {
         children: [
           Container(
             margin: const EdgeInsets.only(bottom: 15),
-            child: Text("Community Profile", style: textStyle().copyWith(fontSize: 24)),
+            child: Text(loc.accountCommunityProfile, style: textStyle().copyWith(fontSize: 24)),
           ),
           Container(
             padding: const EdgeInsets.all(16),
@@ -87,7 +90,7 @@ class _AccountSettingState extends State<AccountSetting> {
                           style: TextStyle(color: appTheme.textMainColor, fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 2),
                       Text(
-                        social.isReady ? "Nama tampil di komentar & like" : "Fitur sosial tidak tersedia",
+                        social.isReady ? loc.accountNameShownHint : loc.accountSocialUnavailable,
                         style: TextStyle(color: appTheme.textSubColor, fontSize: 12),
                       ),
                     ],
@@ -106,6 +109,7 @@ class _AccountSettingState extends State<AccountSetting> {
   }
 
   void _editProfile() {
+    final loc = AppLocalizations.of(context);
     final social = SocialService.instance;
     final controller = TextEditingController(text: social.nickname);
     String selected = social.avatar;
@@ -122,14 +126,14 @@ class _AccountSettingState extends State<AccountSetting> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Edit Profil", style: textStyle().copyWith(fontSize: 22)),
+              Text(loc.accountEditProfile, style: textStyle().copyWith(fontSize: 22)),
               const SizedBox(height: 16),
               TextField(
                 controller: controller,
                 maxLength: 24,
                 style: TextStyle(color: appTheme.textMainColor),
                 decoration: InputDecoration(
-                  labelText: "Username",
+                  labelText: loc.accountUsername,
                   labelStyle: TextStyle(color: appTheme.textSubColor),
                   filled: true,
                   fillColor: appTheme.backgroundSubColor,
@@ -153,14 +157,14 @@ class _AccountSettingState extends State<AccountSetting> {
                             if (url != null) {
                               Navigator.pop(ctx);
                               setState(() {});
-                              floatingSnackBar("Foto profil diperbarui");
+                              floatingSnackBar(loc.accountPhotoUpdated);
                             } else {
                               setSheet(() => uploading = false);
-                              floatingSnackBar("Gagal mengunggah foto");
+                              floatingSnackBar(loc.accountPhotoUploadFailed);
                             }
                           } catch (e) {
                             if (mounted) setSheet(() => uploading = false);
-                            floatingSnackBar("Gagal membuka galeri: ${e.toString()}");
+                            floatingSnackBar(loc.accountGalleryError(e.toString()));
                           }
                         },
                   icon: uploading
@@ -170,7 +174,7 @@ class _AccountSettingState extends State<AccountSetting> {
                           child: CircularProgressIndicator(strokeWidth: 2, color: appTheme.accentColor),
                         )
                       : const Icon(Icons.photo_library_rounded),
-                  label: Text(uploading ? "Mengunggah..." : "Upload foto (maks 2MB)"),
+                  label: Text(uploading ? loc.accountUploading : loc.accountUploadPhoto),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: appTheme.accentColor,
                     side: BorderSide(color: appTheme.accentColor),
@@ -180,7 +184,7 @@ class _AccountSettingState extends State<AccountSetting> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text("Atau pilih ikon", style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold)),
+              Text(loc.accountOrPickIcon, style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -213,7 +217,7 @@ class _AccountSettingState extends State<AccountSetting> {
                     if (!mounted) return;
                     Navigator.pop(ctx);
                     setState(() {});
-                    floatingSnackBar("Profil disimpan");
+                    floatingSnackBar(loc.accountProfileSaved);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: appTheme.accentColor,
@@ -221,7 +225,7 @@ class _AccountSettingState extends State<AccountSetting> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text("Simpan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: Text(loc.accountSave, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
             ],
@@ -232,6 +236,7 @@ class _AccountSettingState extends State<AccountSetting> {
   }
 
   Widget _rankSection() {
+    final loc = AppLocalizations.of(context);
     final social = SocialService.instance;
     if (!social.isReady || social.accountCreatedAt == null) return const SizedBox.shrink();
 
@@ -253,30 +258,30 @@ class _AccountSettingState extends State<AccountSetting> {
         children: [
           Container(
             margin: const EdgeInsets.only(bottom: 15),
-            child: Text("Rank & Pencapaian", style: textStyle().copyWith(fontSize: 24)),
+            child: Text(loc.accountRankTitle, style: textStyle().copyWith(fontSize: 24)),
           ),
           _rankTile(
             emoji: timeRank.emoji,
             title: timeRank.name,
-            subtitle: "Tercapai ${_formatDate(achieved)}",
+            subtitle: loc.accountRankAchievedOn(_formatDate(achieved, loc)),
             progress: RankSystem.progress(RankSystem.timeRanks, ageDays),
             footer: timeNext != null
-                ? "Menuju ${timeNext.emoji} ${timeNext.name} • ${timeNext.threshold - ageDays} hari lagi"
-                : "Rank waktu tertinggi tercapai 🎉",
+                ? loc.accountRankTimeNext(timeNext.emoji, timeNext.name, timeNext.threshold - ageDays)
+                : loc.accountRankTimeMax,
           ),
           const SizedBox(height: 14),
           _rankTile(
             emoji: activityRank.emoji,
             title: activityRank.name,
-            subtitle: "$episodes episode ditonton",
+            subtitle: loc.accountEpisodesWatched(episodes),
             progress: RankSystem.progress(RankSystem.activityRanks, episodes),
             footer: activityNext != null
-                ? "Menuju ${activityNext.emoji} ${activityNext.name} • ${activityNext.threshold - episodes} episode lagi"
-                : "Rank aktivitas tertinggi tercapai 🎉",
+                ? loc.accountRankActivityNext(activityNext.emoji, activityNext.name, activityNext.threshold - episodes)
+                : loc.accountRankActivityMax,
           ),
           if (badges.isNotEmpty) ...[
             const SizedBox(height: 18),
-            Text("Badge", style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(loc.accountBadge, style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Wrap(spacing: 8, runSpacing: 8, children: badges.map(_badgeChip).toList()),
           ],
@@ -347,8 +352,21 @@ class _AccountSettingState extends State<AccountSetting> {
     );
   }
 
-  String _formatDate(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  String _formatDate(DateTime date, AppLocalizations loc) {
+    final months = [
+      loc.accountMonthJan,
+      loc.accountMonthFeb,
+      loc.accountMonthMar,
+      loc.accountMonthApr,
+      loc.accountMonthMay,
+      loc.accountMonthJun,
+      loc.accountMonthJul,
+      loc.accountMonthAug,
+      loc.accountMonthSep,
+      loc.accountMonthOct,
+      loc.accountMonthNov,
+      loc.accountMonthDec,
+    ];
     return "${date.day} ${months[date.month - 1]} ${date.year}";
   }
 }
