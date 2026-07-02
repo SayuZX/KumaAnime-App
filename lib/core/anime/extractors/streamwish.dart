@@ -1,5 +1,5 @@
-import 'package:animestream/core/anime/extractors/type.dart';
-import 'package:animestream/core/anime/providers/types.dart';
+import 'package:kumaanime/core/anime/extractors/type.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:html/parser.dart' as html;
 import 'package:js_unpack/js_unpack.dart';
 import '../../commons/utils.dart';
