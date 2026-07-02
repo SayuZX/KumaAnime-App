@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/app/version.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/ContextMenu.dart';
@@ -65,9 +66,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                     ],
                   )
                 : Center(
-                    child: CircularProgressIndicator(
-                      color: appTheme.accentColor,
-                    ),
+                    child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                   )),
       ),
     );
