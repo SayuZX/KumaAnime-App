@@ -69,7 +69,7 @@ class Cards {
   }
 
   /**Builds a card for news */
-  static Widget NewsCard(String title, String imageUrl, String date, String time) {
+  static Widget NewsCard(String title, String? imageUrl, String date, String time) {
     return Card(
       surfaceTintColor: appTheme.textSubColor,
       color: appTheme.backgroundColor,
@@ -91,14 +91,19 @@ class Cards {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Image.asset('lib/assets/images/broken_heart.png'),
-                ),
-              ),
+              child: imageUrl == null || imageUrl.isEmpty
+                  ? Container(
+                      color: appTheme.backgroundSubColor,
+                      child: Icon(Icons.newspaper_rounded, size: 40, color: appTheme.textSubColor),
+                    )
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Padding(
+                        padding: const EdgeInsets.all(40),
+                        child: Image.asset('lib/assets/images/broken_heart.png'),
+                      ),
+                    ),
             ),
             Expanded(
               child: Column(
