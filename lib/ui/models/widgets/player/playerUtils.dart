@@ -15,9 +15,7 @@ Future<BetterPlayerDataSource> dataSourceConfig(String url, {Map<String, String>
       maxBufferMs: 120000,
     ),
     cacheConfiguration: BetterPlayerCacheConfiguration(
-      useCache: true,
-      maxCacheFileSize: 50 * 1024 * 1024,
-      maxCacheSize: 50 * 1024 * 1024,
+      useCache: false,
     ),
     headers: headers,
     placeholder: PlayerLoadingWidget(),
