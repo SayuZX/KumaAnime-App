@@ -1,8 +1,8 @@
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/anilist/anilist.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/core/database/database.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/anilist/anilist.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/core/database/database.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
 class AniListLogin extends DatabaseLogin {
@@ -23,7 +23,7 @@ class AniListLogin extends DatabaseLogin {
   /**Will only return bool (i hope) */
   @override
   Future<bool> initiateLogin() async {
-    final res = await FlutterWebAuth2.authenticate(url: url, callbackUrlScheme: "auth.animestream");
+    final res = await FlutterWebAuth2.authenticate(url: url, callbackUrlScheme: "auth.kumaanime");
     if (!res.contains("access_token")) {
       print("ERR_RECIEVED_AUTH_CODE_NULL");
       return false;
