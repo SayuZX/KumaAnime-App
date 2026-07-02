@@ -2,6 +2,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/commonInfo.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/scrollingList.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class InfoSection extends StatelessWidget {
@@ -17,6 +18,7 @@ class InfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final recommendationScrollController = ScrollController();
     final charactersScrollController = ScrollController();
     // final relatedScrollController = ScrollController();
@@ -69,7 +71,7 @@ class InfoSection extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Text("${provider.data.episodes ?? "??"} Episodes", style: _textStyle())
+                        Text(loc.isecEpisodesCount("${provider.data.episodes ?? "??"}"), style: _textStyle())
                       ],
                     ),
                   ],
@@ -88,11 +90,11 @@ class InfoSection extends StatelessWidget {
                           spacing: 20,
                           children: [
                             Text(
-                              "Synopsis",
+                              loc.isecSynopsis,
                               style: _textStyle(),
                             ),
                             Text(
-                              provider.data.synopsis ?? "No synopsis available",
+                              provider.data.synopsis ?? loc.isecNoSynopsis,
                               style: _textStyle().copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,
@@ -117,16 +119,16 @@ class InfoSection extends StatelessWidget {
                                 child: Column(
                                   spacing: 2,
                                   children: [
-                                    _infoBoxItem("Status:", provider.data.status ?? "??"),
-                                    _infoBoxItem("Duration:", provider.data.duration),
-                                    _infoBoxItem("Studios:", provider.data.studios.join(", ")),
+                                    _infoBoxItem(loc.isecStatus, provider.data.status ?? "??"),
+                                    _infoBoxItem(loc.isecDuration, provider.data.duration),
+                                    _infoBoxItem(loc.isecStudios, provider.data.studios.join(", ")),
                                     _infoBoxItem(
-                                        "Air start",
+                                        loc.isecAirStart,
                                         provider.data.aired['start']!.trim().isEmpty
                                             ? "??"
                                             : provider.data.aired['start']!),
                                     _infoBoxItem(
-                                        "Air end",
+                                        loc.isecAirEnd,
                                         provider.data.aired['end']!.trim().isEmpty
                                             ? "??"
                                             : provider.data.aired['end']!),
@@ -137,25 +139,25 @@ class InfoSection extends StatelessWidget {
                           ),
                         ),
                         if (size.width >= 1200 && size.width <= splitWidth)
-                          _tagsNgenresBuilder("Genres", provider.data.genres, context: context),
+                          _tagsNgenresBuilder(loc.isecGenres, provider.data.genres, context: context),
                       ],
                     ),
                     if (size.width < 1200)
                       Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: _tagsNgenresBuilder("Genres", provider.data.genres,
+                        child: _tagsNgenresBuilder(loc.isecGenres, provider.data.genres,
                             context: context, unconstrainedWidth: true, padLeft: false),
                       ),
                   ],
                 ),
               ),
               if (size.width < splitWidth)
-                _tagsNgenresBuilder("Tags", provider.data.tags!,
+                _tagsNgenresBuilder(loc.isecTags, provider.data.tags!,
                     unconstrainedWidth: true, padLeft: false, context: context),
               ScrollingList.character(
                   context, splitWidth, charactersScrollController, provider.data.characters),
               // ScrollingList.animeCards(context, splitWidth, relatedScrollController, "Related", provider.data.related), // Notto ereganto!
-              ScrollingList.animeCards(context, splitWidth, recommendationScrollController, "Recommended",
+              ScrollingList.animeCards(context, splitWidth, recommendationScrollController, loc.isecRecommended,
                   provider.data.recommended),
               SizedBox(
                 height: 16,
@@ -170,9 +172,9 @@ class InfoSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _tagsNgenresBuilder("Genres", provider.data.genres, context: context),
-                  _tagsNgenresBuilder("Synopsis", [provider.data.synopsis ?? ""], synopsis: true, context: context),
-                  if (provider.data.tags != null) _tagsNgenresBuilder("Tags", provider.data.tags!, context: context),
+                  _tagsNgenresBuilder(loc.isecGenres, provider.data.genres, context: context),
+                  _tagsNgenresBuilder(loc.isecSynopsis, [provider.data.synopsis ?? ""], synopsis: true, context: context),
+                  if (provider.data.tags != null) _tagsNgenresBuilder(loc.isecTags, provider.data.tags!, context: context),
                 ],
               ),
             ),
