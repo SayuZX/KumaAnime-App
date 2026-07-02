@@ -37,8 +37,6 @@ class PlayerSettingState extends State<PlayerSetting> {
 
   bool loaded = false;
 
-  String? preferredQuality;
-
   late bool enableSuperSpeeds;
   late bool doubleTapToSkip;
   late bool enablePipOnMinimize;
@@ -52,7 +50,6 @@ class PlayerSettingState extends State<PlayerSetting> {
     setState(() {
       skipDuration = settings.skipDuration ?? 15;
       megaSkipDuration = settings.megaSkipDuration ?? 85;
-      preferredQuality = settings.preferredQuality;
       skipDurationSliderValue = skipDuration!.toDouble();
       megaSkipDurationSliderValue = megaSkipDuration!.toDouble();
       enableSuperSpeeds = settings.enableSuperSpeeds ?? false;
@@ -185,48 +182,6 @@ class PlayerSettingState extends State<PlayerSetting> {
                               ],
                             ),
                           ),
-                          item(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
-                                  child: Text(
-                                    "Preferred quality",
-                                    style: textStyle(),
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  child: SegmentedButton(
-                                    style: SegmentedButton.styleFrom(
-                                        backgroundColor: appTheme.backgroundSubColor,
-                                        selectedBackgroundColor: appTheme.accentColor,
-                                        selectedForegroundColor: appTheme.onAccent,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        side: BorderSide(color: appTheme.textSubColor)),
-                                    multiSelectionEnabled: false,
-                                    showSelectedIcon: false,
-                                    onSelectionChanged: (val) {
-                                      setState(() {
-                                        preferredQuality = val.first;
-                                        writeSettings(SettingsModal(preferredQuality: val.first));
-                                      });
-                                    },
-                                    segments: [
-                                      segment("360p"),
-                                      segment("480p"),
-                                      segment("720p"),
-                                      segment("1080p"),
-                                    ],
-                                    selected: <String>{preferredQuality!},
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                           InkWell(
                             onTap: () {
                               Navigator.of(context)
@@ -325,20 +280,6 @@ class PlayerSettingState extends State<PlayerSetting> {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
       child: child,
-    );
-  }
-
-  ButtonSegment segment(String label) {
-    return ButtonSegment(
-      value: label,
-      label: Text(
-        label,
-        style: TextStyle(
-          // color: preferredQuality == label ? appTheme.backgroundColor : appTheme.accentColor,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
     );
   }
 
