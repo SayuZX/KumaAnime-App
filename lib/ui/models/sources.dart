@@ -4,6 +4,7 @@ import 'package:kumaanime/core/anime/providers/animeonsen.dart';
 import 'package:kumaanime/core/anime/providers/animepahe.dart';
 import 'package:kumaanime/core/anime/providers/anizone.dart';
 import 'package:kumaanime/core/anime/providers/gojo.dart';
+import 'package:kumaanime/core/anime/providers/otakudesu.dart';
 import 'package:kumaanime/core/anime/providers/anidb.dart';
 import 'package:kumaanime/core/anime/providers/animeProvider.dart';
 import 'package:kumaanime/core/anime/providers/providerDetails.dart';
@@ -29,6 +30,7 @@ class SourceManager {
     "Animegg",
     "AniDB",
     "Gojo",
+    "Otakudesu",
   ]
       .map((e) => ProviderDetails(
           name: e, identifier: e.toLowerCase() + "_inbuilt", version: "0.0.0.0", supportDownloads: e != "AnimeOnsen"))
@@ -116,6 +118,7 @@ final Map<String, AnimeProvider> sources = {
   "animegg": Animegg(),
   "anikoto": Anikoto(),
   "anidb": AniDB(),
+  "otakudesu": OtakuDesu(),
 };
 
 AnimeProvider getClass(String source) {
