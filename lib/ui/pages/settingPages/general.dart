@@ -138,7 +138,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                         print("Path set to: $dir");
                         await Settings().writeSettings(SettingsModal(downloadPath: dir));
                         setState(() {});
-                        floatingSnackBar("might need to provide 'allow access to all files' while downloading!");
+                        floatingSnackBar(loc.genAllowAllFilesHint);
                       },
                       child: Container(
                         padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
@@ -208,8 +208,8 @@ class _GeneralSettingState extends State<GeneralSetting> {
                           builder: (context) => _dnsSheet(context),
                         );
                       },
-                      label: "Secure DNS",
-                      description: _dnsOptions[dnsProvider] ?? 'Off',
+                      label: loc.genSecureDns,
+                      description: _dnsLabel(dnsProvider, loc),
                       suffixIcon: Icon(Icons.arrow_drop_down),
                     )
                   ],
@@ -285,7 +285,14 @@ class _GeneralSettingState extends State<GeneralSetting> {
     );
   }
 
+  String _dnsLabel(String key, AppLocalizations loc) {
+    if (key == 'auto') return loc.genDnsAuto;
+    if (key == 'off') return loc.genDnsOff;
+    return _dnsOptions[key] ?? loc.genDnsOff;
+  }
+
   Widget _dnsSheet(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return StatefulBuilder(
       builder: (context, setSheet) => Container(
         padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
@@ -296,7 +303,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: Text("Secure DNS", style: textStyle().copyWith(fontSize: 23)),
+              child: Text(loc.genSecureDns, style: textStyle().copyWith(fontSize: 23)),
             ),
             ListView(
               shrinkWrap: true,
@@ -323,7 +330,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         child: Text(
-                          entry.value,
+                          _dnsLabel(entry.key, loc),
                           style: textStyle().copyWith(
                             fontSize: 16,
                             color: selected ? appTheme.onAccent : appTheme.textMainColor,
