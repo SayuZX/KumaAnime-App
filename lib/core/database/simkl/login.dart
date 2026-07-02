@@ -1,25 +1,25 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:animestream/core/app/env.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/data/secureStorage.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/simkl/mutations.dart';
-import 'package:animestream/core/database/simkl/types.dart';
+import 'package:kumaanime/core/app/env.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/secureStorage.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/simkl/mutations.dart';
+import 'package:kumaanime/core/database/simkl/types.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart';
 
 class SimklLogin extends DatabaseLogin {
-  static const callbackScheme = "auth.animestream://";
+  static const callbackScheme = "auth.kumaanime://";
 
   @override
   Future<bool> initiateLogin() async {
-    final clientId = AnimeStreamEnvironment.simklClientId;
-    final clientSecret = AnimeStreamEnvironment.simklClientSecret;
+    final clientId = KumaAnimeEnvironment.simklClientId;
+    final clientSecret = KumaAnimeEnvironment.simklClientSecret;
     if (clientSecret.isEmpty || clientId.isEmpty) {
       throw Exception("Error: SIMKL CLIENT ID OR SECRET NOT PROVIDED!");
     }
@@ -61,7 +61,7 @@ class SimklLogin extends DatabaseLogin {
   }
 
   static Future<PCKECodeResult> getPkceCode() async {
-    final url = "https://api.simkl.com/oauth/pin?client_id=${AnimeStreamEnvironment.simklClientId}";
+    final url = "https://api.simkl.com/oauth/pin?client_id=${KumaAnimeEnvironment.simklClientId}";
     final res = await get(Uri.parse(url));
     if (res.statusCode != 200) throw new Exception("Couldnt Get Code for Login");
     final jsoned = jsonDecode(res.body);
@@ -79,7 +79,7 @@ class SimklLogin extends DatabaseLogin {
 
   //function to call for polling
   static Future<bool> verifyPkceCode(PCKECodeResult codeRes) async {
-    final url = "https://api.simkl.com/oauth/pin/${codeRes.userCode}?client_id=${AnimeStreamEnvironment.simklClientId}";
+    final url = "https://api.simkl.com/oauth/pin/${codeRes.userCode}?client_id=${KumaAnimeEnvironment.simklClientId}";
     final Completer<bool> completer = Completer<bool>();
     int failCount = 0;
     Timer.periodic(Duration(seconds: codeRes.interval), (timer) async {
