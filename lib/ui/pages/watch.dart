@@ -655,7 +655,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
         children: [
           Container(
             color: Colors.black,
-            child: AspectRatio(aspectRatio: 16 / 9, child: player),
+            child: ClipRect(child: AspectRatio(aspectRatio: 16 / 9, child: player)),
           ),
           Expanded(
             child: WatchSocialPanel(
