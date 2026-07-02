@@ -101,7 +101,7 @@ class AppProvider with ChangeNotifier {
       );
     } else {
       appTheme = KumaAnimeTheme(
-        accentColor: theme.lightVariant.accentColor,
+        accentColor: Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor),
         backgroundColor: lightModeValues.backgroundColor,
         backgroundSubColor: lightModeValues.backgroundSubColor,
         textMainColor: lightModeValues.textMainColor,
