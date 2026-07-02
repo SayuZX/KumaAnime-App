@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/pages/settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -41,6 +42,7 @@ class _NewHomeState extends State<NewHome> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final provider = context.watch<MainNavProvider>();
     return Scaffold(
         body: Padding(
@@ -52,7 +54,7 @@ class _NewHomeState extends State<NewHome> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.mainNavProvider.userProfile?.name ?? "no usah", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+                Text(widget.mainNavProvider.userProfile?.name ?? loc.newHomeNoName, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
                 IconButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => SettingsPage()));
@@ -60,7 +62,7 @@ class _NewHomeState extends State<NewHome> {
                     icon: Icon(Icons.settings_rounded, size: 36,)),
               ],
             ),
-            _title("Continue Watching"),
+            _title(loc.newHomeContinueWatching),
             SizedBox(
               height: 200,
               child: CarouselView(
@@ -116,7 +118,7 @@ class _NewHomeState extends State<NewHome> {
                 }).toList(),
               ),
             ),
-            _title("Trending"),
+            _title(loc.newHomeTrending),
             SizedBox(
               height: 400,
               child: GridView.builder(
