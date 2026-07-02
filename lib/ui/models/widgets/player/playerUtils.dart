@@ -80,7 +80,7 @@ class PlayerLoadingWidget extends StatelessWidget {
               )),
           Text(
             messages[Random().nextInt(messages.length)],
-            style: TextStyle(color: Colors.grey, fontFamily: "Rubik", fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
           )
         ],
       ),
