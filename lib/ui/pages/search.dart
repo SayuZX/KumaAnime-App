@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/data/preferences.dart';
-import 'package:animestream/core/data/types.dart';
-import 'package:animestream/core/database/handler/handler.dart';
-import 'package:animestream/core/database/types.dart';
-import 'package:animestream/ui/models/widgets/cards.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCardExtended.dart';
-import 'package:animestream/ui/models/widgets/header.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/data/preferences.dart';
+import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/core/database/handler/handler.dart';
+import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCardExtended.dart';
+import 'package:kumaanime/ui/models/widgets/header.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
