@@ -46,7 +46,6 @@ class Cards {
               name,
               style: TextStyle(
                 color: appTheme.textMainColor,
-                fontFamily: 'NotoSans',
                 fontSize: 15,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -58,7 +57,6 @@ class Cards {
             role,
             style: TextStyle(
               color: appTheme.textSubColor,
-              fontFamily: 'NotoSans',
               fontSize: 12,
               overflow: TextOverflow.ellipsis,
             ),
@@ -118,8 +116,7 @@ class Cards {
                       style: TextStyle(
                         color: appTheme.textMainColor,
                         fontSize: 18,
-                        fontFamily: "Rubik",
-                      ),
+                        ),
                     ),
                   ),
                   Spacer(),
@@ -128,7 +125,6 @@ class Cards {
                     child: Text(
                       "$date • $time",
                       style: TextStyle(
-                        fontFamily: "NotoSans",
                         fontSize: 13,
                         color: appTheme.textSubColor,
                       ),
