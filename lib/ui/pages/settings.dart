@@ -1,10 +1,10 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/pages/settingPages/account.dart';
-import 'package:animestream/ui/pages/settingPages/appInfo.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
-import 'package:animestream/ui/pages/settingPages/general.dart';
-import 'package:animestream/ui/pages/settingPages/player.dart';
-import 'package:animestream/ui/pages/settingPages/ui.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/pages/settingPages/account.dart';
+import 'package:kumaanime/ui/pages/settingPages/appInfo.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/settingPages/general.dart';
+import 'package:kumaanime/ui/pages/settingPages/player.dart';
+import 'package:kumaanime/ui/pages/settingPages/ui.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
