@@ -1,4 +1,4 @@
-import 'package:animestream/core/anime/providers/types.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
 
 abstract class AnimeProvider {
   /// Name of the provider
