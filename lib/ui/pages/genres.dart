@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/extensions.dart';
-import 'package:animestream/core/database/anilist/queries.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/ui/models/widgets/cards.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCard.dart';
-import 'package:animestream/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/extensions.dart';
+import 'package:kumaanime/core/database/anilist/queries.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:flutter/material.dart';
-import 'package:animestream/core/commons/genresAndTags.dart';
+import 'package:kumaanime/core/commons/genresAndTags.dart';
 
 class GenresPage extends StatefulWidget {
   const GenresPage({super.key});
