@@ -171,7 +171,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
                 ),
                 Text(
                   "Episode ${widget.episodeIndex + 1}",
-                 style: TextStyle(color: appTheme.textSubColor, fontFamily: "Rubik")
+                 style: TextStyle(color: appTheme.textSubColor, )
                 ),
               ],
             ),
@@ -206,7 +206,7 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
                       child: Center(
                         child: Text(
                           "Woah! empty list of servers!",
-                          style: TextStyle(fontFamily: "Rubik", fontSize: 18),
+                          style: TextStyle(fontSize: 18),
                         ),
                       ),
                     )
@@ -371,16 +371,14 @@ class _DownloadTile extends StatelessWidget {
                         style: TextStyle(
                           color: appTheme.accentColor,
                           fontSize: 18,
-                          fontFamily: "Rubik",
-                        ),
+                          ),
                       ),
                       Text(
                         "${quality['quality']}",
                         style: TextStyle(
                           color: appTheme.textMainColor,
                           fontSize: 18,
-                          fontFamily: "Rubik",
-                        ),
+                          ),
                       ),
                     ],
                   ),
