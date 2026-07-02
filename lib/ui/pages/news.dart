@@ -79,7 +79,7 @@ class _NewsState extends State<News> {
         backgroundColor: appTheme.backgroundColor,
         title: Text(
           loc.newsTitle,
-          style: TextStyle(color: appTheme.textMainColor, fontFamily: "Poppins", fontSize: 25),
+          style: TextStyle(color: appTheme.textMainColor, fontSize: 25),
         ),
       ),
       body: Column(
@@ -120,7 +120,6 @@ class _NewsState extends State<News> {
             label,
             style: TextStyle(
               color: selected ? appTheme.onAccent : appTheme.textMainColor,
-              fontFamily: "NotoSans",
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -144,7 +143,7 @@ class _NewsState extends State<News> {
             Text(
               loc.newsLoadError,
               textAlign: TextAlign.center,
-              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 16),
+              style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
             ),
             const SizedBox(height: 15),
             ElevatedButton(
