@@ -22,6 +22,7 @@ import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/theme.dart';
 import 'package:kumaanime/core/security/securityInit.dart';
+import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/notification.dart';
 import 'package:kumaanime/ui/models/widgets/kumaSecureWidget.dart';
@@ -60,6 +61,8 @@ void main(List<String> args) async {
     await Hive.initFlutter(!Platform.isAndroid ? "kumaanime" : null);
 
     await loadAndAssignSettings();
+
+    if (Platform.isAndroid) await SocialService.instance.init();
 
     if (!Platform.isAndroid) {
       fvp.registerWith();
