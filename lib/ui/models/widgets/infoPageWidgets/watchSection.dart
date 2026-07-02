@@ -5,6 +5,7 @@ import 'package:kumaanime/ui/models/widgets/infoPageWidgets/commonInfo.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/continueBoxes.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/episodeGrid.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/sourceBoxes.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class WatchSection extends StatelessWidget {
@@ -75,6 +76,7 @@ class WatchSection extends StatelessWidget {
   }
 
   Widget buildEpisodesContainer(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20).copyWith(top: 50),
       height: (size.height / 1.75),
@@ -94,7 +96,7 @@ class WatchSection extends StatelessWidget {
                   KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                   SizedBox(height: 16),
                   Text(
-                    "Loading episodes...",
+                    loc.wsLoadingEpisodes,
                     style: TextStyle(
                       color: appTheme.textMainColor.withAlpha(204),
                       fontSize: 14,
@@ -135,7 +137,7 @@ class WatchSection extends StatelessWidget {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            "Episodes",
+                            loc.wsEpisodes,
                             style: TextStyle(
                               color: appTheme.textMainColor,
                               fontSize: 16,
@@ -186,7 +188,7 @@ class WatchSection extends StatelessWidget {
                                     color: appTheme.textMainColor,
                                     size: 16,
                                   ),
-                                  tooltip: "Previous page",
+                                  tooltip: loc.wsPreviousPage,
                                 ),
                               ),
                               SizedBox(width: 10),
@@ -211,7 +213,7 @@ class WatchSection extends StatelessWidget {
                                             Padding(
                                               padding: const EdgeInsets.only(left: 8, bottom: 16),
                                               child: Text(
-                                                "Select Episode Range",
+                                                loc.wsSelectEpisodeRange,
                                                 style: TextStyle(
                                                   color: appTheme.textMainColor,
                                                   fontSize: 18,
@@ -333,7 +335,7 @@ class WatchSection extends StatelessWidget {
                                     color: appTheme.textMainColor,
                                     size: 16,
                                   ),
-                                  tooltip: "Next page",
+                                  tooltip: loc.wsNextPage,
                                 ),
                               ),
                             ],
@@ -352,8 +354,8 @@ class WatchSection extends StatelessWidget {
                         margin: EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
                           children: [
-                            _buildSubDubButton(false),
-                            _buildSubDubButton(true),
+                            _buildSubDubButton(false, loc),
+                            _buildSubDubButton(true, loc),
                           ],
                         ),
                       ),
@@ -365,9 +367,9 @@ class WatchSection extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                         child: Row(
                           children: [
-                            _buildViewModeButton(0, Icons.view_list),
-                            _buildViewModeButton(1, Icons.grid_view_sharp),
-                            _buildViewModeButton(2, Icons.grid_on_sharp),
+                            _buildViewModeButton(0, Icons.view_list, loc),
+                            _buildViewModeButton(1, Icons.grid_view_sharp, loc),
+                            _buildViewModeButton(2, Icons.grid_on_sharp, loc),
                           ],
                         ),
                       ),
@@ -387,7 +389,7 @@ class WatchSection extends StatelessWidget {
                               ),
                               SizedBox(height: 16),
                               Text(
-                                "No episodes found",
+                                loc.wsNoEpisodesFound,
                                 style: TextStyle(
                                   color: appTheme.textMainColor.withAlpha(204),
                                   fontSize: 16,
@@ -396,7 +398,7 @@ class WatchSection extends StatelessWidget {
                               ),
                               SizedBox(height: 8),
                               Text(
-                                "Try changing the source or using manual search",
+                                loc.wsTryChangingSource,
                                 style: TextStyle(
                                   color: appTheme.textMainColor.withAlpha(153),
                                   fontSize: 14,
@@ -416,7 +418,7 @@ class WatchSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSubDubButton(bool isDub) {
+  Widget _buildSubDubButton(bool isDub, AppLocalizations loc) {
     // provider.viewMode;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 2, vertical: 3),
@@ -430,7 +432,7 @@ class WatchSection extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
           icon: Text(
-            isDub ? "dub" : "sub",
+            isDub ? loc.wsDub : loc.wsSub,
             style: TextStyle(color: provider.preferDubs == isDub ? appTheme.onAccent : null, fontWeight: FontWeight.bold),
           ),
           padding: EdgeInsets.all(8),
@@ -438,11 +440,11 @@ class WatchSection extends StatelessWidget {
             minWidth: 36,
             minHeight: 36,
           ),
-          tooltip: isDub ? "prefer dubs" : "prefer subs"),
+          tooltip: isDub ? loc.wsPreferDubs : loc.wsPreferSubs),
     );
   }
 
-  Widget _buildViewModeButton(int mode, IconData icon) {
+  Widget _buildViewModeButton(int mode, IconData icon, AppLocalizations loc) {
     // provider.viewMode;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 2, vertical: 3),
@@ -466,10 +468,10 @@ class WatchSection extends StatelessWidget {
           minHeight: 36,
         ),
         tooltip: mode == 0
-            ? "List view"
+            ? loc.wsListView
             : mode == 1
-                ? "Grid view"
-                : "Compact grid",
+                ? loc.wsGridView
+                : loc.wsCompactGrid,
       ),
     );
   }
