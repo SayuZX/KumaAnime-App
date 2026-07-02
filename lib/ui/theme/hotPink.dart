@@ -1,4 +1,4 @@
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 
 class HotPink implements ThemeItem {
@@ -9,7 +9,7 @@ class HotPink implements ThemeItem {
   bool get dev => false;
 
   @override
-  AnimeStreamTheme get lightVariant => AnimeStreamTheme(
+  KumaAnimeTheme get lightVariant => KumaAnimeTheme(
         accentColor: Color.fromARGB(255, 255, 91, 173),
         backgroundColor: Colors.white,
         backgroundSubColor: Color.fromARGB(255, 179, 179, 179),
@@ -23,7 +23,7 @@ class HotPink implements ThemeItem {
   String get name => "Hot Pink";
 
   @override
-  AnimeStreamTheme get theme => AnimeStreamTheme(
+  KumaAnimeTheme get theme => KumaAnimeTheme(
         accentColor: Color.fromARGB(255, 255, 91, 173),
         backgroundColor: Color.fromARGB(255, 24, 24, 24),
         backgroundSubColor: Color.fromARGB(255, 36, 36, 36),
