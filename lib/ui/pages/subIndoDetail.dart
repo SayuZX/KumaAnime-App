@@ -1,17 +1,21 @@
 import 'dart:io';
 
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
-import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/subIndoWatched.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/handler/handler.dart';
+import 'package:kumaanime/core/database/types.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/widgets/sourceTile.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/watch.dart';
@@ -32,12 +36,11 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
   final _provider = OtakuDesu();
 
   SubIndoAnimeDetail? _detail;
+  DatabaseInfo? _enriched;
   bool _loading = true;
   bool _error = false;
+  bool _enrichLoading = false;
   bool _synopsisExpanded = false;
-
-  Set<int> _watched = {};
-  int? _lastWatched;
 
   @override
   void initState() {
@@ -52,15 +55,12 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     });
     try {
       final detail = await _provider.getDetail(widget.animeId);
-      final watched = await SubIndoWatched.getWatched(widget.animeId);
-      final last = await SubIndoWatched.getLast(widget.animeId);
       if (!mounted) return;
       setState(() {
         _detail = detail;
-        _watched = watched;
-        _lastWatched = last;
         _loading = false;
       });
+      _loadEnrichment(detail);
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -70,23 +70,52 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     }
   }
 
-  Future<void> _reloadWatched() async {
-    final watched = await SubIndoWatched.getWatched(widget.animeId);
-    final last = await SubIndoWatched.getLast(widget.animeId);
-    if (mounted) setState(() {
-      _watched = watched;
-      _lastWatched = last;
-    });
+  Future<void> _loadEnrichment(SubIndoAnimeDetail detail) async {
+    setState(() => _enrichLoading = true);
+    try {
+      final handler = DatabaseHandler(database: Databases.anilist);
+      final primary =
+          (detail.japanese != null && detail.japanese!.trim().isNotEmpty) ? detail.japanese!.trim() : detail.title;
+      var results = await handler.search(primary);
+      if (results.isEmpty && primary != detail.title) results = await handler.search(detail.title);
+      if (results.isEmpty) {
+        if (mounted) setState(() => _enrichLoading = false);
+        return;
+      }
+      final info = await handler.getAnimeInfo(results.first.id);
+      if (!mounted) return;
+      setState(() {
+        _enriched = info;
+        _enrichLoading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _enrichLoading = false);
+    }
   }
 
-  void _openServerSheet(int episodeIndex) {
+  void _onWatchNow(SubIndoAnimeDetail detail) {
+    if (detail.episodeList.isEmpty) return;
+    if (detail.isMovie || detail.episodeList.length == 1) {
+      _openServerSheet(detail, 0);
+    } else {
+      showModalBottomSheet(
+        context: context,
+        showDragHandle: true,
+        isScrollControlled: true,
+        backgroundColor: appTheme.modalSheetBackgroundColor,
+        builder: (_) => _EpisodePickerSheet(detail: detail, animeId: widget.animeId),
+      );
+    }
+  }
+
+  void _openServerSheet(SubIndoAnimeDetail detail, int episodeIndex) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: appTheme.modalSheetBackgroundColor,
-      builder: (context) => _SubIndoServerSheet(detail: _detail!, animeId: widget.animeId, episodeIndex: episodeIndex),
-    ).then((_) => _reloadWatched());
+      builder: (_) => _SubIndoServerSheet(detail: detail, animeId: widget.animeId, episodeIndex: episodeIndex),
+    );
   }
 
   @override
@@ -238,15 +267,14 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
                 if (detail.genres.isNotEmpty) _genreChips(detail),
                 const SizedBox(height: 18),
                 _watchButton(loc, detail),
-                if (detail.synopsis.isNotEmpty) ...[
-                  const SizedBox(height: 24),
-                  _sectionTitle(loc.subIndoSynopsis),
-                  _synopsis(loc, detail),
+                ..._synopsisSection(loc, detail),
+                ..._tagsSection(loc),
+                ..._charactersSection(loc),
+                ..._recommendedSection(loc),
+                if (_enrichLoading && _enriched == null) ...[
+                  const SizedBox(height: 30),
+                  Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 28)),
                 ],
-                const SizedBox(height: 24),
-                _episodeHeader(loc, detail),
-                const SizedBox(height: 12),
-                _episodeGrid(detail),
               ],
             ),
           ),
@@ -282,19 +310,21 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: detail.genres
-          .map((genre) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  color: appTheme.backgroundSubColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  genre.title,
-                  style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 12),
-                ),
-              ))
-          .toList(),
+      children: detail.genres.map((genre) => _pill(genre.title)).toList(),
+    );
+  }
+
+  Widget _pill(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        color: appTheme.backgroundSubColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 12),
+      ),
     );
   }
 
@@ -303,7 +333,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () => _openServerSheet(0),
+        onPressed: () => _onWatchNow(detail),
         style: ElevatedButton.styleFrom(
           backgroundColor: appTheme.accentColor,
           foregroundColor: appTheme.onAccent,
@@ -319,106 +349,203 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     );
   }
 
-  Widget _synopsis(AppLocalizations loc, SubIndoAnimeDetail detail) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AnimatedSize(
-          duration: const Duration(milliseconds: 200),
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: _synopsisExpanded ? double.infinity : 90),
-            child: Text(
-              detail.synopsis,
-              overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
-              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 14, height: 1.5),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () => setState(() => _synopsisExpanded = !_synopsisExpanded),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              _synopsisExpanded ? loc.showLess : loc.showMore,
-              style: TextStyle(color: appTheme.accentColor, fontFamily: "NotoSans", fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _episodeHeader(AppLocalizations loc, SubIndoAnimeDetail detail) {
-    final title = detail.isMovie
-        ? loc.movie
-        : "${loc.subIndoEpisodes}${detail.episodes != null && detail.episodes!.isNotEmpty ? " (${detail.episodes})" : ""}";
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: _sectionTitle(title)),
-        if (!detail.isMovie) ...[
-          IconButton(
-            tooltip: loc.markAllWatched,
-            onPressed: () => _markAll(detail),
-            icon: Icon(Icons.done_all_rounded, color: appTheme.textSubColor),
-          ),
-          IconButton(
-            tooltip: loc.resetProgress,
-            onPressed: () => _confirmReset(loc),
-            icon: Icon(Icons.restart_alt_rounded, color: appTheme.textSubColor),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _episodeGrid(SubIndoAnimeDetail detail) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: List.generate(detail.episodeList.length, (index) {
-        final ep = detail.episodeList[index];
-        final number = ep.episodeNumber;
-        final isWatched = _watched.contains(number);
-        final isLast = _lastWatched == number;
-        final bg = isLast
-            ? appTheme.accentColor
-            : (isWatched ? appTheme.accentColor.withValues(alpha: 0.16) : appTheme.backgroundSubColor);
-        final fg = isLast
-            ? appTheme.onAccent
-            : (isWatched ? appTheme.accentColor : appTheme.textMainColor);
-        return GestureDetector(
-          onTap: () => _openServerSheet(index),
-          child: Container(
-            width: 52,
-            height: 52,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(12),
-              border: !isLast && isWatched
-                  ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.55), width: 1.5)
-                  : null,
-            ),
-            child: Text(
-              "$number",
-              style: TextStyle(
-                color: fg,
-                fontFamily: "Rubik",
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+  List<Widget> _synopsisSection(AppLocalizations loc, SubIndoAnimeDetail detail) {
+    final text = detail.synopsis.isNotEmpty ? detail.synopsis : (_enriched?.synopsis ?? '');
+    if (text.isEmpty) return [];
+    return [
+      const SizedBox(height: 24),
+      _sectionTitle(loc.subIndoSynopsis),
+      const SizedBox(height: 8),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: _synopsisExpanded ? double.infinity : 90),
+              child: Text(
+                text,
+                overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
+                style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 14, height: 1.5),
               ),
             ),
           ),
-        );
-      }),
+          GestureDetector(
+            onTap: () => setState(() => _synopsisExpanded = !_synopsisExpanded),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                _synopsisExpanded ? loc.showLess : loc.showMore,
+                style: TextStyle(color: appTheme.accentColor, fontFamily: "NotoSans", fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<Widget> _tagsSection(AppLocalizations loc) {
+    final tags = _enriched?.tags ?? [];
+    if (tags.isEmpty) return [];
+    return [
+      const SizedBox(height: 24),
+      _sectionTitle(loc.subIndoTags),
+      const SizedBox(height: 12),
+      Wrap(spacing: 8, runSpacing: 8, children: tags.map(_pill).toList()),
+    ];
+  }
+
+  List<Widget> _charactersSection(AppLocalizations loc) {
+    final chars = _enriched?.characters ?? [];
+    if (chars.isEmpty) return [];
+    return [
+      const SizedBox(height: 24),
+      _sectionTitle(loc.subIndoCharacters),
+      const SizedBox(height: 12),
+      SizedBox(
+        height: 210,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          itemCount: chars.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, index) => _characterCard(chars[index]),
+        ),
+      ),
+    ];
+  }
+
+  Widget _characterCard(Map<String, dynamic> character) {
+    final name = (character['name'] ?? '').toString();
+    final role = (character['role'] ?? '').toString();
+    final image = (character['image'] ?? '').toString();
+    return SizedBox(
+      width: 110,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: CachedNetworkImage(
+              imageUrl: image,
+              height: 150,
+              width: 110,
+              fit: BoxFit.cover,
+              placeholder: (_, __) => Container(height: 150, width: 110, color: appTheme.backgroundSubColor),
+              errorWidget: (_, __, ___) => Container(
+                height: 150,
+                width: 110,
+                color: appTheme.backgroundSubColor,
+                child: Icon(Icons.person_rounded, color: appTheme.textSubColor),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            name,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 13),
+          ),
+          if (role.isNotEmpty)
+            Text(
+              role,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 11),
+            ),
+        ],
+      ),
     );
   }
 
-  Future<void> _markAll(SubIndoAnimeDetail detail) async {
-    await SubIndoWatched.markAll(widget.animeId, detail.episodeList.map((e) => e.episodeNumber).toList());
-    await _reloadWatched();
+  List<Widget> _recommendedSection(AppLocalizations loc) {
+    final recs = _enriched?.recommended ?? [];
+    if (recs.isEmpty) return [];
+    return [
+      const SizedBox(height: 24),
+      _sectionTitle(loc.subIndoRecommended),
+      const SizedBox(height: 12),
+      SizedBox(
+        height: 235,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          itemCount: recs.length,
+          itemBuilder: (context, index) {
+            final r = recs[index];
+            return Cards.animeCard(
+              r.id,
+              r.title['english'] ?? r.title['romaji'] ?? '',
+              r.cover,
+              isMobile: true,
+              rating: r.rating,
+            );
+          },
+        ),
+      ),
+    ];
+  }
+
+  Widget _sectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: appTheme.textMainColor,
+        fontFamily: "Rubik",
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
+
+class _EpisodePickerSheet extends StatefulWidget {
+  final SubIndoAnimeDetail detail;
+  final String animeId;
+
+  const _EpisodePickerSheet({required this.detail, required this.animeId});
+
+  @override
+  State<_EpisodePickerSheet> createState() => _EpisodePickerSheetState();
+}
+
+class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
+  Set<int> _watched = {};
+  int? _lastWatched;
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
+  }
+
+  Future<void> _reload() async {
+    final watched = await SubIndoWatched.getWatched(widget.animeId);
+    final last = await SubIndoWatched.getLast(widget.animeId);
+    if (mounted) {
+      setState(() {
+        _watched = watched;
+        _lastWatched = last;
+      });
+    }
+  }
+
+  void _openServerSheet(int episodeIndex) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      backgroundColor: appTheme.modalSheetBackgroundColor,
+      builder: (_) => _SubIndoServerSheet(detail: widget.detail, animeId: widget.animeId, episodeIndex: episodeIndex),
+    ).then((_) => _reload());
+  }
+
+  Future<void> _markAll() async {
+    await SubIndoWatched.markAll(widget.animeId, widget.detail.episodeList.map((e) => e.episodeNumber).toList());
+    await _reload();
   }
 
   void _confirmReset(AppLocalizations loc) {
@@ -432,7 +559,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
           TextButton(
             onPressed: () async {
               await SubIndoWatched.reset(widget.animeId);
-              await _reloadWatched();
+              await _reload();
               if (mounted) Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: appTheme.accentColor),
@@ -443,14 +570,78 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     );
   }
 
-  Widget _sectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: appTheme.textMainColor,
-        fontFamily: "Rubik",
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final detail = widget.detail;
+    return Container(
+      padding: EdgeInsets.only(left: 20, right: 20, top: 4, bottom: MediaQuery.of(context).padding.bottom + 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(loc.subIndoSelectEpisode, style: textStyle().copyWith(fontSize: 22)),
+              ),
+              IconButton(
+                tooltip: loc.markAllWatched,
+                onPressed: _markAll,
+                icon: Icon(Icons.done_all_rounded, color: appTheme.textSubColor),
+              ),
+              IconButton(
+                tooltip: loc.resetProgress,
+                onPressed: () => _confirmReset(loc),
+                icon: Icon(Icons.restart_alt_rounded, color: appTheme.textSubColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: SingleChildScrollView(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: List.generate(detail.episodeList.length, (index) {
+                  final number = detail.episodeList[index].episodeNumber;
+                  final isWatched = _watched.contains(number);
+                  final isLast = _lastWatched == number;
+                  final bg = isLast
+                      ? appTheme.accentColor
+                      : (isWatched ? appTheme.accentColor.withValues(alpha: 0.16) : appTheme.backgroundSubColor);
+                  final fg =
+                      isLast ? appTheme.onAccent : (isWatched ? appTheme.accentColor : appTheme.textMainColor);
+                  return GestureDetector(
+                    onTap: () => _openServerSheet(index),
+                    child: Container(
+                      width: 52,
+                      height: 52,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: bg,
+                        borderRadius: BorderRadius.circular(12),
+                        border: !isLast && isWatched
+                            ? Border.all(color: appTheme.accentColor.withValues(alpha: 0.55), width: 1.5)
+                            : null,
+                      ),
+                      child: Text(
+                        "$number",
+                        style: TextStyle(
+                          color: fg,
+                          fontFamily: "Rubik",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
