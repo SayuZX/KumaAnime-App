@@ -119,6 +119,12 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void applyAccentColor(int? argb) {
+    if (argb == null) return;
+    appTheme.accentColor = Color(argb);
+    notifyListeners();
+  }
+
   /// Set the window mode to fullscreen or windowed
   Future<void> setFullScreen(bool fs) async {
     if (Platform.isAndroid) return;
