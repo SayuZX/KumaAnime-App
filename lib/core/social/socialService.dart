@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -147,19 +149,39 @@ class SocialService {
     if (_uid == null) return null;
     final data = await ImageCompressor.compressUnder2MB(path);
     if (data == null) return null;
+    final url = await _uploadToCatbox(data) ?? await _uploadToNullPointer(data);
+    if (url == null) return null;
+    await saveProfile(nickname: nickname, avatar: url);
+    return url;
+  }
+
+  Future<String?> _uploadToCatbox(Uint8List data) async {
     try {
       final request = http.MultipartRequest('POST', Uri.parse('https://catbox.moe/user/api.php'))
         ..fields['reqtype'] = 'fileupload'
         ..files.add(http.MultipartFile.fromBytes('fileToUpload', data, filename: '$_uid.jpg'));
-      final response = await http.Response.fromStream(await request.send());
+      final streamed = await request.send().timeout(const Duration(seconds: 45));
+      final response = await http.Response.fromStream(streamed);
       final url = response.body.trim();
-      if (response.statusCode != 200 || !url.startsWith('http')) return null;
-      await saveProfile(nickname: nickname, avatar: url);
-      return url;
+      if (response.statusCode == 200 && url.startsWith('http')) return url;
     } catch (err) {
-      Logs.app.log("[SOCIAL] avatar upload failed: ${err.toString()}");
-      return null;
+      Logs.app.log("[SOCIAL] catbox upload failed: ${err.toString()}");
     }
+    return null;
+  }
+
+  Future<String?> _uploadToNullPointer(Uint8List data) async {
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse('https://0x0.st'))
+        ..files.add(http.MultipartFile.fromBytes('file', data, filename: '$_uid.jpg'));
+      final streamed = await request.send().timeout(const Duration(seconds: 45));
+      final response = await http.Response.fromStream(streamed);
+      final url = response.body.trim();
+      if (response.statusCode == 200 && url.startsWith('http')) return url;
+    } catch (err) {
+      Logs.app.log("[SOCIAL] 0x0 upload failed: ${err.toString()}");
+    }
+    return null;
   }
 
   DocumentReference<Map<String, dynamic>> _animeDoc(String key) => _db.collection('anime_social').doc(key);
