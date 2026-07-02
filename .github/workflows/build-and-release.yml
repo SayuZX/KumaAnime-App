@@ -114,17 +114,17 @@ jobs:
         run: |
           cd build/app/outputs/flutter-apk
           # Rename split + universal APKs
-          mv app-release.apk animestream-${{ needs.extract-version.outputs.version }}-universal.apk
-          mv app-armeabi-v7a-release.apk animestream-${{ needs.extract-version.outputs.version }}-armeabi-v7a.apk 2>/dev/null || true
-          mv app-arm64-v8a-release.apk animestream-${{ needs.extract-version.outputs.version }}-arm64-v8a.apk 2>/dev/null || true
-          mv app-x86_64-release.apk animestream-${{ needs.extract-version.outputs.version }}-x86_64.apk 2>/dev/null || true
+          mv app-release.apk kumaanime-${{ needs.extract-version.outputs.version }}-universal.apk
+          mv app-armeabi-v7a-release.apk kumaanime-${{ needs.extract-version.outputs.version }}-armeabi-v7a.apk 2>/dev/null || true
+          mv app-arm64-v8a-release.apk kumaanime-${{ needs.extract-version.outputs.version }}-arm64-v8a.apk 2>/dev/null || true
+          mv app-x86_64-release.apk kumaanime-${{ needs.extract-version.outputs.version }}-x86_64.apk 2>/dev/null || true
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
           name: android-builds
           path: |
-            build/app/outputs/flutter-apk/animestream-*.apk
+            build/app/outputs/flutter-apk/kumaanime-*.apk
           retention-days: 30
           
   # LINUX BUILDS
@@ -193,16 +193,16 @@ jobs:
           # Create package structure
           PKGDIR="deb-package"
           mkdir -p "$PKGDIR/DEBIAN"
-          mkdir -p "$PKGDIR/opt/animestream"
+          mkdir -p "$PKGDIR/opt/kumaanime"
           mkdir -p "$PKGDIR/usr/share/applications"
           mkdir -p "$PKGDIR/usr/share/icons/hicolor/512x512/apps"
 
           # Copy files
-          cp -r build/linux/x64/release/bundle/* "$PKGDIR/opt/animestream/"
+          cp -r build/linux/x64/release/bundle/* "$PKGDIR/opt/kumaanime/"
 
           # Create control file
           cat > "$PKGDIR/DEBIAN/control" << EOF
-          Package: animestream
+          Package: kumaanime
           Version: ${{ needs.extract-version.outputs.version }}
           Architecture: amd64
           Maintainer: FrostNova
@@ -213,22 +213,22 @@ jobs:
           EOF
 
           # Create desktop file
-          cat > "$PKGDIR/usr/share/applications/animestream.desktop" << 'EOF'
+          cat > "$PKGDIR/usr/share/applications/kumaanime.desktop" << 'EOF'
           [Desktop Entry]
-          Name=animestream
-          Exec=/opt/animestream/animestream
-          Icon=animestream
+          Name=Kuma Anime
+          Exec=/opt/kumaanime/kumaanime
+          Icon=kumaanime
           Type=Application
           Categories=AudioVideo;Video;
           EOF
 
           # Copy icon
           if [ -f "lib/assets/icons/logo.png" ]; then
-            cp lib/assets/icons/logo.png "$PKGDIR/usr/share/icons/hicolor/512x512/apps/animestream.png"
+            cp lib/assets/icons/logo.png "$PKGDIR/usr/share/icons/hicolor/512x512/apps/kumaanime.png"
           fi
 
           # Build deb
-          dpkg-deb --build "$PKGDIR" "animestream-${{ needs.extract-version.outputs.version }}-amd64.deb"
+          dpkg-deb --build "$PKGDIR" "kumaanime-${{ needs.extract-version.outputs.version }}-amd64.deb"
 
       - name: Create rpm package
         run: |
@@ -237,36 +237,36 @@ jobs:
 
           # Create build directories
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          mkdir -p rpmbuild-root/opt/animestream
+          mkdir -p rpmbuild-root/opt/kumaanime
           mkdir -p rpmbuild-root/usr/share/applications
           mkdir -p rpmbuild-root/usr/share/icons/hicolor/512x512/apps
 
           # Copy files
-          cp -r build/linux/x64/release/bundle/* rpmbuild-root/opt/animestream/
+          cp -r build/linux/x64/release/bundle/* rpmbuild-root/opt/kumaanime/
 
           # Create desktop file
-          cat > rpmbuild-root/usr/share/applications/animestream.desktop << 'EOF'
+          cat > rpmbuild-root/usr/share/applications/kumaanime.desktop << 'EOF'
           [Desktop Entry]
-          Name=animestream
-          Exec=/opt/animestream/animestream
-          Icon=animestream
+          Name=Kuma Anime
+          Exec=/opt/kumaanime/kumaanime
+          Icon=kumaanime
           Type=Application
           Categories=AudioVideo;Video;
           EOF
 
           # Copy icon
           if [ -f "lib/assets/icons/logo.png" ]; then
-            cp lib/assets/icons/logo.png rpmbuild-root/usr/share/icons/hicolor/512x512/apps/animestream.png
+            cp lib/assets/icons/logo.png rpmbuild-root/usr/share/icons/hicolor/512x512/apps/kumaanime.png
           fi
 
           # Create spec file
-          cat > ~/rpmbuild/SPECS/animestream.spec << EOF
-          Name:           animestream
+          cat > ~/rpmbuild/SPECS/kumaanime.spec << EOF
+          Name:           kumaanime
           Version:        ${{ needs.extract-version.outputs.version }}
           Release:        1%{?dist}
           Summary:        An app made to stream and download anime
           License:        GPL-3.0
-          URL:            https://github.com/Shebyyy/animestream
+          URL:            https://github.com/SayuZX/KumaAnime-App
           BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
           %description
@@ -274,28 +274,28 @@ jobs:
 
           %install
           rm -rf \$RPM_BUILD_ROOT
-          mkdir -p \$RPM_BUILD_ROOT/opt/animestream
+          mkdir -p \$RPM_BUILD_ROOT/opt/kumaanime
           mkdir -p \$RPM_BUILD_ROOT/usr/share/applications
           mkdir -p \$RPM_BUILD_ROOT/usr/share/icons/hicolor/512x512/apps
 
-          cp -r $PWD/rpmbuild-root/opt/animestream/* \$RPM_BUILD_ROOT/opt/animestream/
-          cp $PWD/rpmbuild-root/usr/share/applications/animestream.desktop \$RPM_BUILD_ROOT/usr/share/applications/
-          cp $PWD/rpmbuild-root/usr/share/icons/hicolor/512x512/apps/animestream.png \$RPM_BUILD_ROOT/usr/share/icons/hicolor/512x512/apps/ 2>/dev/null || true
+          cp -r $PWD/rpmbuild-root/opt/kumaanime/* \$RPM_BUILD_ROOT/opt/kumaanime/
+          cp $PWD/rpmbuild-root/usr/share/applications/kumaanime.desktop \$RPM_BUILD_ROOT/usr/share/applications/
+          cp $PWD/rpmbuild-root/usr/share/icons/hicolor/512x512/apps/kumaanime.png \$RPM_BUILD_ROOT/usr/share/icons/hicolor/512x512/apps/ 2>/dev/null || true
 
           %files
-          /opt/animestream/*
-          /usr/share/applications/animestream.desktop
-          /usr/share/icons/hicolor/512x512/apps/animestream.png
+          /opt/kumaanime/*
+          /usr/share/applications/kumaanime.desktop
+          /usr/share/icons/hicolor/512x512/apps/kumaanime.png
           EOF
 
           # Build rpm
-          rpmbuild -bb ~/rpmbuild/SPECS/animestream.spec
-          cp ~/rpmbuild/RPMS/x86_64/animestream-*.rpm ./animestream-${{ needs.extract-version.outputs.version }}-x86_64.rpm
+          rpmbuild -bb ~/rpmbuild/SPECS/kumaanime.spec
+          cp ~/rpmbuild/RPMS/x86_64/kumaanime-*.rpm ./kumaanime-${{ needs.extract-version.outputs.version }}-x86_64.rpm
 
       - name: Create portable zip
         run: |
           cd build/linux/x64/release
-          zip -r ../../../animestream-${{ needs.extract-version.outputs.version }}-linux-x64.zip bundle/
+          zip -r ../../../kumaanime-${{ needs.extract-version.outputs.version }}-linux-x64.zip bundle/
 
       - name: Create Flatpak
         run: |
@@ -309,42 +309,42 @@ jobs:
           convert lib/assets/icons/logo.png -resize 512x512 icon.png
           
           # Create desktop entry file
-          cat > com.example.animestream.desktop << 'EOF'
+          cat > com.example.kumaanime.desktop << 'EOF'
           [Desktop Entry]
-          Name=AnimeStream
+          Name=Kuma Anime
           Comment=Watch anime with multiple sources
-          Exec=animestream
-          Icon=com.example.animestream
+          Exec=kumaanime
+          Icon=com.example.kumaanime
           Type=Application
           Categories=AudioVideo;Video;Player;
           EOF
           
           # Create AppStream metadata
-          cat > com.example.animestream.metainfo.xml << 'EOF'
+          cat > com.example.kumaanime.metainfo.xml << 'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <component type="desktop-application">
-            <id>com.example.animestream</id>
-            <name>AnimeStream</name>
+            <id>com.example.kumaanime</id>
+            <name>Kuma Anime</name>
             <summary>Watch anime from multiple sources</summary>
             <metadata_license>CC0-1.0</metadata_license>
             <project_license>MIT</project_license>
             <description>
-              <p>AnimeStream is a multi-source anime streaming application.</p>
+              <p>Kuma Anime is a multi-source anime streaming application.</p>
             </description>
-            <launchable type="desktop-id">com.example.animestream.desktop</launchable>
+            <launchable type="desktop-id">com.example.kumaanime.desktop</launchable>
             <provides>
-              <binary>animestream</binary>
+              <binary>kumaanime</binary>
             </provides>
           </component>
           EOF
           
           # Create Flatpak manifest
-          cat > com.example.animestream.yaml << 'EOF'
-          app-id: com.example.animestream
+          cat > com.example.kumaanime.yaml << 'EOF'
+          app-id: com.example.kumaanime
           runtime: org.freedesktop.Platform
           runtime-version: '24.08'
           sdk: org.freedesktop.Sdk
-          command: animestream
+          command: kumaanime
           finish-args:
             - --socket=wayland
             - --socket=fallback-x11
@@ -355,47 +355,47 @@ jobs:
             - --filesystem=xdg-download
             - --filesystem=xdg-videos
           modules:
-            - name: animestream
+            - name: kumaanime
               buildsystem: simple
               build-commands:
-                - cp -r bundle /app/animestream
+                - cp -r bundle /app/kumaanime
                 - mkdir -p /app/bin
                 - |
-                  cat > /app/bin/animestream << 'SCRIPT'
+                  cat > /app/bin/kumaanime << 'SCRIPT'
                   #!/bin/bash
-                  exec /app/animestream/animestream "$@"
+                  exec /app/kumaanime/kumaanime "$@"
                   SCRIPT
-                - chmod +x /app/bin/animestream
-                - install -Dm644 com.example.animestream.desktop /app/share/applications/com.example.animestream.desktop
-                - install -Dm644 icon.png /app/share/icons/hicolor/512x512/apps/com.example.animestream.png
-                - install -Dm644 com.example.animestream.metainfo.xml /app/share/metainfo/com.example.animestream.metainfo.xml
+                - chmod +x /app/bin/kumaanime
+                - install -Dm644 com.example.kumaanime.desktop /app/share/applications/com.example.kumaanime.desktop
+                - install -Dm644 icon.png /app/share/icons/hicolor/512x512/apps/com.example.kumaanime.png
+                - install -Dm644 com.example.kumaanime.metainfo.xml /app/share/metainfo/com.example.kumaanime.metainfo.xml
               sources:
                 - type: dir
                   path: build/linux/x64/release/bundle
                   dest: bundle
                 - type: file
-                  path: com.example.animestream.desktop
+                  path: com.example.kumaanime.desktop
                 - type: file
                   path: icon.png
                 - type: file
-                  path: com.example.animestream.metainfo.xml
+                  path: com.example.kumaanime.metainfo.xml
           EOF
           
           # Build Flatpak
-          flatpak-builder --force-clean --repo=flatpak-repo build-dir com.example.animestream.yaml
+          flatpak-builder --force-clean --repo=flatpak-repo build-dir com.example.kumaanime.yaml
           
           # Create single-file bundle
-          flatpak build-bundle flatpak-repo animestream-${{ needs.extract-version.outputs.version }}-x86_64.flatpak com.example.animestream
+          flatpak build-bundle flatpak-repo kumaanime-${{ needs.extract-version.outputs.version }}-x86_64.flatpak com.example.kumaanime
     
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-builds
           path: |
-            animestream-*.deb
-            animestream-*.rpm
-            build/animestream-*-linux-x64.zip
-            animestream-*.flatpak
+            kumaanime-*.deb
+            kumaanime-*.rpm
+            build/kumaanime-*-linux-x64.zip
+            kumaanime-*.flatpak
           retention-days: 30
 
   # WINDOWS BUILDS
@@ -440,7 +440,7 @@ jobs:
         shell: pwsh
         run: |
           cd build/windows/x64/runner/Release
-          7z a ../../../animestream-${{ needs.extract-version.outputs.version }}-windows-x64-portable.zip .
+          7z a ../../../kumaanime-${{ needs.extract-version.outputs.version }}-windows-x64-portable.zip .
 
       - name: Create installer
         shell: pwsh
@@ -451,7 +451,7 @@ jobs:
         with:
           name: windows-builds
           path: |
-            build/windows/animestream-*-windows-x64-portable.zip
+            build/windows/kumaanime-*-windows-x64-portable.zip
             build/windows/x64/installer/Release/*.exe
           retention-days: 30
 
