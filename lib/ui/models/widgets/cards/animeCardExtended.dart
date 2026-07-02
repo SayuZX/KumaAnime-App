@@ -118,7 +118,6 @@ class AnimeCardExtended extends StatelessWidget {
                                 title,
                                 style: TextStyle(
                                   color: appTheme.textMainColor,
-                                  fontFamily: "NotoSans",
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                 ),
@@ -153,7 +152,6 @@ class AnimeCardExtended extends StatelessWidget {
                                               style: TextStyle(
                                                 color: appTheme.onAccent,
                                                 //  (currentUserSettings?.darkMode ?? true) ? appTheme.backgroundColor : appTheme.textMainColor,
-                                                fontFamily: "NotoSans",
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
                                               ),
@@ -177,7 +175,6 @@ class AnimeCardExtended extends StatelessWidget {
                                           Text(
                                             "${watchedEpisodeCount ?? "~"} ",
                                             style: TextStyle(
-                                              fontFamily: "NunitoSans",
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Theme.of(context).colorScheme.primary,
@@ -186,7 +183,6 @@ class AnimeCardExtended extends StatelessWidget {
                                           Text(
                                             "/ ${totalEpisodes ?? "??"}",
                                             style: TextStyle(
-                                              fontFamily: "NunitoSans",
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Theme.of(context).colorScheme.onSecondaryContainer,
