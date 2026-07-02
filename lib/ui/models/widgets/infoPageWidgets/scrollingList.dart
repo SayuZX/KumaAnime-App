@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:kumaanime/core/database/types.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ScrollingList {
@@ -19,7 +20,7 @@ class ScrollingList {
               Padding(
                 padding: const EdgeInsets.only(top: 20, bottom: 20),
                 child: Text(
-                  "Characters",
+                  AppLocalizations.of(context).slCharacters,
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ),
