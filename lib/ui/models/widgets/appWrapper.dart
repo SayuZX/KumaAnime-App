@@ -1,5 +1,5 @@
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/ui/models/providers/appProvider.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
