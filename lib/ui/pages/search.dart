@@ -97,7 +97,6 @@ class _SearchState extends State<Search> {
                               "searching...",
                               style: TextStyle(
                                   color: appTheme.accentColor,
-                                  fontFamily: "NotoSans",
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16),
                             ),
@@ -137,7 +136,6 @@ class _SearchState extends State<Search> {
             "exact match",
             style: TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "NotoSans",
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -155,7 +153,6 @@ class _SearchState extends State<Search> {
             "list view",
             style: TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "NotoSans",
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -251,7 +248,7 @@ class _SearchState extends State<Search> {
       decoration: InputDecoration(
         labelText: "search",
         labelStyle:
-            TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontWeight: FontWeight.bold, fontSize: 17),
+            TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold, fontSize: 17),
         suffixIcon: Padding(
           padding: EdgeInsets.only(right: 10),
           child: Image.asset(
@@ -269,10 +266,10 @@ class _SearchState extends State<Search> {
           borderSide: BorderSide(color: appTheme.accentColor),
         ),
         hintText: "Search...",
-        hintStyle: TextStyle(fontFamily: "Poppins", color: Color.fromARGB(255, 168, 168, 168)),
+        hintStyle: TextStyle(color: Color.fromARGB(255, 168, 168, 168)),
         contentPadding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
       ),
-      style: TextStyle(color: appTheme.textMainColor, fontFamily: "Poppins"),
+      style: TextStyle(color: appTheme.textMainColor, ),
     );
   }
 
