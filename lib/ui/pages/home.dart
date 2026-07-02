@@ -194,7 +194,7 @@ class _HomeState extends State<Home> {
                       padding: const EdgeInsets.only(right: 12),
                       child: Text(
                         selectedList!.title ?? "Which list might this be?",
-                        style: TextStyle(fontFamily: "Rubik", fontSize: 20, color: appTheme.textMainColor),
+                        style: TextStyle(fontSize: 20, color: appTheme.textMainColor),
                       ),
                     ),
                   ],
@@ -267,7 +267,6 @@ class _HomeState extends State<Home> {
                     "Lists",
                     style: TextStyle(
                       color: appTheme.textMainColor,
-                      fontFamily: "Poppins",
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -312,7 +311,6 @@ class _HomeState extends State<Home> {
                   child: Text(
                     storedUserData!.name,
                     style: TextStyle(
-                        fontFamily: "Poppins",
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: appTheme.textMainColor),
@@ -354,7 +352,7 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.only(left: 15, right: 15),
               child: Text(
                 title,
-                style: TextStyle(fontFamily: "Rubik", fontSize: 20, color: appTheme.textMainColor),
+                style: TextStyle(fontSize: 20, color: appTheme.textMainColor),
               ),
             ),
             if (showRefreshIndication)
@@ -440,7 +438,6 @@ class _HomeState extends State<Home> {
                             "Aww... Something's wrong!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: "NunitoSans",
                               fontWeight: FontWeight.w500,
                               color: Color.fromARGB(255, 80, 80, 80),
                               fontSize: 18,
@@ -491,7 +488,6 @@ class _HomeState extends State<Home> {
                                     "Boo! Nothing's here!",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontFamily: "NunitoSans",
                                       fontWeight: FontWeight.w500,
                                       color: Color.fromARGB(255, 80, 80, 80),
                                       fontSize: 18,
