@@ -7,7 +7,13 @@ import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-class WatchSocialSheet extends StatefulWidget {
+String socialKeyFor(int animeId, String title) {
+  if (animeId > 0) return "anime:$animeId";
+  final slug = title.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'(^-+)|(-+$)'), '');
+  return "title:${slug.isEmpty ? 'unknown' : slug}";
+}
+
+class WatchSocialSheet extends StatelessWidget {
   final int animeId;
   final String title;
   final VoidCallback onDownload;
@@ -20,14 +26,40 @@ class WatchSocialSheet extends StatefulWidget {
   });
 
   @override
-  State<WatchSocialSheet> createState() => _WatchSocialSheetState();
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.88,
+        child: WatchSocialPanel(animeId: animeId, title: title, onDownload: onDownload, showTitleHeader: true),
+      ),
+    );
+  }
 }
 
-class _WatchSocialSheetState extends State<WatchSocialSheet> {
+class WatchSocialPanel extends StatefulWidget {
+  final int animeId;
+  final String title;
+  final VoidCallback onDownload;
+  final bool showTitleHeader;
+
+  const WatchSocialPanel({
+    super.key,
+    required this.animeId,
+    required this.title,
+    required this.onDownload,
+    this.showTitleHeader = false,
+  });
+
+  @override
+  State<WatchSocialPanel> createState() => _WatchSocialPanelState();
+}
+
+class _WatchSocialPanelState extends State<WatchSocialPanel> {
   final _social = SocialService.instance;
   final _commentController = TextEditingController();
 
-  String get _key => "anilist:${widget.animeId}";
+  late final String _key = socialKeyFor(widget.animeId, widget.title);
 
   String? _synopsis;
   bool _synopsisLoading = true;
@@ -49,6 +81,10 @@ class _WatchSocialSheetState extends State<WatchSocialSheet> {
   }
 
   Future<void> _loadSynopsis() async {
+    if (widget.animeId <= 0) {
+      setState(() => _synopsisLoading = false);
+      return;
+    }
     try {
       final info = await DatabaseHandler(database: Databases.anilist).getAnimeInfo(widget.animeId);
       if (!mounted) return;
@@ -73,9 +109,8 @@ class _WatchSocialSheetState extends State<WatchSocialSheet> {
   }
 
   void _share() {
-    SharePlus.instance.share(
-      ShareParams(text: "Nonton ${widget.title} di Kuma Anime\nhttps://anilist.co/anime/${widget.animeId}"),
-    );
+    final link = widget.animeId > 0 ? "\nhttps://anilist.co/anime/${widget.animeId}" : "";
+    SharePlus.instance.share(ShareParams(text: "Nonton ${widget.title} di Kuma Anime$link"));
   }
 
   Future<void> _sendComment() async {
@@ -95,40 +130,37 @@ class _WatchSocialSheetState extends State<WatchSocialSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.88,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 6),
-              Text(
-                widget.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              _synopsisBlock(),
-              const SizedBox(height: 14),
-              _actionRow(),
-              const SizedBox(height: 6),
-              Divider(color: appTheme.textSubColor.withValues(alpha: 0.2)),
-              _commentsHeader(),
-              const SizedBox(height: 8),
-              Expanded(child: _commentsList()),
-              _commentInput(),
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
-            ],
-          ),
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 6),
+          if (widget.showTitleHeader) ...[
+            Text(
+              widget.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+          ],
+          _synopsisBlock(),
+          const SizedBox(height: 14),
+          _actionRow(),
+          const SizedBox(height: 6),
+          Divider(color: appTheme.textSubColor.withValues(alpha: 0.2)),
+          _commentsHeader(),
+          const SizedBox(height: 8),
+          Expanded(child: _commentsList()),
+          _commentInput(),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+        ],
       ),
     );
   }
 
   Widget _synopsisBlock() {
+    if (widget.animeId <= 0) return const SizedBox.shrink();
     if (_synopsisLoading) {
       return Row(
         children: [
