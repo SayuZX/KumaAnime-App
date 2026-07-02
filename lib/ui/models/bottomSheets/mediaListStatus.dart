@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/utils.dart';
-import 'package:animestream/core/database/handler/syncHandler.dart';
-import 'package:animestream/ui/models/providers/infoProvider.dart';
-import 'package:animestream/ui/models/snackBar.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/utils.dart';
+import 'package:kumaanime/core/database/handler/syncHandler.dart';
+import 'package:kumaanime/ui/models/providers/infoProvider.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:flutter/material.dart';
 
 class MediaListStatusBottomSheet extends StatefulWidget {
