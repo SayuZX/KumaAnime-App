@@ -145,7 +145,6 @@ class _GenresPageState extends State<GenresPage> {
                       "Results",
                       style: TextStyle(
                           color: appTheme.textMainColor,
-                          fontFamily: "NotoSans",
                           fontSize: 22,
                           fontWeight: FontWeight.bold),
                     ),
@@ -169,7 +168,6 @@ class _GenresPageState extends State<GenresPage> {
                                   "Filters",
                                   style: TextStyle(
                                       color: appTheme.textMainColor,
-                                      fontFamily: "Rubik",
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -213,7 +211,7 @@ class _GenresPageState extends State<GenresPage> {
                                           style: ElevatedButton.styleFrom(backgroundColor: appTheme.accentColor),
                                           child: Text(
                                             "Cancel",
-                                            style: TextStyle(color: appTheme.backgroundColor, fontFamily: "Poppins"),
+                                            style: TextStyle(color: appTheme.backgroundColor, ),
                                           ),
                                         ),
                                       ),
@@ -228,7 +226,7 @@ class _GenresPageState extends State<GenresPage> {
                                         style: ElevatedButton.styleFrom(backgroundColor: appTheme.accentColor),
                                         child: Text(
                                           "Apply",
-                                          style: TextStyle(color: appTheme.backgroundColor, fontFamily: "Poppins"),
+                                          style: TextStyle(color: appTheme.backgroundColor, ),
                                         ),
                                       ),
                                     ],
@@ -281,14 +279,14 @@ class _GenresPageState extends State<GenresPage> {
                                     Text(
                                       "~~nooo matches~~",
                                       style: TextStyle(
-                                          color: appTheme.textMainColor, fontFamily: "NunitoSans", fontSize: 17),
+                                          color: appTheme.textMainColor, fontSize: 17),
                                     ),
                                   ],
                                 )
                               : Text(
                                   'Apply filters to discover animes!',
                                   style:
-                                      TextStyle(color: appTheme.textMainColor, fontFamily: "NunitoSans", fontSize: 16),
+                                      TextStyle(color: appTheme.textMainColor, fontSize: 16),
                                   textAlign: TextAlign.center,
                                 ),
                         ),
@@ -352,7 +350,6 @@ class _GenresPageState extends State<GenresPage> {
         title,
         style: TextStyle(
           color: appTheme.textMainColor,
-          fontFamily: "Rubik",
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
@@ -375,7 +372,6 @@ class _GenresPageState extends State<GenresPage> {
             title,
             style: TextStyle(
               color: appTheme.textMainColor,
-              fontFamily: "Rubik",
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -406,7 +402,6 @@ class _GenresPageState extends State<GenresPage> {
                           e,
                           style: TextStyle(
                               color: value == e ? appTheme.backgroundColor : appTheme.textMainColor,
-                              fontFamily: "NotoSans",
                               fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -434,7 +429,6 @@ class _GenresPageState extends State<GenresPage> {
                 title,
                 style: TextStyle(
                   color: appTheme.textMainColor,
-                  fontFamily: "Rubik",
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -454,7 +448,7 @@ class _GenresPageState extends State<GenresPage> {
                                 padding: EdgeInsets.only(bottom: 20),
                                 child: Text(
                                   title,
-                                  style: TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 23),
+                                  style: TextStyle(color: appTheme.textMainColor, fontSize: 23),
                                 )),
                             Container(
                               height: 550,
@@ -497,7 +491,6 @@ class _GenresPageState extends State<GenresPage> {
                                                     color: selectedList.contains(e)
                                                         ? appTheme.backgroundColor
                                                         : appTheme.textMainColor,
-                                                    fontFamily: "NotoSans",
                                                     fontWeight: FontWeight.bold),
                                               ),
                                             ),
@@ -515,7 +508,7 @@ class _GenresPageState extends State<GenresPage> {
                                 style: ElevatedButton.styleFrom(backgroundColor: appTheme.accentColor),
                                 child: Text(
                                   "close",
-                                  style: TextStyle(color: appTheme.backgroundColor, fontFamily: "Poppins"),
+                                  style: TextStyle(color: appTheme.backgroundColor, ),
                                 ),
                               ),
                             ),
@@ -559,7 +552,6 @@ class _GenresPageState extends State<GenresPage> {
                           e,
                           style: TextStyle(
                               color: selectedList.contains(e) ? appTheme.backgroundColor : appTheme.textMainColor,
-                              fontFamily: "NotoSans",
                               fontWeight: FontWeight.bold),
                         ),
                       ),
