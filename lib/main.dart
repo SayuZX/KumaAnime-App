@@ -168,6 +168,9 @@ Future<void> loadAndAssignSettings() async {
       );
     }
 
+    final accentOverride = currentUserSettings?.accentColorValue;
+    if (accentOverride != null) appTheme.accentColor = Color(accentOverride);
+
     Logs.app.log("[STARTUP] Loaded theme of ID $themeId (${theme.name})");
   });
 }
