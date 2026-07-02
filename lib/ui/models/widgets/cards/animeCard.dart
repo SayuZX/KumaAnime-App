@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/database/handler/syncHandler.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/ContextMenu.dart';
-import 'package:animestream/ui/pages/info.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/database/handler/syncHandler.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/ContextMenu.dart';
+import 'package:kumaanime/ui/pages/info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
