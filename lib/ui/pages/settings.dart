@@ -4,8 +4,12 @@ import 'package:kumaanime/ui/pages/settingPages/account.dart';
 import 'package:kumaanime/ui/pages/settingPages/appInfo.dart';
 import 'package:kumaanime/ui/pages/settingPages/appearance.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/settingPages/content.dart';
 import 'package:kumaanime/ui/pages/settingPages/general.dart';
+import 'package:kumaanime/ui/pages/settingPages/notifications.dart';
+import 'package:kumaanime/ui/pages/settingPages/playback.dart';
 import 'package:kumaanime/ui/pages/settingPages/player.dart';
+import 'package:kumaanime/ui/pages/settingPages/storage.dart';
 import 'package:kumaanime/ui/pages/settingPages/ui.dart';
 import 'package:flutter/material.dart';
 
@@ -52,6 +56,26 @@ class _SettingsPageState extends State<SettingsPage> {
           label: loc.settingsPlayer,
           description: loc.settingsPlayerDesc,
           navigateTo: PlayerSetting()),
+      SettingItem(
+          icon: Icons.smart_display_outlined,
+          label: "Playback",
+          description: "Quality, buffer, auto-play & orientation",
+          navigateTo: PlaybackSetting()),
+      SettingItem(
+          icon: Icons.translate_rounded,
+          label: "Content & Language",
+          description: "Language, adult content & genre filter",
+          navigateTo: ContentSetting()),
+      SettingItem(
+          icon: Icons.notifications_none_rounded,
+          label: "Notifications",
+          description: "Episodes, news & updates",
+          navigateTo: NotificationSetting()),
+      SettingItem(
+          icon: Icons.storage_rounded,
+          label: "Storage & Cache",
+          description: "Cache size & clear data",
+          navigateTo: StorageSetting()),
       SettingItem(
           icon: Icons.tune_rounded,
           label: loc.settingsGeneral,
