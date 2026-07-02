@@ -49,7 +49,7 @@ class _LogScreenState extends State<LogScreen> {
             )),
         title: Text(
           "Logs",
-          style: TextStyle(fontFamily: "Rubik", color: appTheme.textMainColor),
+          style: TextStyle(color: appTheme.textMainColor),
         ),
         actionsPadding: EdgeInsets.only(right: 14),
         actions: [
@@ -141,7 +141,6 @@ class _LogScreenState extends State<LogScreen> {
 
   TextStyle _logsTextStyle() {
     return TextStyle(
-      fontFamily: "NunitoSans",
       fontSize: 14,
     );
   }
