@@ -43,6 +43,7 @@ class PlayerSettingState extends State<PlayerSetting> {
   late bool autoOpEdSkip;
   late bool enableHoldToSpeedUp;
   late bool enablePlayerGestures;
+  late bool enableMegaSkip;
 
   Future<void> readSettings() async {
     final settings = await Settings().getSettings();
@@ -50,6 +51,7 @@ class PlayerSettingState extends State<PlayerSetting> {
     setState(() {
       skipDuration = settings.skipDuration ?? 15;
       megaSkipDuration = settings.megaSkipDuration ?? 85;
+      enableMegaSkip = settings.enableMegaSkip ?? true;
       skipDurationSliderValue = skipDuration!.toDouble();
       megaSkipDurationSliderValue = megaSkipDuration!.toDouble();
       enableSuperSpeeds = settings.enableSuperSpeeds ?? false;
@@ -181,6 +183,15 @@ class PlayerSettingState extends State<PlayerSetting> {
                                 ),
                               ],
                             ),
+                          ),
+                          ToggleItem(
+                            label: "Show skip button",
+                            description: "The +$megaSkipDuration button on the player",
+                            value: enableMegaSkip,
+                            onTapFunction: () {
+                              enableMegaSkip = !enableMegaSkip;
+                              writeSettings(SettingsModal(enableMegaSkip: enableMegaSkip));
+                            },
                           ),
                           InkWell(
                             onTap: () {
