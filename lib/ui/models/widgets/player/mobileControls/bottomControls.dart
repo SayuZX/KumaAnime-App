@@ -55,7 +55,7 @@ class BottomControls extends StatelessWidget {
                                     child: Text(
                                       "Choose Quality",
                                       style:
-                                          TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 20),
+                                          TextStyle(color: appTheme.textMainColor, fontSize: 20),
                                     ),
                                   ),
                                   ListView.builder(
@@ -94,8 +94,7 @@ class BottomControls extends StatelessWidget {
                                                       dataProvider.state.currentQuality.url
                                                   ? Colors.black
                                                   : appTheme.accentColor,
-                                              fontFamily: "Poppins",
-                                            ),
+                                              ),
                                           ),
                                         ),
                                       );
@@ -178,7 +177,6 @@ class BottomControls extends StatelessWidget {
                                               color: index == dataProvider.state.currentEpIndex
                                                   ? appTheme.backgroundColor
                                                   : appTheme.textMainColor,
-                                              fontFamily: "Rubik",
                                               fontSize: 20,
                                             ),
                                           ),
@@ -288,8 +286,7 @@ class BottomControls extends StatelessWidget {
                     //                               dataProvider.state.currentAudioTrack.url
                     //                           ? Colors.black
                     //                           : appTheme.accentColor,
-                    //                       fontFamily: "Poppins",
-                    //                     ),
+                    //                       //                     ),
                     //                   ),
                     //                 ),
                     //               );
@@ -346,7 +343,7 @@ class BottomControls extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(
               "Speed",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: "Rubik"),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, ),
             ),
           ),
           Expanded(
