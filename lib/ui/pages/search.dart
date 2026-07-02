@@ -60,7 +60,9 @@ class _SearchState extends State<Search> {
   }
 
   bool exactMatch = false;
-  bool verticalCards = userPreferences?.searchPageListMode ?? false;
+  bool verticalCards =
+      (currentUserSettings?.listLayout == 'list') || (userPreferences?.searchPageListMode ?? false);
+  bool get compactCards => (currentUserSettings?.listLayout ?? 'grid') == 'compact';
   final nativeTitle = currentUserSettings?.nativeTitle ?? false;
 
   @override
@@ -172,11 +174,11 @@ class _SearchState extends State<Search> {
             GridView.builder(
               padding: EdgeInsets.zero,
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: verticalCards ? 450 : 180,
+                  maxCrossAxisExtent: verticalCards ? 450 : (compactCards ? 120 : 180),
                   mainAxisExtent: verticalCards
                       ? 150
                       : Platform.isAndroid
-                          ? 220
+                          ? (compactCards ? 165 : 220)
                           : 260,
                   crossAxisSpacing: verticalCards ? 10 : 0,
                   // crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 3 : 6,
