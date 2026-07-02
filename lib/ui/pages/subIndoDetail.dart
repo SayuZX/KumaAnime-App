@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
@@ -77,7 +78,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: appTheme.accentColor))
+          ? Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 40))
           : _error
               ? _errorBody(loc)
               : _content(loc),
@@ -521,7 +522,7 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
           if (_loading)
             Container(
               padding: const EdgeInsets.only(bottom: 15, top: 10),
-              child: Center(child: CircularProgressIndicator(color: appTheme.accentColor)),
+              child: Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 40)),
             )
           else if (_streams.isEmpty)
             Container(
