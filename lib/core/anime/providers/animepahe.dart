@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:animestream/core/anime/extractors/kwik.dart';
-import 'package:animestream/core/anime/providers/animeProvider.dart';
-import 'package:animestream/core/anime/providers/types.dart';
+import 'package:kumaanime/core/anime/extractors/kwik.dart';
+import 'package:kumaanime/core/anime/providers/animeProvider.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html;
 
