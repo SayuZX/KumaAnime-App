@@ -12,6 +12,8 @@ class SettingsModal {
   /// Mega skip duration in seconds for the player [defaults to 85 seconds]
   final int? megaSkipDuration;
 
+  final bool? enableMegaSkip;
+
   /// Error display errors as snackbars [defaults to false]
   final bool? showErrors;
 
@@ -114,6 +116,7 @@ class SettingsModal {
 
   SettingsModal({
     this.megaSkipDuration,
+    this.enableMegaSkip,
     this.skipDuration,
     this.showErrors,
     this.receivePreReleases,
@@ -171,6 +174,7 @@ class SettingsModal {
   factory SettingsModal.fromMap(Map<dynamic, dynamic> map) {
     return SettingsModal(
       megaSkipDuration: map['megaSkipDuration'] ?? 85,
+      enableMegaSkip: map['enableMegaSkip'] ?? true,
       skipDuration: map['skipDuration'] ?? 10,
       showErrors: map['showErrors'] ?? false,
       receivePreReleases: map['receivePreReleases'] ?? false,
@@ -230,6 +234,7 @@ class SettingsModal {
     return {
       'skipDuration': skipDuration,
       'megaSkipDuration': megaSkipDuration,
+      'enableMegaSkip': enableMegaSkip,
       'showErrors': showErrors,
       'receivePreReleases': receivePreReleases,
       'amoledBackground': amoledBackground,
