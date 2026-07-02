@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/downloadHistory.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
@@ -151,9 +152,7 @@ class _FileExplorerState extends State<FileExplorer> {
             SizedBox(
               height: 20,
               width: 20,
-              child: CircularProgressIndicator(
-                color: appTheme.textSubColor,
-              ),
+              child: KumaAnimeLoading(color: appTheme.textSubColor, size: 40),
             )
           else
             Text(
