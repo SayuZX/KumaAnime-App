@@ -158,7 +158,7 @@ Future<void> loadAndAssignSettings() async {
           (currentUserSettings!.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor;
     } else {
       appTheme = KumaAnimeTheme(
-        accentColor: theme.lightVariant.accentColor,
+        accentColor: Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor),
         textMainColor: lightModeValues.textMainColor,
         textSubColor: lightModeValues.textSubColor,
         backgroundColor: lightModeValues.backgroundColor,
