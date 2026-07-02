@@ -124,7 +124,6 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
         text,
         style: TextStyle(
           color: appTheme.textMainColor,
-          fontFamily: "Rubik",
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
@@ -243,7 +242,6 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                   layout[0].toUpperCase() + layout.substring(1),
                   style: TextStyle(
                     color: isSelected ? appTheme.onAccent : appTheme.textMainColor,
-                    fontFamily: "NotoSans",
                     fontWeight: FontWeight.bold,
                   ),
                 ),
