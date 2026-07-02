@@ -162,7 +162,6 @@ class _FloatyBottomBarState extends State<FloatyBottomBar> {
                                 Text(widget.items[i].title,
                                     style: TextStyle(
                                       color: appTheme.onAccent,
-                                      fontFamily: "NotoSans",
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                     )),
