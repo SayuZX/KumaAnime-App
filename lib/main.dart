@@ -199,9 +199,9 @@ class _KumaAnimeState extends State<KumaAnime> {
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.top]);
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: Colors.black.withValues(alpha: 0.002),
-        systemNavigationBarColor: Colors.black.withValues(alpha: 0.002),
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
       ),
     );
 
@@ -255,11 +255,14 @@ class _KumaAnimeState extends State<KumaAnime> {
   // This widget is the root of *my* application.
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = currentUserSettings?.darkMode ?? true;
     return AnnotatedRegion(
       value: SystemUiOverlayStyle(
-        statusBarIconBrightness: (currentUserSettings?.darkMode ?? true) ? Brightness.light : Brightness.dark,
-        statusBarColor: Colors.black.withValues(alpha: 0.002),
-        systemNavigationBarColor: Colors.black.withValues(alpha: 0.002),
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: appTheme.backgroundColor,
+        systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
       ),
       child: DynamicColorBuilder(
         builder: (lightScheme, darkScheme) {
