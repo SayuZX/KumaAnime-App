@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/database/anilist/queries.dart';
-import 'package:animestream/core/database/anilist/types.dart';
-import 'package:animestream/ui/models/widgets/bottomBar.dart';
-import 'package:animestream/ui/models/widgets/cards.dart';
-import 'package:animestream/ui/models/widgets/cards/animeCard.dart';
-import 'package:animestream/ui/models/widgets/loader.dart';
-import 'package:animestream/ui/models/widgets/navRail.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/database/anilist/queries.dart';
+import 'package:kumaanime/core/database/anilist/types.dart';
+import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/widgets/cards/animeCard.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
+import 'package:kumaanime/ui/models/widgets/navRail.dart';
 import 'package:flutter/material.dart';
 
 class AnimeLists extends StatefulWidget {
@@ -33,7 +33,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
   List<AnimeCard> droppedList = [];
   List<UserAnimeList> rawAnimeList = [];
 
-  final railController = AnimeStreamBottomBarController(length: 4);
+  final railController = KumaAnimeBottomBarController(length: 4);
 
   List<AnimeCard> getSelectedTabView(int tabIndex) {
     switch (tabIndex) {
@@ -297,13 +297,13 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (Platform.isWindows || Platform.isLinux)
-                          AnimeStreamNavRail(
+                          KumaAnimeNavRail(
                               shouldExpand: true,
                               destinations: [
-                                const AnimeStreamNavDestination(icon: Icons.movie, label: "Watching"),
-                                const AnimeStreamNavDestination(icon: Icons.calendar_month, label: "Planned"),
-                                const AnimeStreamNavDestination(icon: Icons.highlight_off_outlined, label: "Dropped"),
-                                const AnimeStreamNavDestination(icon: Icons.task_alt_rounded, label: "Completed")
+                                const KumaAnimeNavDestination(icon: Icons.movie, label: "Watching"),
+                                const KumaAnimeNavDestination(icon: Icons.calendar_month, label: "Planned"),
+                                const KumaAnimeNavDestination(icon: Icons.highlight_off_outlined, label: "Dropped"),
+                                const KumaAnimeNavDestination(icon: Icons.task_alt_rounded, label: "Completed")
                               ],
                               controller: railController,
                               initialIndex: 0),
@@ -345,7 +345,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
               )
             : Center(
                 child: Container(
-                  child: AnimeStreamLoading(
+                  child: KumaAnimeLoading(
                     color: appTheme.accentColor,
                   ),
                 ),
