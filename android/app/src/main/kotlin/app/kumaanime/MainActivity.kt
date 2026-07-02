@@ -1,4 +1,4 @@
-package app.animestream
+package app.kumaanime
 
 import android.widget.Toast
 import android.os.Looper
@@ -16,7 +16,7 @@ class MainActivity: FlutterActivity() {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "animestream.app/utils")
+        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kumaanime.app/utils")
         channel.setMethodCallHandler {
                 call, result ->
             when (call.method) {
