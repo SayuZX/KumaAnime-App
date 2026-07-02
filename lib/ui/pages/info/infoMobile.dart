@@ -220,21 +220,6 @@ class _InfoMobileState extends State<InfoMobile> {
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 45),
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          alignment: Alignment.center,
-                          // padding: EdgeInsets.only(left: 40, right: 25),
-                          child: Text(
-                            getTitle(provider.data.title),
-                            style: TextStyle(
-                              color: appTheme.textMainColor,
-                              fontFamily: "NunitoSans",
-                              fontSize: 25,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
                         AnimatedSwitcher(
                           duration: Duration(milliseconds: 200),
                           child: infoPage ? _infoItems(context) : _watchItems(context),
@@ -1497,15 +1482,15 @@ class _InfoMobileState extends State<InfoMobile> {
                 colors: [Colors.transparent, appTheme.backgroundColor],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                stops: [0.0, 0.42]).createShader(bounds),
+                stops: [0.0, 0.55]).createShader(bounds),
             blendMode: BlendMode.dstIn,
             child: Container(
-              height: 310,
+              height: 300,
               width: double.infinity,
               child: Image.network(
                 provider.data.banner != null ? provider.data.banner! : provider.data.cover,
                 fit: BoxFit.cover,
-                opacity: AlwaysStoppedAnimation(0.6),
+                opacity: AlwaysStoppedAnimation(0.8),
                 frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                   if (wasSynchronouslyLoaded) return child;
                   return AnimatedOpacity(
@@ -1519,18 +1504,79 @@ class _InfoMobileState extends State<InfoMobile> {
             ),
           ),
         ),
-        Container(
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(top: 100),
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: CachedNetworkImage(
-                imageUrl: provider.data.cover,
-                height: 220,
-                fadeInDuration: Duration(milliseconds: 200),
-                fadeInCurve: Curves.easeIn,
-                // fit: BoxFit.cover,
-              )),
+        Positioned(
+          left: 20,
+          right: 20,
+          bottom: 12,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 12, offset: Offset(0, 4)),
+                  ],
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: CachedNetworkImage(
+                  imageUrl: provider.data.cover,
+                  height: 165,
+                  width: 115,
+                  fit: BoxFit.cover,
+                  fadeInDuration: Duration(milliseconds: 200),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        getTitle(provider.data.title),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Rubik",
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          height: 1.15,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          if (provider.data.rating != null) ...[
+                            Icon(Icons.star_rounded, color: const Color(0xFFF5C518), size: 16),
+                            const SizedBox(width: 3),
+                            Text(
+                              "${provider.data.rating}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontFamily: "Rubik", fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                          Flexible(
+                            child: Text(
+                              "${provider.data.type} • ${(provider.data.status ?? '').toLowerCase().replaceAll('_', ' ')}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.8), fontFamily: "NotoSans", fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         Container(
           margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
