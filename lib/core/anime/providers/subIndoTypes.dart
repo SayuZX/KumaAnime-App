@@ -72,6 +72,8 @@ class SubIndoAnimeDetail {
   final List<SubIndoGenre> genres;
   final List<EpisodeDetails> episodeList;
 
+  bool get isMovie => (type ?? '').toLowerCase().contains('movie');
+
   SubIndoAnimeDetail({
     required this.title,
     required this.poster,
