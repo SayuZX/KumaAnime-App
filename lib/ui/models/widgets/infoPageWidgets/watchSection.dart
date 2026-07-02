@@ -97,7 +97,6 @@ class WatchSection extends StatelessWidget {
                     "Loading episodes...",
                     style: TextStyle(
                       color: appTheme.textMainColor.withAlpha(204),
-                      fontFamily: "Poppins",
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -139,7 +138,6 @@ class WatchSection extends StatelessWidget {
                             "Episodes",
                             style: TextStyle(
                               color: appTheme.textMainColor,
-                              fontFamily: "Poppins",
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.6,
@@ -216,7 +214,6 @@ class WatchSection extends StatelessWidget {
                                                 "Select Episode Range",
                                                 style: TextStyle(
                                                   color: appTheme.textMainColor,
-                                                  fontFamily: "Poppins",
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -272,8 +269,7 @@ class WatchSection extends StatelessWidget {
                                                               : appTheme.textMainColor,
                                                           fontWeight: FontWeight.w600,
                                                           fontSize: 15,
-                                                          fontFamily: "Poppins",
-                                                        ),
+                                                          ),
                                                       ),
                                                     ),
                                                   ),
@@ -307,8 +303,7 @@ class WatchSection extends StatelessWidget {
                                           color: appTheme.onAccent,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15,
-                                          fontFamily: "Poppins",
-                                        ),
+                                          ),
                                       ),
                                       SizedBox(width: 6),
                                       Icon(
@@ -395,7 +390,6 @@ class WatchSection extends StatelessWidget {
                                 "No episodes found",
                                 style: TextStyle(
                                   color: appTheme.textMainColor.withAlpha(204),
-                                  fontFamily: "Poppins",
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -405,7 +399,6 @@ class WatchSection extends StatelessWidget {
                                 "Try changing the source or using manual search",
                                 style: TextStyle(
                                   color: appTheme.textMainColor.withAlpha(153),
-                                  fontFamily: "Poppins",
                                   fontSize: 14,
                                   fontWeight: FontWeight.normal,
                                 ),
