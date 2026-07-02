@@ -1,7 +1,7 @@
 //contains base structure for a database
 
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/database/types.dart';
 
 enum Databases {
   anilist,
