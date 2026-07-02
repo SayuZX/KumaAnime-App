@@ -1,7 +1,6 @@
 import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/data/watching.dart';
 import 'package:kumaanime/ui/models/bottomSheets/commentSection.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +30,7 @@ class _InfoMobileState extends State<InfoMobile> {
   late InfoProvider provider;
 
   bool infoPage = true;
+  bool _synopsisExpanded = false;
 
   FocusNode _watchInfoButtonFocusNode = FocusNode();
   final useNativeTitle = currentUserSettings?.nativeTitle ?? false;
@@ -86,140 +86,7 @@ class _InfoMobileState extends State<InfoMobile> {
                     SliverList.list(
                       children: [
                         _stack(),
-                        Container(
-                          margin: EdgeInsets.only(top: 30),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                // width: 120,
-                                child: ElevatedButton(
-                                  focusNode: _watchInfoButtonFocusNode,
-                                  onFocusChange: (val) {
-                                    setState(() {});
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _watchInfoButtonFocusNode.hasFocus
-                                        ? appTheme.textMainColor
-                                        : appTheme.accentColor,
-                                    fixedSize: Size(135, 55),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      infoPage = !infoPage;
-                                    });
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        infoPage ? Icons.play_arrow_rounded : Icons.info_rounded,
-                                        color: appTheme.onAccent,
-                                        size: 28,
-                                      ),
-                                      Text(
-                                        infoPage ? "watch" : " info",
-                                        style: TextStyle(
-                                          color: appTheme.onAccent,
-                                          fontFamily: "Poppins",
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (provider.loggedIn)
-                                Container(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: appTheme.backgroundColor,
-                                        showDragHandle: true,
-                                        isScrollControlled: true,
-                                        builder: (context) => MediaListStatusBottomSheet(
-                                          provider: provider,
-                                        ),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      shape: CircleBorder(
-                                        side: BorderSide(
-                                          color: appTheme.accentColor,
-                                        ),
-                                      ),
-                                      fixedSize: Size(50, 50),
-                                      backgroundColor: appTheme.backgroundColor,
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: Icon(
-                                      InfoProvider.getTrackerIcon(provider.mediaListStatus),
-                                      color: appTheme.accentColor,
-                                      size: 28,
-                                    ),
-                                  ),
-                                ),
-                              if (!provider.loggedIn && provider.started)
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(), child: Text("No")),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  await removeWatching(provider.id);
-                                                  provider.clearLastWatchDuration();
-                                                  await provider.getWatched(refreshLastWatchDuration: true);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text("Yes"),
-                                                style: TextButton.styleFrom(
-                                                  backgroundColor: appTheme.accentColor,
-                                                  foregroundColor: appTheme.onAccent,
-                                                ),
-                                              )
-                                            ],
-                                            content: Padding(
-                                              padding: const EdgeInsets.all(10),
-                                              child: Text.rich(
-                                                TextSpan(text: "Remove \"", style: TextStyle(fontSize: 15), children: [
-                                                  TextSpan(
-                                                      text: "${getTitle(provider.data.title)}",
-                                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "\" from your watch history?",
-                                                      style: TextStyle(fontSize: 15)),
-                                                ]),
-                                              ),
-                                            ),
-                                          );
-                                        });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: CircleBorder(
-                                      side: BorderSide(
-                                        color: appTheme.accentColor,
-                                      ),
-                                    ),
-                                    fixedSize: Size(50, 50),
-                                    backgroundColor: appTheme.backgroundColor,
-                                    padding: EdgeInsets.zero,
-                                  ),
-                                  child: Icon(
-                                    Icons.delete_outline_rounded,
-                                    color: appTheme.accentColor,
-                                    size: 28,
-                                  ),
-                                )
-                            ],
-                          ),
-                        ),
+                        _headerBlock(context),
                         AnimatedSwitcher(
                           duration: Duration(milliseconds: 200),
                           child: infoPage ? _infoItems(context) : _watchItems(context),
@@ -233,6 +100,216 @@ class _InfoMobileState extends State<InfoMobile> {
                     color: appTheme.accentColor,
                   ),
                 ),
+    );
+  }
+
+  Widget _headerBlock(BuildContext context) {
+    final data = provider.data;
+    final native = data.title['native'];
+    final showNative = native != null && native.isNotEmpty && native != getTitle(data.title);
+    return Padding(
+      padding: EdgeInsets.only(
+        left: MediaQuery.of(context).padding.left + 20,
+        right: MediaQuery.of(context).padding.right + 20,
+        top: 6,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            getTitle(data.title),
+            style: TextStyle(
+              color: appTheme.textMainColor,
+              fontFamily: "Rubik",
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              height: 1.15,
+            ),
+          ),
+          if (showNative)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                native,
+                style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13),
+              ),
+            ),
+          const SizedBox(height: 12),
+          _metaRow(),
+          const SizedBox(height: 14),
+          if (data.genres.isNotEmpty) _genreChipsRow(),
+          const SizedBox(height: 18),
+          _actionRow(context),
+          if ((data.synopsis ?? '').isNotEmpty) ...[
+            const SizedBox(height: 24),
+            _sectionHeading("Sinopsis"),
+            const SizedBox(height: 8),
+            _synopsisBlock(data.synopsis!),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _metaRow() {
+    final data = provider.data;
+    final items = <Widget>[];
+    void add(IconData icon, String? value, {Color? iconColor}) {
+      if (value == null || value.trim().isEmpty || value == 'null') return;
+      items.add(Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: iconColor ?? appTheme.textSubColor),
+          const SizedBox(width: 4),
+          Text(value, style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 13)),
+        ],
+      ));
+    }
+
+    final dur = data.duration.toString();
+    add(Icons.star_rounded, data.rating != null ? "${data.rating}" : null, iconColor: const Color(0xFFF5C518));
+    add(Icons.live_tv_rounded, data.type);
+    add(Icons.podcasts_rounded, data.status != null ? _capitalize(data.status!.replaceAll('_', ' ')) : null);
+    add(Icons.timer_outlined, (dur.isEmpty || dur == 'null') ? null : "$dur min");
+    return Wrap(spacing: 16, runSpacing: 8, children: items);
+  }
+
+  String _capitalize(String s) => s.isEmpty ? s : "${s[0].toUpperCase()}${s.substring(1).toLowerCase()}";
+
+  Widget _genreChipsRow() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: provider.data.genres
+          .map((g) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(20)),
+                child: Text(g, style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontSize: 12)),
+              ))
+          .toList(),
+    );
+  }
+
+  Widget _actionRow(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            focusNode: _watchInfoButtonFocusNode,
+            onFocusChange: (val) => setState(() {}),
+            onPressed: () => setState(() => infoPage = !infoPage),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: appTheme.accentColor,
+              foregroundColor: appTheme.onAccent,
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            icon: Icon(infoPage ? Icons.play_arrow_rounded : Icons.info_rounded, size: 24),
+            label: Text(
+              infoPage ? "Tonton Sekarang" : "Info",
+              style: const TextStyle(fontFamily: "Poppins", fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        if (provider.loggedIn) ...[
+          const SizedBox(width: 10),
+          _outlineCircle(
+            InfoProvider.getTrackerIcon(provider.mediaListStatus),
+            () => showModalBottomSheet(
+              context: context,
+              backgroundColor: appTheme.backgroundColor,
+              showDragHandle: true,
+              isScrollControlled: true,
+              builder: (context) => MediaListStatusBottomSheet(provider: provider),
+            ),
+          ),
+        ] else if (provider.started) ...[
+          const SizedBox(width: 10),
+          _outlineCircle(Icons.delete_outline_rounded, () => _confirmRemove(context)),
+        ],
+      ],
+    );
+  }
+
+  Widget _outlineCircle(IconData icon, VoidCallback onTap) {
+    return Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: appTheme.accentColor),
+      ),
+      child: IconButton(
+        onPressed: onTap,
+        icon: Icon(icon, color: appTheme.accentColor, size: 26),
+      ),
+    );
+  }
+
+  void _confirmRemove(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("No")),
+          TextButton(
+            onPressed: () async {
+              await removeWatching(provider.id);
+              provider.clearLastWatchDuration();
+              await provider.getWatched(refreshLastWatchDuration: true);
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(backgroundColor: appTheme.accentColor, foregroundColor: appTheme.onAccent),
+            child: Text("Yes"),
+          ),
+        ],
+        content: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Text.rich(
+            TextSpan(text: "Remove \"", style: TextStyle(fontSize: 15), children: [
+              TextSpan(text: getTitle(provider.data.title), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              TextSpan(text: "\" from your watch history?", style: TextStyle(fontSize: 15)),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _synopsisBlock(String synopsis) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: _synopsisExpanded ? double.infinity : 90),
+            child: Text(
+              synopsis,
+              overflow: _synopsisExpanded ? TextOverflow.visible : TextOverflow.fade,
+              style: TextStyle(color: appTheme.textSubColor, fontFamily: "NotoSans", fontSize: 14, height: 1.5),
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () => setState(() => _synopsisExpanded = !_synopsisExpanded),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              _synopsisExpanded ? "Tutup" : "Selengkapnya",
+              style: TextStyle(color: appTheme.accentColor, fontFamily: "NotoSans", fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _sectionHeading(String title) {
+    return Text(
+      title,
+      style: TextStyle(color: appTheme.textMainColor, fontFamily: "Rubik", fontSize: 20, fontWeight: FontWeight.bold),
     );
   }
 
@@ -1166,38 +1243,6 @@ class _InfoMobileState extends State<InfoMobile> {
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 30),
-            padding: EdgeInsets.only(left: 15, right: 15),
-            child: Column(
-              children: [
-                _categoryTitle('Genres'),
-                SizedBox(
-                  height: 65,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: provider.data.genres.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.only(left: 15, right: 15),
-                        decoration:
-                            BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          provider.data.genres[index],
-                          style: TextStyle(
-                            color: appTheme.textMainColor,
-                            fontSize: 20,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
           if (provider.data.tags != null)
             Container(
               margin: EdgeInsets.only(top: 30),
@@ -1231,23 +1276,6 @@ class _InfoMobileState extends State<InfoMobile> {
                 ],
               ),
             ),
-          Container(
-            margin: EdgeInsets.only(top: 30),
-            padding: EdgeInsets.only(left: 25, right: 25),
-            child: Column(
-              children: [
-                _categoryTitle('Description'),
-                Text(
-                  provider.data.synopsis ?? '',
-                  style: TextStyle(
-                    color: appTheme.textMainColor,
-                    fontFamily: "NunitoSans",
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ),
           Container(
             margin: EdgeInsets.only(top: 30),
             child: Column(
@@ -1502,80 +1530,6 @@ class _InfoMobileState extends State<InfoMobile> {
                 },
               ),
             ),
-          ),
-        ),
-        Positioned(
-          left: 20,
-          right: 20,
-          bottom: 12,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 12, offset: Offset(0, 4)),
-                  ],
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: CachedNetworkImage(
-                  imageUrl: provider.data.cover,
-                  height: 165,
-                  width: 115,
-                  fit: BoxFit.cover,
-                  fadeInDuration: Duration(milliseconds: 200),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        getTitle(provider.data.title),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Rubik",
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          height: 1.15,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          if (provider.data.rating != null) ...[
-                            Icon(Icons.star_rounded, color: const Color(0xFFF5C518), size: 16),
-                            const SizedBox(width: 3),
-                            Text(
-                              "${provider.data.rating}",
-                              style: const TextStyle(
-                                  color: Colors.white, fontFamily: "Rubik", fontSize: 13, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 10),
-                          ],
-                          Flexible(
-                            child: Text(
-                              "${provider.data.type} • ${(provider.data.status ?? '').toLowerCase().replaceAll('_', ' ')}",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8), fontFamily: "NotoSans", fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
         Container(
