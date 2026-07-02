@@ -1,13 +1,13 @@
-import 'package:animestream/core/app/env.dart';
-import 'package:animestream/core/app/logging.dart';
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/commons/enums.dart';
-import 'package:animestream/core/database/anilist/login.dart';
-import 'package:animestream/core/database/commentum/commentumTokenStore.dart';
-import 'package:animestream/ui/models/snackBar.dart';
-import 'package:animestream/ui/models/widgets/comment.dart';
-import 'package:animestream/ui/models/widgets/loader.dart';
-import 'package:animestream/ui/pages/settingPages/account.dart';
+import 'package:kumaanime/core/app/env.dart';
+import 'package:kumaanime/core/app/logging.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/database/anilist/login.dart';
+import 'package:kumaanime/core/database/commentum/commentumTokenStore.dart';
+import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/comment.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
+import 'package:kumaanime/ui/pages/settingPages/account.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:commentum_client/commentum_client.dart';
 import 'package:flutter/foundation.dart';
@@ -42,10 +42,10 @@ class _CommentsectionState extends State<Commentsection> {
   final commentum = CommentumClient(
     storage: CommentumTokenStore(),
     config: CommentumConfig(
-      baseUrl: AnimeStreamEnvironment.commentumApiUrl,
+      baseUrl: KumaAnimeEnvironment.commentumApiUrl,
       enableLogging: kDebugMode,
       verboseLogging: kDebugMode,
-      appClient: "animestream",
+      appClient: "kumaanime",
     ),
     preferredProvider: CommentumProvider.anilist,
   );
@@ -161,7 +161,7 @@ class _CommentsectionState extends State<Commentsection> {
                       ? _loginDialog()
                       : loading
                           ? Center(
-                              child: AnimeStreamLoading(
+                              child: KumaAnimeLoading(
                               color: appTheme.textMainColor,
                             ))
                           : replyMode
