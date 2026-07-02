@@ -118,16 +118,21 @@ class _SettingsPageState extends State<SettingsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             child: Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: appTheme.accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(item.icon, color: appTheme.accentColor, size: 22),
-                ),
+                Builder(builder: (context) {
+                  final isLight = appTheme.backgroundColor.computeLuminance() > 0.5;
+                  final iconColor =
+                      isLight ? Color.alphaBlend(Colors.black.withValues(alpha: 0.42), appTheme.accentColor) : appTheme.accentColor;
+                  return Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: appTheme.accentColor.withValues(alpha: isLight ? 0.22 : 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(item.icon, color: iconColor, size: 22),
+                  );
+                }),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
