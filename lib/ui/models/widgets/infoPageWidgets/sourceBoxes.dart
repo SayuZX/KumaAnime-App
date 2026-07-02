@@ -3,6 +3,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/ui/models/bottomSheets/manualSearchSheet.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
 import 'package:kumaanime/ui/models/sources.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SourceSideWidget extends StatelessWidget {
@@ -14,7 +15,8 @@ class SourceSideWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String sourceMatchString = "Searching... ";
+    final loc = AppLocalizations.of(context);
+    String sourceMatchString = loc.sbSearching;
     IconData statusIcon;
     Color statusColor;
 
@@ -22,7 +24,7 @@ class SourceSideWidget extends StatelessWidget {
       bool isMatched = (provider.foundName == provider.data.title['english']) ||
           (provider.foundName == provider.data.title['romaji']);
 
-      sourceMatchString = "Matching title ${isMatched ? "found" : "not found"}";
+      sourceMatchString = isMatched ? loc.sbMatchingTitleFound : loc.sbMatchingTitleNotFound;
       statusIcon = isMatched ? Icons.check_circle_rounded : Icons.error_rounded;
       statusColor = isMatched ? appTheme.accentColor : Colors.orange.shade400;
     } else {
@@ -83,7 +85,7 @@ class SourceSideWidget extends StatelessWidget {
                               ),
                               SizedBox(width: 6),
                               Text(
-                                "Select Source",
+                                loc.sbSelectSource,
                                 style: TextStyle(
                                   color: appTheme.textMainColor.withAlpha(220),
                                   fontSize: 15,
@@ -210,7 +212,7 @@ class SourceSideWidget extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Source Status",
+                                    loc.sbSourceStatus,
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(150),
                                       fontSize: 13,
@@ -276,7 +278,7 @@ class SourceSideWidget extends StatelessWidget {
                               size: 18,
                             ),
                             label: Text(
-                              "Manual Search",
+                              loc.sbManualSearch,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -310,7 +312,7 @@ class SourceSideWidget extends StatelessWidget {
                                 SizedBox(width: 6),
                                 Flexible(
                                   child: Text(
-                                    "Use manual search if automatic matching fails",
+                                    loc.sbManualSearchHint,
                                     style: TextStyle(
                                       color: appTheme.textMainColor.withAlpha(130),
                                       fontSize: 12,
@@ -343,8 +345,9 @@ class SourceBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     // ignore: unused_local_variable cus it is used!
-    String sourceMatchString = "Searching... ";
+    String sourceMatchString = loc.sbSearching;
     IconData statusIcon;
     Color statusColor;
 
@@ -352,7 +355,7 @@ class SourceBodyWidget extends StatelessWidget {
       bool isMatched = (provider.foundName == provider.data.title['english']) ||
           (provider.foundName == provider.data.title['romaji']);
 
-      sourceMatchString = "Matching title ${isMatched ? "found" : "not found"}";
+      sourceMatchString = isMatched ? loc.sbMatchingTitleFound : loc.sbMatchingTitleNotFound;
       statusIcon = isMatched ? Icons.check_circle_rounded : Icons.error_rounded;
       statusColor = isMatched ? appTheme.accentColor : Colors.orange.shade400;
     } else {
@@ -410,7 +413,7 @@ class SourceBodyWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "Source Selection",
+                        loc.sbSourceSelection,
                         style: TextStyle(
                           color: appTheme.textMainColor,
                           fontSize: 16,
@@ -451,7 +454,7 @@ class SourceBodyWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Select Source",
+                              loc.sbSelectSource,
                               style: TextStyle(
                                 color: appTheme.textMainColor.withAlpha(204),
                                 fontSize: 14,
@@ -476,9 +479,9 @@ class SourceBodyWidget extends StatelessWidget {
                                     provider.foundName != null
                                         ? (provider.foundName == provider.data.title['english'] ||
                                                 provider.foundName == provider.data.title['romaji']
-                                            ? "Matched"
-                                            : "Not Matched")
-                                        : "Searching",
+                                            ? loc.sbMatched
+                                            : loc.sbNotMatched)
+                                        : loc.sbSearchingStatus,
                                     style: TextStyle(
                                       color: statusColor,
                                       fontSize: 13,
@@ -603,7 +606,7 @@ class SourceBodyWidget extends StatelessWidget {
                         size: 18,
                       ),
                       label: Text(
-                        "Manual Search",
+                        loc.sbManualSearch,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -637,7 +640,7 @@ class SourceBodyWidget extends StatelessWidget {
                           SizedBox(width: 6),
                           Flexible(
                             child: Text(
-                              "Use manual search if automatic matching fails",
+                              loc.sbManualSearchHint,
                               style: TextStyle(
                                 color: appTheme.textMainColor.withAlpha(130),
                                 fontSize: 12,
