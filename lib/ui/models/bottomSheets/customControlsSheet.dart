@@ -1,5 +1,6 @@
 import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/sources.dart';
@@ -113,7 +114,7 @@ class CustomControls_BottomSheetState extends State<CustomControlsBottomSheet> {
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Text(
-              "Select Server",
+              AppLocalizations.of(context).ccSelectServer,
               style: textStyle().copyWith(fontSize: 23),
             ),
           ),
@@ -201,7 +202,7 @@ class CustomControls_BottomSheetState extends State<CustomControlsBottomSheet> {
                     ),
                     if (currentSources[index].backup)
                       Text(
-                        " • backup",
+                        " • ${AppLocalizations.of(context).ccBackup}",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[500],
