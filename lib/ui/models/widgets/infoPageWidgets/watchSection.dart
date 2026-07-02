@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/commonInfo.dart';
 import 'package:kumaanime/ui/models/widgets/infoPageWidgets/continueBoxes.dart';
@@ -90,9 +91,7 @@ class WatchSection extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(
-                    color: appTheme.accentColor,
-                  ),
+                  KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                   SizedBox(height: 16),
                   Text(
                     "Loading episodes...",
