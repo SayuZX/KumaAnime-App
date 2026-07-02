@@ -13,22 +13,6 @@ String socialKeyFor(int animeId, String title) {
   return "title:${slug.isEmpty ? 'unknown' : slug}";
 }
 
-void openCommentsSheet(BuildContext context, String socialKey) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    showDragHandle: true,
-    backgroundColor: appTheme.modalSheetBackgroundColor,
-    builder: (_) => Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.85,
-        child: WatchCommentsView(socialKey: socialKey),
-      ),
-    ),
-  );
-}
-
 class WatchSocialSheet extends StatelessWidget {
   final int animeId;
   final String title;
@@ -83,14 +67,19 @@ class WatchSocialPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final socialKey = socialKeyFor(animeId, title);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _TitleDescription(animeId: animeId, title: title),
-        const SizedBox(height: 14),
-        WatchActionsBar(socialKey: socialKey, animeId: animeId, title: title, onDownload: onDownload),
-        const SizedBox(height: 16),
-        _CommentsPreviewCard(socialKey: socialKey),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+          child: _TitleDescription(animeId: animeId, title: title),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: WatchActionsBar(socialKey: socialKey, animeId: animeId, title: title, onDownload: onDownload),
+        ),
+        Divider(height: 1, color: appTheme.textSubColor.withValues(alpha: 0.15)),
+        Expanded(child: WatchCommentsView(socialKey: socialKey)),
       ],
     );
   }
@@ -108,6 +97,7 @@ class _TitleDescription extends StatefulWidget {
 
 class _TitleDescriptionState extends State<_TitleDescription> {
   String? _synopsis;
+  String? _apiTitle;
   bool _loading = true;
   bool _expanded = false;
 
@@ -127,6 +117,7 @@ class _TitleDescriptionState extends State<_TitleDescription> {
       if (!mounted) return;
       setState(() {
         _synopsis = info.synopsis;
+        _apiTitle = info.title['english'] ?? info.title['romaji'];
         _loading = false;
       });
     } catch (_) {
@@ -137,6 +128,7 @@ class _TitleDescriptionState extends State<_TitleDescription> {
   @override
   Widget build(BuildContext context) {
     final desc = (_synopsis ?? '').trim();
+    final displayTitle = (_apiTitle != null && _apiTitle!.trim().isNotEmpty) ? _apiTitle! : widget.title;
     return GestureDetector(
       onTap: desc.isEmpty ? null : () => setState(() => _expanded = !_expanded),
       behavior: HitTestBehavior.opaque,
@@ -144,7 +136,7 @@ class _TitleDescriptionState extends State<_TitleDescription> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.title,
+            displayTitle,
             maxLines: _expanded ? 4 : 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: appTheme.textMainColor, fontSize: 17, fontWeight: FontWeight.bold, height: 1.3),
@@ -305,78 +297,6 @@ class _WatchActionsBarState extends State<WatchActionsBar> {
             Text(label, style: TextStyle(color: appTheme.textMainColor, fontSize: 14)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _CommentsPreviewCard extends StatelessWidget {
-  final String socialKey;
-
-  const _CommentsPreviewCard({required this.socialKey});
-
-  @override
-  Widget build(BuildContext context) {
-    final social = SocialService.instance;
-    return GestureDetector(
-      onTap: social.isReady ? () => openCommentsSheet(context, socialKey) : null,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(16)),
-        child: StreamBuilder<List<SocialComment>>(
-          stream: social.isReady ? social.watchComments(socialKey) : const Stream.empty(),
-          builder: (context, snapshot) {
-            final comments = snapshot.data ?? [];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text("Komentar",
-                        style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 8),
-                    Text("${comments.length}", style: TextStyle(color: appTheme.textSubColor, fontSize: 14)),
-                    const Spacer(),
-                    Icon(Icons.expand_more_rounded, color: appTheme.textSubColor),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                if (!social.isReady)
-                  Text("Fitur sosial tidak tersedia", style: TextStyle(color: appTheme.textSubColor, fontSize: 13))
-                else if (comments.isEmpty)
-                  Text("Belum ada komentar. Ketuk untuk menambahkan.",
-                      style: TextStyle(color: appTheme.textSubColor, fontSize: 13))
-                else
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _avatar(comments.first.nickname),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          comments.first.text,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: appTheme.textMainColor, fontSize: 13, height: 1.35),
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _avatar(String nickname) {
-    return CircleAvatar(
-      radius: 16,
-      backgroundColor: appTheme.accentColor.withValues(alpha: 0.2),
-      child: Text(
-        nickname.isNotEmpty ? nickname[0].toUpperCase() : "?",
-        style: TextStyle(color: appTheme.accentColor, fontWeight: FontWeight.bold, fontSize: 14),
       ),
     );
   }
