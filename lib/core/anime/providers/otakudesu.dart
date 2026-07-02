@@ -162,7 +162,14 @@ class OtakuDesu extends AnimeProvider {
         .map((a) => SubIndoGenre(title: a.text.trim(), genreId: _slug(a.attributes['href'], 'genres')))
         .toList();
 
-    final synopsis = doc.querySelectorAll('.sinopc p').map((p) => p.text.trim()).where((t) => t.isNotEmpty).join("\n\n");
+    String synopsis =
+        doc.querySelectorAll('.sinopc p').map((p) => p.text.trim()).where((t) => t.isNotEmpty).join("\n\n");
+    if (synopsis.isEmpty) synopsis = doc.querySelector('.sinopc')?.text.trim() ?? '';
+    if (synopsis.isEmpty) {
+      synopsis = doc.querySelector('meta[property="og:description"]')?.attributes['content']?.trim() ??
+          doc.querySelector('meta[name="description"]')?.attributes['content']?.trim() ??
+          '';
+    }
 
     final episodes = <EpisodeDetails>[];
     for (final anchor in doc.querySelectorAll('.episodelist ul li span a')) {
