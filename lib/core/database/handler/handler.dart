@@ -1,11 +1,11 @@
 //Call the database functions from this!
 
-import 'package:animestream/core/app/runtimeDatas.dart';
-import 'package:animestream/core/database/anilist/anilist.dart';
-import 'package:animestream/core/database/database.dart';
-import 'package:animestream/core/database/mal/mal.dart';
-import 'package:animestream/core/database/simkl/simkl.dart';
-import 'package:animestream/core/database/types.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/database/anilist/anilist.dart';
+import 'package:kumaanime/core/database/database.dart';
+import 'package:kumaanime/core/database/mal/mal.dart';
+import 'package:kumaanime/core/database/simkl/simkl.dart';
+import 'package:kumaanime/core/database/types.dart';
 
 class DatabaseHandler extends Database {
   DatabaseHandler({Databases? database}) {
