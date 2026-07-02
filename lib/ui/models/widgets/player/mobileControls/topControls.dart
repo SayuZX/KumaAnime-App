@@ -3,6 +3,7 @@ import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/pages/settingPages/player.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,8 +22,9 @@ class TopControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final epTitle = provider.isOffline
-        ? 'Episode ${dataProvider.state.currentEpIndex + 1}'
+        ? loc.tcEpisodeNumber(dataProvider.state.currentEpIndex + 1)
         : dataProvider.epLinks[dataProvider.state.currentEpIndex].episodeTitle;
     return Expanded(
       child: Container(
@@ -53,7 +55,7 @@ class TopControls extends StatelessWidget {
                             alignment: Alignment.topLeft,
                             child: Text(
                                 (epTitle == null || epTitle.isEmpty)
-                                    ? "Episode ${dataProvider.state.currentEpIndex + 1}"
+                                    ? loc.tcEpisodeNumber(dataProvider.state.currentEpIndex + 1)
                                     : epTitle,
                                 style: TextStyle(
                                   color: Colors.white,
@@ -119,7 +121,7 @@ class TopControls extends StatelessWidget {
                       SystemChrome.setPreferredOrientations(watchPreferredOrientations());
                     });
                   },
-                  tooltip: "Player settings",
+                  tooltip: loc.tcPlayerSettings,
                   icon: Icon(
                     Icons.video_settings_rounded,
                     color: Colors.white,
