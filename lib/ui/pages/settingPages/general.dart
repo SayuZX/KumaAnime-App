@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
+import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/sources.dart';
 import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
@@ -11,6 +13,7 @@ import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/plugin.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GeneralSetting extends StatefulWidget {
   const GeneralSetting({super.key});
@@ -56,8 +59,14 @@ class _GeneralSettingState extends State<GeneralSetting> {
 
   final sources = SourceManager.instance.sources;
 
+  static const languageNames = {
+    'en': 'English',
+    'id': 'Bahasa Indonesia',
+  };
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: loaded
@@ -67,9 +76,9 @@ class _GeneralSettingState extends State<GeneralSetting> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    settingPagesTitleHeader(context, "General"),
+                    settingPagesTitleHeader(context, loc.generalTitle),
                     ToggleItem(
-                      label: "Show errors",
+                      label: loc.showErrors,
                       value: showErrorsButtonState,
                       onTapFunction: () {
                         setState(() {
@@ -79,7 +88,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       },
                     ),
                     ToggleItem(
-                      label: "Receive beta updates",
+                      label: loc.receiveBetaUpdates,
                       value: receivePreReleases,
                       onTapFunction: () {
                         setState(() {
@@ -87,10 +96,10 @@ class _GeneralSettingState extends State<GeneralSetting> {
                         });
                         writeSettings(SettingsModal(receivePreReleases: receivePreReleases));
                       },
-                      description: "*maybe unstable",
+                      description: loc.receiveBetaUpdatesDesc,
                     ),
                     ToggleItem(
-                        label: "Use faster downloading",
+                        label: loc.fasterDownloading,
                         value: fasterDownloads,
                         onTapFunction: () {
                           setState(() {
@@ -98,11 +107,11 @@ class _GeneralSettingState extends State<GeneralSetting> {
                           });
                           writeSettings(SettingsModal(fasterDownloads: fasterDownloads));
                         },
-                        description: "*download 2x items per batch"),
+                        description: loc.fasterDownloadingDesc),
                     ToggleItem(
-                        label: "Queued downloads",
+                        label: loc.queuedDownloads,
                         value: useQueuedDownloads,
-                        description: "Download items one by one",
+                        description: loc.queuedDownloadsDesc,
                         onTapFunction: () {
                           setState(() {
                             useQueuedDownloads = !useQueuedDownloads;
@@ -135,7 +144,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Download path",
+                                  loc.downloadPath,
                                   style: textStyle(),
                                 ),
                                 Text(
@@ -159,7 +168,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                           builder: (context) => _providerSheet(context),
                         );
                       },
-                      label: "Default provider",
+                      label: loc.defaultProvider,
                       description:
                           (currentUserSettings?.preferredProvider ?? sources.first.identifier).replaceAll('_', ' '),
                       suffixIcon: Icon(Icons.arrow_drop_down),
@@ -168,9 +177,21 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => PluginPage()));
                       },
-                      label: "Manage Providers",
-                      description: "Add or remove providers",
+                      label: loc.manageProviders,
+                      description: loc.manageProvidersDesc,
                       suffixIcon: Icon(Icons.navigate_next_rounded),
+                    ),
+                    ClickableItem(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          showDragHandle: true,
+                          builder: (context) => _languageSheet(context),
+                        );
+                      },
+                      label: loc.language,
+                      description: languageNames[currentUserSettings?.locale] ?? languageNames['en']!,
+                      suffixIcon: Icon(Icons.language_rounded),
                     ),
                     ToggleItem(
                       onTapFunction: () {
@@ -179,8 +200,8 @@ class _GeneralSettingState extends State<GeneralSetting> {
                         });
                         writeSettings(SettingsModal(enableLogging: enableLogging));
                       },
-                      label: "Enable Logging",
-                      description: "Helps with debugging issues",
+                      label: loc.enableLogging,
+                      description: loc.enableLoggingDesc,
                       value: enableLogging,
                     )
                   ],
@@ -207,7 +228,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: Text(
-                "Select Provider",
+                AppLocalizations.of(context).selectProvider,
                 style: textStyle().copyWith(fontSize: 23),
                 textAlign: TextAlign.left,
               ),
@@ -253,6 +274,72 @@ class _GeneralSettingState extends State<GeneralSetting> {
           ],
         ),
       ),
+    );
+  }
+
+  StatefulBuilder _languageSheet(BuildContext context) {
+    return StatefulBuilder(
+      builder: (context, setSheetState) {
+        final activeLocale = currentUserSettings?.locale ?? 'en';
+        final codes = languageNames.keys.toList();
+        return Container(
+          padding: const EdgeInsets.only(
+            top: 10,
+            left: 20,
+            right: 20,
+          ),
+          margin: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  AppLocalizations.of(context).selectLanguage,
+                  style: textStyle().copyWith(fontSize: 23),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: codes.length,
+                  itemBuilder: (context, index) {
+                    final code = codes[index];
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        color: code == activeLocale ? appTheme.accentColor : appTheme.backgroundSubColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () async {
+                            final appProvider = context.read<AppProvider>();
+                            await writeSettings(SettingsModal(locale: code));
+                            appProvider.justRefresh();
+                            setSheetState(() {});
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            child: Text(
+                              languageNames[code]!,
+                              style: textStyle().copyWith(
+                                color: code == activeLocale ? appTheme.onAccent : appTheme.textMainColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        );
+      },
     );
   }
 }
