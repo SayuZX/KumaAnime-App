@@ -1,6 +1,6 @@
 
 
-import 'package:animestream/ui/theme/types.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:flutter/material.dart';
 
 class CozyKoala implements ThemeItem {
@@ -11,7 +11,7 @@ class CozyKoala implements ThemeItem {
   bool get dev => true;
 
   @override
-  AnimeStreamTheme get lightVariant => AnimeStreamTheme(
+  KumaAnimeTheme get lightVariant => KumaAnimeTheme(
         accentColor: Color(0xFF6EADBC),
         backgroundColor: Color(0xFFF1F7D4),
         backgroundSubColor: Color(0xFF9FCBAD),
@@ -21,7 +21,7 @@ class CozyKoala implements ThemeItem {
         onAccent: Color(0xFF4A4466),
       );
 
-  @override AnimeStreamTheme get theme => AnimeStreamTheme(
+  @override KumaAnimeTheme get theme => KumaAnimeTheme(
         accentColor: Color(0xFF6EADBC),
         backgroundColor: Color.fromARGB(255, 49, 47, 61),
         backgroundSubColor: Color.fromARGB(255, 101, 129, 110),
