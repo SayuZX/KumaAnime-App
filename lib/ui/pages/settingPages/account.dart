@@ -10,6 +10,7 @@ import 'package:kumaanime/core/database/database.dart';
 import 'package:kumaanime/core/database/mal/login.dart';
 import 'package:kumaanime/core/database/simkl/login.dart';
 import 'package:kumaanime/core/database/simkl/types.dart';
+import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
@@ -217,6 +218,7 @@ class _AccountSettingState extends State<AccountSetting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               settingPagesTitleHeader(context, "Account"),
+              _communityProfileCard(),
               loading
                   ? Container(
                       padding: EdgeInsets.only(top: 30),
@@ -443,6 +445,148 @@ class _AccountSettingState extends State<AccountSetting> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  static const _avatars = ['😺', '🦊', '🐼', '🐯', '🐧', '🐨', '🦁', '🐸', '🐙', '👾', '🍥', '⭐'];
+
+  Widget _communityProfileCard() {
+    final social = SocialService.instance;
+    final avatar = social.avatar;
+    final nickname = social.nickname;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.only(bottom: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 15),
+            child: Text("Community Profile", style: textStyle().copyWith(fontSize: 24)),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(16)),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: appTheme.accentColor.withValues(alpha: 0.2),
+                  child: Text(
+                    avatar.isNotEmpty ? avatar : (nickname.isNotEmpty ? nickname[0].toUpperCase() : "?"),
+                    style: TextStyle(
+                      color: appTheme.accentColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: avatar.isNotEmpty ? 26 : 20,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(nickname,
+                          style: TextStyle(color: appTheme.textMainColor, fontSize: 18, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 2),
+                      Text(
+                        social.isReady ? "Nama tampil di komentar & like" : "Fitur sosial tidak tersedia",
+                        style: TextStyle(color: appTheme.textSubColor, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: social.isReady ? _editProfile : null,
+                  icon: Icon(Icons.edit_rounded, color: appTheme.accentColor),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editProfile() {
+    final social = SocialService.instance;
+    final controller = TextEditingController(text: social.nickname);
+    String selected = social.avatar;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: appTheme.modalSheetBackgroundColor,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) => Padding(
+          padding: EdgeInsets.only(left: 20, right: 20, top: 6, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Edit Profil", style: textStyle().copyWith(fontSize: 22)),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                maxLength: 24,
+                style: TextStyle(color: appTheme.textMainColor),
+                decoration: InputDecoration(
+                  labelText: "Username",
+                  labelStyle: TextStyle(color: appTheme.textSubColor),
+                  filled: true,
+                  fillColor: appTheme.backgroundSubColor,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text("Ikon Profil", style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: _avatars.map((emoji) {
+                  final isSelected = selected == emoji;
+                  return GestureDetector(
+                    onTap: () => setSheet(() => selected = emoji),
+                    child: Container(
+                      width: 52,
+                      height: 52,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSelected ? appTheme.accentColor.withValues(alpha: 0.18) : appTheme.backgroundSubColor,
+                        shape: BoxShape.circle,
+                        border: isSelected ? Border.all(color: appTheme.accentColor, width: 2) : null,
+                      ),
+                      child: Text(emoji, style: const TextStyle(fontSize: 26)),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final name = controller.text.trim();
+                    await social.saveProfile(nickname: name.isEmpty ? social.nickname : name, avatar: selected);
+                    if (!mounted) return;
+                    Navigator.pop(ctx);
+                    setState(() {});
+                    floatingSnackBar("Profil disimpan");
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: appTheme.accentColor,
+                    foregroundColor: appTheme.onAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text("Simpan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
