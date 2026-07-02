@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/app/version.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
@@ -43,6 +44,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -51,7 +53,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
             child: loaded
                 ? Column(
                     children: [
-                      settingPagesTitleHeader(context, "App Info"),
+                      settingPagesTitleHeader(context, loc.aiAppInfo),
                       SizedBox(height: 20),
                       _header(),
                       SizedBox(height: 40),
@@ -73,6 +75,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   }
 
   Widget _header() {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         GestureDetector(
@@ -90,7 +93,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
             menuItems: [
               ContextMenuItem(
                   icon: Icons.open_in_new,
-                  label: "Open secret link",
+                  label: loc.aiOpenSecretLink,
                   onClick: () async {
                     if (await canLaunchUrl(Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ"))) {
                       launchUrl(
@@ -151,7 +154,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            "v$appVersion",
+            loc.aiVersion(appVersion),
             style: TextStyle(
               color: appTheme.textSubColor,
               fontSize: 14,
@@ -163,6 +166,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   }
 
   Widget _linksGroup() {
+    final loc = AppLocalizations.of(context);
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
@@ -176,8 +180,8 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                     Uri.parse("https://github.com/SayuZX/KumaAnime-App"),
                     mode: LaunchMode.externalApplication,
                   ),
-              label: "GitHub Repository",
-              description: "Source code n stuff",
+              label: loc.aiGithubRepo,
+              description: loc.aiGithubRepoDesc,
               suffixIcon: Icon(Icons.arrow_outward_rounded, size: 20, color: appTheme.textSubColor),
               borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
           _divider(),
@@ -186,18 +190,18 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
               Uri.parse("https://github.com/SayuZX/KumaAnime-App/issues"),
               mode: LaunchMode.externalApplication,
             ),
-            label: "Report an Issue",
-            description: "Found a bug? Let us know!",
+            label: loc.aiReportIssue,
+            description: loc.aiReportIssueDesc,
             suffixIcon: Icon(Icons.bug_report_rounded, size: 20, color: appTheme.textSubColor),
           ),
           _divider(),
           ClickableItem(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: "https://github.com/SayuZX/KumaAnime-App"));
-                floatingSnackBar("Repository link copied!");
+                floatingSnackBar(loc.aiRepoLinkCopied);
               },
-              label: "Share App",
-              description: "Copy link to clipboard",
+              label: loc.aiShareApp,
+              description: loc.aiCopyToClipboard,
               suffixIcon: Icon(Icons.copy_rounded, size: 20, color: appTheme.textSubColor),
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
         ],
@@ -206,6 +210,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   }
 
   Widget _codename() {
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
@@ -214,7 +219,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
         color: appTheme.accentColor.withAlpha(20),
       ),
       child: Text(
-        "Codename: ${AppVersion.instance.nickname}",
+        loc.aiCodename(AppVersion.instance.nickname),
         style: TextStyle(
           color: appTheme.accentColor,
           fontWeight: FontWeight.bold,
@@ -224,6 +229,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   }
 
   Widget _footer() {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         Center(
@@ -264,7 +270,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Buy me a coffee',
+                      loc.aiBuyMeCoffee,
                       style: TextStyle(
                         fontSize: 14,
                         // fontWeight: FontWeight.bold,
@@ -278,7 +284,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
           ),
         ),
         Text(
-          "Made with ❤️ & Flutter",
+          loc.aiMadeWith,
           style: TextStyle(
             color: appTheme.textSubColor,
             fontSize: 12,
