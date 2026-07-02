@@ -170,15 +170,8 @@ Future<void> loadAndAssignSettings() async {
       appTheme.backgroundColor =
           (currentUserSettings!.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor;
     } else {
-      appTheme = KumaAnimeTheme(
-        accentColor: Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor),
-        textMainColor: lightModeValues.textMainColor,
-        textSubColor: lightModeValues.textSubColor,
-        backgroundColor: lightModeValues.backgroundColor,
-        backgroundSubColor: lightModeValues.backgroundSubColor,
-        modalSheetBackgroundColor: lightModeValues.modalSheetBackgroundColor,
-        onAccent: theme.lightVariant.onAccent,
-      );
+      final accent = Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
+      appTheme = lightThemeFor(accent, theme.lightVariant.onAccent);
     }
 
     final accentOverride = currentUserSettings?.accentColorValue;
