@@ -270,10 +270,8 @@ class _WatchActionsBarState extends State<WatchActionsBar> {
                 children: [
                   Icon(_myVote == -1 ? Icons.thumb_down_alt_rounded : Icons.thumb_down_alt_outlined,
                       size: 20, color: _myVote == -1 ? appTheme.accentColor : appTheme.textMainColor),
-                  if (dislikes > 0) ...[
-                    const SizedBox(width: 8),
-                    Text("$dislikes", style: TextStyle(color: appTheme.textMainColor, fontSize: 14)),
-                  ],
+                  const SizedBox(width: 8),
+                  Text("$dislikes", style: TextStyle(color: appTheme.textMainColor, fontSize: 14)),
                 ],
               ),
             ),
