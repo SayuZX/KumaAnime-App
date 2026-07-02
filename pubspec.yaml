@@ -175,3 +175,6 @@ flutter:
     - family: Poppins
       fonts:
         - asset: lib/assets/fonts/Poppins-Bold.ttf
+    - family: PlayfairDisplay
+      fonts:
+        - asset: lib/assets/fonts/PlayfairDisplay.ttf
