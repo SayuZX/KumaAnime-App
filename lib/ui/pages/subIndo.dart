@@ -288,10 +288,11 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   }
 
   Widget _chip({required String label, required bool selected, required void Function() onTap}) {
+    final activeBg = Color.alphaBlend(Colors.black.withValues(alpha: 0.62), appTheme.accentColor);
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? appTheme.accentColor : const Color(0xff1E1E1E),
+        color: selected ? activeBg : const Color(0xff1A1A1A),
         borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.hardEdge,
         child: InkWell(
@@ -301,12 +302,15 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: selected ? Colors.transparent : const Color(0xff333333)),
+              border: Border.all(
+                color: selected ? appTheme.accentColor : const Color(0xff2A2A2A),
+                width: 1,
+              ),
             ),
             child: Text(
               label,
               style: TextStyle(
-                color: selected ? appTheme.onAccent : const Color(0xffAAAAAA),
+                color: selected ? const Color(0xffCCFFF0) : const Color(0xff888888),
                 fontFamily: "NotoSans",
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
