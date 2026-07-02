@@ -63,7 +63,6 @@ class _ManualSearchSheetState extends State<ManualSearchSheet> {
                     item['name'] ?? item['alias'] ?? '',
                     style: TextStyle(
                       color: appTheme.textMainColor,
-                      fontFamily: 'NotoSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                       overflow: TextOverflow.ellipsis,
@@ -100,13 +99,12 @@ class _ManualSearchSheetState extends State<ManualSearchSheet> {
               onSubmitted: (val) => search(val),
               controller: searchBarController,
               focusNode: searchBarFocusNode,
-              style: TextStyle(color: appTheme.textMainColor, fontFamily: "NotoSans", fontWeight: FontWeight.bold),
+              style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold),
               autocorrect: false,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 20),
                 labelText: "search",
                 labelStyle: TextStyle(
-                    fontFamily: "Poppins",
                     fontWeight: FontWeight.bold,
                     color: searchBarFocusNode.hasFocus ? appTheme.accentColor : appTheme.textMainColor),
                 focusedBorder: OutlineInputBorder(
@@ -143,7 +141,6 @@ class _ManualSearchSheetState extends State<ManualSearchSheet> {
                             "No Results!",
                             style: TextStyle(
                               color: appTheme.textMainColor,
-                              fontFamily: "NunitoSans",
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
