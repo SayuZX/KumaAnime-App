@@ -1,4 +1,5 @@
 import 'package:kumaanime/ui/models/bottomSheets/customControlsSheet.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/widgets/player/mobileControls/bottomControls.dart';
@@ -270,9 +271,7 @@ class _MobileControlsState extends State<MobileControls> {
               width: 40,
               height: 40,
               child: Center(
-                child: CircularProgressIndicator(
-                  color: appTheme.accentColor,
-                ),
+                child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
               ),
             ),
         ],
@@ -368,9 +367,7 @@ class _MobileControlsState extends State<MobileControls> {
                     height: 65,
                     margin: EdgeInsets.only(left: 5, right: 5),
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: appTheme.accentColor,
-                      ),
+                      child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
                     ),
                   ),
           ),
