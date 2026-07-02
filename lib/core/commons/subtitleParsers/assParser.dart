@@ -1,6 +1,6 @@
-import 'package:animestream/core/commons/subtitleParsers/subtitleParsers.dart';
-import 'package:animestream/core/commons/subtitleParsers/util.dart';
-import 'package:animestream/ui/models/widgets/subtitles/subtitle.dart';
+import 'package:kumaanime/core/commons/subtitleParsers/subtitleParsers.dart';
+import 'package:kumaanime/core/commons/subtitleParsers/util.dart';
+import 'package:kumaanime/ui/models/widgets/subtitles/subtitle.dart';
 
 // Vibecoded parser dont blame me for this mess
 class ASSRIPPER {
