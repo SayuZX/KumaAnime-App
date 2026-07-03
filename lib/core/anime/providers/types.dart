@@ -64,8 +64,7 @@ class VideoStream {
       subtitleFormat: map['subtitleFormat'] != null ? map['subtitleFormat'] : null,
       server: map['server'] as String,
       backup: map['backup'] as bool,
-      customHeaders:
-          map['customHeaders'] != null ? Map<String, String>.from((map['customHeaders'] as Map<String, String>)) : null,
+      customHeaders: map['customHeaders'] != null ? Map<String, String>.from(map['customHeaders'] as Map) : null,
     );
   }
 
