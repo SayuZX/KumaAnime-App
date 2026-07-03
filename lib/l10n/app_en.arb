@@ -139,6 +139,8 @@
   "ctIAm18Plus": "I am 18+",
   "ctSelectLanguage": "Select Language",
   "plrPlayer": "Player",
+  "plrSeekbarStyle": "Seekbar style",
+  "plrSeekbarStyleDesc": "Choose the look of the player progress bar",
   "plrSkipDuration": "Skip duration",
   "plrMegaSkipDuration": "Mega skip duration",
   "plrShowSkipButton": "Show skip button",
