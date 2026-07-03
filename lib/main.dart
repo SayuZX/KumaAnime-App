@@ -384,6 +384,15 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
                         ? scheme.accentColor
                         : appTheme.accentColor,
                   ),
+                  pageTransitionsTheme: (currentUserSettings?.reduceMotion ?? false)
+                      ? const PageTransitionsTheme(builders: {
+                          TargetPlatform.android: _NoTransitionsBuilder(),
+                          TargetPlatform.iOS: _NoTransitionsBuilder(),
+                          TargetPlatform.windows: _NoTransitionsBuilder(),
+                          TargetPlatform.linux: _NoTransitionsBuilder(),
+                          TargetPlatform.macOS: _NoTransitionsBuilder(),
+                        })
+                      : null,
                   iconTheme: IconThemeData(color: appTheme.textMainColor)),
               builder: (context, child) {
                 final scale =
@@ -408,5 +417,20 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
           );
         },
     );
+  }
+}
+
+class _NoTransitionsBuilder extends PageTransitionsBuilder {
+  const _NoTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
   }
 }
