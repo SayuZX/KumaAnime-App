@@ -42,6 +42,8 @@
   "language": "Bahasa",
   "selectLanguage": "Pilih Bahasa",
   "subIndo": "INDONESIA",
+  "subEng": "ENGLISH",
+  "subEngSearchHint": "Cari anime...",
   "subIndoTagline": "Subtitle Indonesia",
   "subIndoOngoing": "Sedang Tayang",
   "subIndoCompleted": "Selesai",

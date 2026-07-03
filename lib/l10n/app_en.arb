@@ -42,6 +42,8 @@
   "language": "Language",
   "selectLanguage": "Select Language",
   "subIndo": "INDONESIA",
+  "subEng": "ENGLISH",
+  "subEngSearchHint": "Search anime...",
   "subIndoTagline": "Subtitle Indonesia",
   "subIndoOngoing": "Ongoing",
   "subIndoCompleted": "Completed",
