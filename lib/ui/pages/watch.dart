@@ -877,11 +877,12 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     if (controller.duration != null && controller.duration! > 0) {
       //store the exact percentage of watched
       if (!widget.localSource) print("SAVED WATCH DURATION");
-      controller.removeListener(_listener);
-      controller.dispose();
-      _controlsTimer?.cancel();
-      _tapTimer?.cancel();
     }
+
+    controller.removeListener(_listener);
+    controller.dispose();
+    _controlsTimer?.cancel();
+    _tapTimer?.cancel();
 
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
