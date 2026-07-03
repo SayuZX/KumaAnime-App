@@ -197,8 +197,13 @@ class _KumaAnimeState extends State<KumaAnime> {
       onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ));
 
     // if (currentUserSettings?.enableDiscordPresence ?? false)
     // FlutterDiscordRPC.instance.connect(autoRetry: true, retryDelay: Duration(seconds: 10));
@@ -253,10 +258,11 @@ class _KumaAnimeState extends State<KumaAnime> {
     final isDarkMode = currentUserSettings?.darkMode ?? true;
     return AnnotatedRegion(
       value: SystemUiOverlayStyle(
-        statusBarColor: appTheme.backgroundColor,
+        statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: appTheme.backgroundColor,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
         systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
       ),
       child: DynamicColorBuilder(
@@ -313,10 +319,11 @@ class _KumaAnimeState extends State<KumaAnime> {
 
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
-              statusBarColor: appTheme.backgroundColor,
+              statusBarColor: Colors.transparent,
               statusBarIconBrightness: themeProvider.isDark ? Brightness.light : Brightness.dark,
               statusBarBrightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
-              systemNavigationBarColor: appTheme.backgroundColor,
+              systemNavigationBarColor: Colors.transparent,
+              systemNavigationBarContrastEnforced: false,
               systemNavigationBarIconBrightness: themeProvider.isDark ? Brightness.light : Brightness.dark,
             ),
             child: MaterialApp(
