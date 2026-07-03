@@ -497,6 +497,8 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
               'episodeIndex': playerDataProvider.state.currentEpIndex,
               'episodeNumber': playerDataProvider.epLinks[playerDataProvider.state.currentEpIndex].episodeNumber,
               'progress': watchPercentage,
+              'positionMs': pos.toInt(),
+              'durationMs': dur.toInt(),
               'stream': playerDataProvider.state.currentStream.toMap(),
               'epLinks': playerDataProvider.epLinks.map((e) => e.toMap()).toList(),
               'selectedSource': playerDataProvider.selectedSource,
@@ -681,6 +683,9 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     });
   }
 
+  double _minimizeDrag = 0;
+  bool _minimizeDragging = false;
+
   Widget _layoutBody(bool youtube, PlayerDataProvider dataProvider, Widget player) {
     if (!youtube) {
       return Padding(
@@ -688,21 +693,51 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
         child: player,
       );
     }
-    return SafeArea(
-      child: Column(
-        children: [
-          Container(
-            color: Colors.black,
-            child: ClipRect(child: AspectRatio(aspectRatio: 16 / 9, child: player)),
-          ),
-          Expanded(
-            child: WatchSocialPanel(
-              animeId: dataProvider.showId,
-              title: dataProvider.showTitle,
-              onDownload: _downloadCurrent,
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    return AnimatedContainer(
+      duration: _minimizeDragging ? Duration.zero : const Duration(milliseconds: 380),
+      curve: Curves.easeOutBack,
+      transform: Matrix4.translationValues(0, _minimizeDrag, 0)
+        ..scaleByDouble(1 - (_minimizeDrag / screenHeight) * 0.12, 1 - (_minimizeDrag / screenHeight) * 0.12, 1, 1),
+      transformAlignment: Alignment.topCenter,
+      child: SafeArea(
+        child: Column(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onVerticalDragStart: (details) => setState(() => _minimizeDragging = true),
+              onVerticalDragUpdate: (details) {
+                setState(() => _minimizeDrag = (_minimizeDrag + details.delta.dy).clamp(0.0, screenHeight));
+              },
+              onVerticalDragEnd: (details) {
+                final fling = (details.primaryVelocity ?? 0) > 700;
+                if (_minimizeDrag > 140 || fling) {
+                  Navigator.of(context).maybePop();
+                } else {
+                  setState(() {
+                    _minimizeDragging = false;
+                    _minimizeDrag = 0;
+                  });
+                }
+              },
+              onVerticalDragCancel: () => setState(() {
+                _minimizeDragging = false;
+                _minimizeDrag = 0;
+              }),
+              child: Container(
+                color: Colors.black,
+                child: ClipRect(child: AspectRatio(aspectRatio: 16 / 9, child: player)),
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: WatchSocialPanel(
+                animeId: dataProvider.showId,
+                title: dataProvider.showTitle,
+                onDownload: _downloadCurrent,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
