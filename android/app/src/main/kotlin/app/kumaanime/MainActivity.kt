@@ -1,6 +1,8 @@
 package app.kumaanime
 
 import android.widget.Toast
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
@@ -18,7 +20,22 @@ class MainActivity: FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        enableEdgeToEdge()
+    }
+
+    private fun enableEdgeToEdge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isStatusBarContrastEnforced = false
+            window.isNavigationBarContrastEnforced = false
+        }
     }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
