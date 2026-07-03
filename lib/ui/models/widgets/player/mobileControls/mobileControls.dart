@@ -203,9 +203,14 @@ class _MobileControlsState extends State<MobileControls> {
   Widget _fullscreenButton(bool isMini) {
     return InkWell(
       onTap: () {
-        SystemChrome.setPreferredOrientations(isMini
-            ? const [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]
-            : const [DeviceOrientation.portraitUp]);
+        if (isMini) {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+          SystemChrome.setPreferredOrientations(
+              const [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+        } else {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
+        }
       },
       child: Padding(
         padding: const EdgeInsets.all(6),
