@@ -14,7 +14,6 @@ class SettingsModal {
 
   final bool? enableMegaSkip;
 
-  final String? dnsProvider;
 
   /// Error display errors as snackbars [defaults to false]
   final bool? showErrors;
@@ -120,7 +119,6 @@ class SettingsModal {
   SettingsModal({
     this.megaSkipDuration,
     this.enableMegaSkip,
-    this.dnsProvider,
     this.skipDuration,
     this.showErrors,
     this.receivePreReleases,
@@ -180,7 +178,6 @@ class SettingsModal {
     return SettingsModal(
       megaSkipDuration: map['megaSkipDuration'] ?? 85,
       enableMegaSkip: map['enableMegaSkip'] ?? true,
-      dnsProvider: map['dnsProvider'] ?? 'off',
       skipDuration: map['skipDuration'] ?? 10,
       showErrors: map['showErrors'] ?? false,
       receivePreReleases: map['receivePreReleases'] ?? false,
@@ -242,7 +239,6 @@ class SettingsModal {
       'skipDuration': skipDuration,
       'megaSkipDuration': megaSkipDuration,
       'enableMegaSkip': enableMegaSkip,
-      'dnsProvider': dnsProvider,
       'showErrors': showErrors,
       'receivePreReleases': receivePreReleases,
       'amoledBackground': amoledBackground,
