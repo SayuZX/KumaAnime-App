@@ -139,6 +139,8 @@
   "ctIAm18Plus": "Saya 18+",
   "ctSelectLanguage": "Pilih Bahasa",
   "plrPlayer": "Pemutar",
+  "plrSeekbarStyle": "Gaya seekbar",
+  "plrSeekbarStyleDesc": "Pilih tampilan bar progres pemutar",
   "plrSkipDuration": "Durasi lewati",
   "plrMegaSkipDuration": "Durasi mega lewati",
   "plrShowSkipButton": "Tampilkan tombol lewati",
