@@ -22,7 +22,9 @@ class MiniResumePlayer extends StatelessWidget {
 
   bool get _isDark => currentUserSettings?.darkMode ?? true;
 
-  void _resume(BuildContext context, Map<String, dynamic> session) {
+  static void resume(BuildContext context, Map<String, dynamic> session) => _resume(context, session);
+
+  static void _resume(BuildContext context, Map<String, dynamic> session) {
     final stream = VideoStream.fromMap(Map<String, dynamic>.from(session['stream']));
     final epLinks =
         (session['epLinks'] as List).map((e) => EpisodeDetails.fromMap(Map<String, dynamic>.from(e))).toList();
