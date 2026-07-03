@@ -89,7 +89,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
   }
 
   void setWatchMode() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    _lastYoutubeLayout = null;
     SystemChrome.setPreferredOrientations(watchPreferredOrientations());
   }
 
@@ -632,7 +632,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     );
   }
 
-  bool _lastYoutubeLayout = false;
+  bool? _lastYoutubeLayout;
 
   bool _useYoutubeLayout(Orientation orientation) {
     switch (currentUserSettings?.playerOrientation ?? 'auto') {
