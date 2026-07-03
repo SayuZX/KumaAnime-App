@@ -68,8 +68,8 @@ class _ContextMenuState extends State<ContextMenu> {
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return MouseRegion(
-                                    onEnter: (event) => hoverList[index].value = true,
-                                    onExit: (event) => hoverList[index].value = false,
+                                    onEnter: (event) => Future.microtask(() => hoverList[index].value = true),
+                                    onExit: (event) => Future.microtask(() => hoverList[index].value = false),
                                     child: ValueListenableBuilder(
                                       valueListenable: hoverList[index],
                                       builder: (context, hovered, child) => GestureDetector(
