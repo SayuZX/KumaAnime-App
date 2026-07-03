@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 
 import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 
-/// Last unfinished watch session powering the mini resume player.
 class ResumeSession {
   static const _key = 'resumeSession';
 

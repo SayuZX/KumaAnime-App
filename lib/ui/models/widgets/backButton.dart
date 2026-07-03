@@ -1,7 +1,6 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:flutter/material.dart';
 
-/// Minimal modern back button used across every page.
 class KumaBackButton extends StatelessWidget {
   final Color? color;
   final double size;

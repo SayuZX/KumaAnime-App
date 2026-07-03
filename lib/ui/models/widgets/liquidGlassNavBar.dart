@@ -13,8 +13,6 @@ class LiquidGlassNavItem {
       : activeIcon = activeIcon ?? icon;
 }
 
-/// Frosted liquid-glass pill navigation bar with an animated capsule indicator,
-/// ported from OpenTune's FloatingNavigationToolbar.
 class LiquidGlassNavBar extends StatefulWidget {
   final List<LiquidGlassNavItem> items;
   final FloatyBottomBarController controller;
