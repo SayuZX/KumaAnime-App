@@ -68,8 +68,8 @@ class ContinueWatchingSideBox extends StatelessWidget {
               children: [
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
-                  onEnter: (event) => notif.value = true,
-                  onExit: (event) => notif.value = false,
+                  onEnter: (event) => Future.microtask(() => notif.value = true),
+                  onExit: (event) => Future.microtask(() => notif.value = false),
                   child: GestureDetector(
                     onTap: () {
                       showDialog(
