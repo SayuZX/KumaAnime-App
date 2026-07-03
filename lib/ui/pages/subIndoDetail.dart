@@ -13,17 +13,13 @@ import 'package:kumaanime/core/database/types.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
-import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
-import 'package:kumaanime/ui/models/providers/playerProvider.dart';
-import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
+import 'package:kumaanime/ui/models/providers/playerSheetController.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/ui/models/widgets/sourceTile.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
-import 'package:kumaanime/ui/pages/watch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SubIndoDetailPage extends StatefulWidget {
   final String animeId;
@@ -686,7 +682,6 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
 
   void _openPlayer(int streamIndex) {
     final controller = Platform.isAndroid ? BetterPlayerWrapper() : FvpWrapper();
-    final navigatorState = Platform.isWindows ? AppWrapper.navKey.currentState : Navigator.of(context);
     final detail = widget.detail;
     final streams = _streams;
 
@@ -695,31 +690,16 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
 
     Navigator.pop(context, true);
 
-    navigatorState?.push(
-      MaterialPageRoute(
-        builder: (context) => MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (context) => PlayerDataProvider(
-                initialStreams: streams,
-                initialStream: streams[streamIndex],
-                epLinks: detail.episodeList,
-                showTitle: detail.title,
-                coverImageUrl: detail.poster,
-                showId: 0,
-                selectedSource: widget.source.playerSourceId,
-                startIndex: widget.episodeIndex,
-                altDatabases: const [],
-                lastWatchDuration: null,
-              ),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => PlayerProvider(controller, true),
-            ),
-          ],
-          child: Watch(controller: controller),
-        ),
-      ),
+    PlayerSheet.instance.open(
+      videoController: controller,
+      streams: streams,
+      initialStream: streams[streamIndex],
+      epLinks: detail.episodeList,
+      title: detail.title,
+      cover: detail.poster,
+      showId: 0,
+      selectedSource: widget.source.playerSourceId,
+      startIndex: widget.episodeIndex,
     );
   }
 
