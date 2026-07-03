@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/types.dart';
@@ -122,27 +124,13 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
             : Padding(
                 padding: MediaQuery.paddingOf(context),
                 child: !initialised
-                    ? IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: Icon(
-                          Icons.arrow_back_rounded,
-                          color: appTheme.textMainColor,
-                          size: 35,
-                        ),
-                      )
+                    ? KumaBackButton(size: 35)
                     : Column(
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              IconButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                icon: Icon(
-                                  Icons.arrow_back_rounded,
-                                  size: 35,
-                                  color: appTheme.textMainColor,
-                                ),
-                              ),
+                              KumaBackButton(size: 35),
                             ],
                           ),
                           Stack(
