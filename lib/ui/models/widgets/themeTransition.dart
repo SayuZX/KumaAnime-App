@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 
+import 'package:kumaanime/core/app/runtimeDatas.dart';
+
 class ThemeTransition {
   static final boundaryKey = GlobalKey();
   static bool _running = false;
@@ -14,7 +16,7 @@ class ThemeTransition {
     final boundary = boundaryKey.currentContext?.findRenderObject()
         as RenderRepaintBoundary?;
     final overlay = Overlay.maybeOf(originContext, rootOverlay: true);
-    if (_running || boundary == null || overlay == null) {
+    if (_running || boundary == null || overlay == null || (currentUserSettings?.reduceMotion ?? false)) {
       await switchTheme();
       return;
     }
