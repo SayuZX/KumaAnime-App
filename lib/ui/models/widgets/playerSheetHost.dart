@@ -121,9 +121,18 @@ class _PlayerSheetHostState extends State<PlayerSheetHost> with SingleTickerProv
       builder: (context, _) {
         final v = Curves.linear.transform(_anim.value.clamp(0.0, 1.0));
         final rect = Rect.lerp(miniRect, fullRect, v)!;
-        final radius = lerpDouble(22, 0, v)!;
+        final radius = lerpDouble(24, 0, v)!;
         final showFull = v > 0.02;
         final miniOpacity = (1 - v / 0.3).clamp(0.0, 1.0);
+        final draggableLayer = v < 0.98;
+        final blur = (1 - v) * 22;
+
+        final miniGlass = _isDark
+            ? appTheme.backgroundSubColor.withValues(alpha: 0.55)
+            : Color.alphaBlend(Colors.black.withValues(alpha: 0.06), appTheme.backgroundSubColor)
+                .withValues(alpha: 0.8);
+        final fullColor = _isDark ? const Color(0xFF141518) : Colors.white;
+        final surface = Color.lerp(miniGlass, fullColor, v)!;
 
         return Stack(
           children: [
@@ -135,54 +144,75 @@ class _PlayerSheetHostState extends State<PlayerSheetHost> with SingleTickerProv
               ),
             Positioned.fromRect(
               rect: rect,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(radius),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: _isDark ? const Color(0xFF141518) : Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: v < 1 ? 0.3 : 0),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Offstage(
-                        offstage: !showFull,
-                        child: Opacity(
-                          opacity: ((v - 0.15) / 0.5).clamp(0.0, 1.0),
-                          child: IgnorePointer(
-                            ignoring: v < 0.85,
-                            child: OverflowBox(
-                              minWidth: 0,
-                              minHeight: 0,
-                              maxWidth: screen.width,
-                              maxHeight: screen.height,
-                              alignment: Alignment.topCenter,
-                              child: Transform.scale(
-                                scale: (rect.width / screen.width).clamp(0.3, 1.0),
-                                alignment: Alignment.topCenter,
-                                child: SizedBox(
-                                  width: screen.width,
-                                  height: screen.height,
-                                  child: MultiProvider(
-                                    providers: [
-                                      ChangeNotifierProvider.value(value: _sheet.dataProvider!),
-                                      ChangeNotifierProvider.value(value: _sheet.playerProvider!),
-                                    ],
-                                    child: Navigator(
-                                      key: _sheet.nestedNavKey,
-                                      onGenerateRoute: (settings) => MaterialPageRoute(
-                                        builder: (context) => Watch(
-                                          controller: _sheet.controller!,
-                                          sheetMode: true,
-                                          onMinimize: _sheet.requestMinimize,
-                                          onMinimizeDragUpdate: _onFullDragUpdate,
-                                          onMinimizeDragEnd: _onFullDragEnd,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(radius),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: v < 1 ? (_isDark ? 0.3 : 0.16) : 0),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: v < 0.5 ? _sheet.requestExpand : null,
+                  onVerticalDragUpdate: draggableLayer ? _onMiniDragUpdate : null,
+                  onVerticalDragEnd: draggableLayer ? _onMiniDragEnd : null,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(radius),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: surface,
+                          border: v < 0.5
+                              ? Border.all(
+                                  color: (_isDark ? Colors.white : Colors.black).withValues(alpha: 0.08 * (1 - v * 2)),
+                                  width: 1)
+                              : null,
+                        ),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Offstage(
+                              offstage: !showFull,
+                              child: Opacity(
+                                opacity: ((v - 0.15) / 0.5).clamp(0.0, 1.0),
+                                child: IgnorePointer(
+                                  ignoring: v < 0.85,
+                                  child: OverflowBox(
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                    maxWidth: screen.width,
+                                    maxHeight: screen.height,
+                                    alignment: Alignment.topCenter,
+                                    child: Transform.scale(
+                                      scale: (rect.width / screen.width).clamp(0.3, 1.0),
+                                      alignment: Alignment.topCenter,
+                                      child: SizedBox(
+                                        width: screen.width,
+                                        height: screen.height,
+                                        child: MultiProvider(
+                                          providers: [
+                                            ChangeNotifierProvider.value(value: _sheet.dataProvider!),
+                                            ChangeNotifierProvider.value(value: _sheet.playerProvider!),
+                                          ],
+                                          child: HeroControllerScope.none(
+                                            child: Navigator(
+                                              key: _sheet.nestedNavKey,
+                                              onGenerateRoute: (settings) => MaterialPageRoute(
+                                                builder: (context) => Watch(
+                                                  controller: _sheet.controller!,
+                                                  sheetMode: true,
+                                                  onMinimize: _sheet.requestMinimize,
+                                                  onMinimizeDragUpdate: _onFullDragUpdate,
+                                                  onMinimizeDragEnd: _onFullDragEnd,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -190,18 +220,17 @@ class _PlayerSheetHostState extends State<PlayerSheetHost> with SingleTickerProv
                                 ),
                               ),
                             ),
-                          ),
+                            if (miniOpacity > 0)
+                              Opacity(
+                                opacity: miniOpacity,
+                                child: IgnorePointer(
+                                  child: _miniBar(context),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                      if (miniOpacity > 0)
-                        Opacity(
-                          opacity: miniOpacity,
-                          child: IgnorePointer(
-                            ignoring: v > 0.3,
-                            child: _miniBar(context),
-                          ),
-                        ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -217,11 +246,8 @@ class _PlayerSheetHostState extends State<PlayerSheetHost> with SingleTickerProv
     final dp = _sheet.dataProvider!;
     final pp = _sheet.playerProvider!;
 
-    return GestureDetector(
-      onTap: _sheet.requestExpand,
-      onVerticalDragUpdate: _onMiniDragUpdate,
-      onVerticalDragEnd: _onMiniDragEnd,
-      behavior: HitTestBehavior.opaque,
+    return Material(
+      type: MaterialType.transparency,
       child: AnimatedBuilder(
         animation: Listenable.merge([dp, pp]),
         builder: (context, _) {
@@ -255,8 +281,7 @@ class _PlayerSheetHostState extends State<PlayerSheetHost> with SingleTickerProv
                             dp.showTitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: appTheme.textMainColor, fontWeight: FontWeight.w600, fontSize: 13),
+                            style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.w600, fontSize: 13),
                           ),
                           Text(
                             "${loc.episode} ${dp.epLinks[dp.state.currentEpIndex].episodeNumber}",
