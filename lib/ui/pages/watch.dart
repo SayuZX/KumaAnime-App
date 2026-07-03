@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/commons/systemBars.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
 import 'package:kumaanime/core/data/resumeSession.dart';
 import 'package:kumaanime/core/data/types.dart';
@@ -464,8 +465,15 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     _applySystemUiForLayout(youtubeLayout);
 
     return PopScope(
-      canPop: true,
+      canPop: youtubeLayout || !Platform.isAndroid,
       onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          // back from fullscreen returns to the portrait player instead of leaving
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          showSystemBars();
+          SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
+          return;
+        }
         // save the last watched duration
         if (isInitiated && (controller.duration ?? 0) > 0) {
           final pos = (controller.position ?? 0).toDouble();
@@ -669,6 +677,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       SystemChrome.setEnabledSystemUIMode(youtube ? SystemUiMode.edgeToEdge : SystemUiMode.immersiveSticky);
+      youtube ? showSystemBars() : hideSystemBars();
     });
   }
 
@@ -890,6 +899,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    showSystemBars();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
     if (controller.duration != null && controller.duration! > 0) {
