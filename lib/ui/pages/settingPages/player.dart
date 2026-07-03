@@ -303,7 +303,11 @@ class PlayerSettingState extends State<PlayerSetting> {
     final current = currentUserSettings?.seekbarStyle ?? 'standard';
 
     return InkWell(
-      onTap: () => _showSeekbarStyleDialog(loc, current),
+      onTap: () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _showSeekbarStyleDialog(loc, current);
+        });
+      },
       child: item(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
