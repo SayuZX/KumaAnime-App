@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/logs.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,8 +18,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   String _version = '';
   String _buildNumber = '';
   String _buildTime = '-';
-  String _sdk = '-';
-  String _arch = '-';
   int _devTapCounter = 0;
 
   static const _repoUrl = "https://github.com/SayuZX/KumaAnime-App";
@@ -37,11 +33,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
     _version = info.version;
     _buildNumber = info.buildNumber;
     _buildTime = _timestampFromVersion(info.version);
-    if (Platform.isAndroid) {
-      final android = await DeviceInfoPlugin().androidInfo;
-      _sdk = "API ${android.version.sdkInt}";
-      _arch = android.supportedAbis.firstOrNull ?? '-';
-    }
     if (mounted) setState(() {});
   }
 
@@ -60,7 +51,8 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
 
   Color get _cardColor => _isDark ? const Color(0xFF1E1F22) : Colors.white;
 
-  Color get _chipColor => _isDark ? const Color(0xFF2A2B2F) : const Color(0xFFF1F1F4);
+  Color get _chipColor =>
+      _isDark ? const Color(0xFF2A2B2F) : const Color(0xFFF1F1F4);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +61,8 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
-          padding: pagePadding(context, bottom: true).copyWith(left: 16, right: 16),
+          padding:
+              pagePadding(context, bottom: true).copyWith(left: 16, right: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -79,9 +72,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
               const SizedBox(height: 20),
               _sectionHeader(Icons.person_rounded, loc.aiSectionDeveloper),
               _developerCard(),
-              const SizedBox(height: 20),
-              _sectionHeader(Icons.info_rounded, loc.aiSectionApp),
-              _appInfoCard(loc),
               const SizedBox(height: 20),
               _sectionHeader(Icons.policy_rounded, loc.aiSectionPolicies),
               _policiesCard(loc),
@@ -122,21 +112,37 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
           const SizedBox(width: 12),
           Text(
             title,
-            style: TextStyle(color: appTheme.textMainColor, fontSize: 17, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: appTheme.textMainColor,
+                fontSize: 17,
+                fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  Widget _card({required Widget child, EdgeInsets padding = const EdgeInsets.all(20), double radius = 28}) {
+  Widget _card(
+      {required Widget child,
+      EdgeInsets padding = const EdgeInsets.all(20),
+      double radius = 28}) {
     return Container(
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
         color: _cardColor,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: (_isDark ? Colors.white : Colors.black).withValues(alpha: 0.06), width: 1),
+        border: Border.all(
+            color:
+                (_isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+            width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: _isDark ? 0.2 : 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: child,
     );
@@ -152,24 +158,30 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
             onTap: () {
               _devTapCounter++;
               if (_devTapCounter % 5 == 0) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LogScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LogScreen()));
               }
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: Image.asset('lib/assets/icons/logo_foreground.png', height: 96, width: 96),
+              child: Image.asset('lib/assets/icons/logo_foreground.png',
+                  height: 96, width: 96),
             ),
           ),
           const SizedBox(height: 14),
           Text(
             "Kuma Anime",
-            style: TextStyle(color: appTheme.textMainColor, fontSize: 26, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: appTheme.textMainColor,
+                fontSize: 26,
+                fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             loc.aiDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: appTheme.textSubColor, fontSize: 13, height: 1.5),
+            style: TextStyle(
+                color: appTheme.textSubColor, fontSize: 13, height: 1.5),
           ),
           const SizedBox(height: 14),
           Wrap(
@@ -224,7 +236,10 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                   alignment: Alignment.center,
                   child: Text(
                     "RN",
-                    style: TextStyle(color: appTheme.onAccent, fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(
+                        color: appTheme.onAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
                   ),
                 ),
               ),
@@ -237,15 +252,20 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
               children: [
                 Text(
                   "Raihan Nugroho",
-                  style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: appTheme.textMainColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: const ["Founder", "Lead Developer", "UI/UX Designer"]
-                      .map((role) => _roleChip(role))
-                      .toList(),
+                  children: const [
+                    "Founder",
+                    "Lead Developer",
+                    "UI/UX Designer"
+                  ].map((role) => _roleChip(role)).toList(),
                 ),
               ],
             ),
@@ -264,41 +284,10 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       ),
       child: Text(
         role,
-        style: TextStyle(color: appTheme.textMainColor, fontSize: 11, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
-  Widget _appInfoCard(AppLocalizations loc) {
-    final rows = <MapEntry<String, String>>[
-      MapEntry(loc.aiRowVersion, _version.isEmpty ? '-' : _version),
-      MapEntry(loc.aiRowBuild, _buildNumber.isEmpty ? '-' : _buildNumber),
-      MapEntry(loc.aiRowBuildTime, _buildTime),
-      MapEntry(loc.aiRowEngine, "Flutter / Dart ${Platform.version.split(' ').first}"),
-      if (Platform.isAndroid) MapEntry(loc.aiRowSdk, _sdk),
-      if (Platform.isAndroid) MapEntry(loc.aiRowArch, _arch),
-    ];
-
-    return _card(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Column(
-        children: rows
-            .map(
-              (row) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 9),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(row.key, style: TextStyle(color: appTheme.textSubColor, fontSize: 13.5)),
-                    Text(
-                      row.value,
-                      style: TextStyle(color: appTheme.textMainColor, fontSize: 13.5, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            )
-            .toList(),
+        style: TextStyle(
+            color: appTheme.textMainColor,
+            fontSize: 11,
+            fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -309,27 +298,39 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       (Icons.description_rounded, loc.aiTerms, loc.aiTermsBody),
       (Icons.gavel_rounded, loc.aiDmca, loc.aiDmcaBody),
       (Icons.copyright_rounded, loc.aiCopyrightInfo, loc.aiCopyrightBody),
-      (Icons.report_gmailerrorred_rounded, loc.aiDisclaimer, loc.aiDisclaimerBody),
+      (
+        Icons.report_gmailerrorred_rounded,
+        loc.aiDisclaimer,
+        loc.aiDisclaimerBody
+      ),
     ];
 
     return _card(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Column(
-        children: items.map((item) => _navRow(item.$1, item.$2, () => _openPolicy(item.$2, item.$3))).toList(),
+        children: items
+            .map((item) =>
+                _navRow(item.$1, item.$2, () => _openPolicy(item.$2, item.$3)))
+            .toList(),
       ),
     );
   }
 
   Widget _moreCard(AppLocalizations loc) {
     return _card(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Column(
         children: [
-          _navRow(Icons.source_rounded, loc.aiLicenses, () => _showLicenses(loc)),
-          _navRow(Icons.extension_rounded, loc.aiThirdParty, () => _showLicenses(loc)),
-          _navRow(Icons.numbers_rounded, loc.aiVersionInfo, () => _versionDialog(loc)),
-          _navRow(Icons.history_rounded, loc.aiChangelog, () => _open("$_repoUrl/releases")),
-          _navRow(Icons.mail_rounded, loc.aiContactDev, () => _open("mailto:pixelraihan77@gmail.com")),
+          _navRow(
+              Icons.source_rounded, loc.aiLicenses, () => _showLicenses(loc)),
+          _navRow(Icons.extension_rounded, loc.aiThirdParty,
+              () => _showLicenses(loc)),
+          _navRow(Icons.numbers_rounded, loc.aiVersionInfo,
+              () => _versionDialog(loc)),
+          _navRow(Icons.history_rounded, loc.aiChangelog,
+              () => _open("$_repoUrl/releases")),
+          _navRow(Icons.mail_rounded, loc.aiContactDev,
+              () => _open("mailto:pixelraihan77@gmail.com")),
         ],
       ),
     );
@@ -338,17 +339,31 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   Widget _navRow(IconData icon, String label, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(18),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
         child: Row(
           children: [
-            Icon(icon, color: appTheme.accentColor, size: 20),
+            Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: appTheme.accentColor.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: appTheme.accentColor, size: 19),
+            ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(label, style: TextStyle(color: appTheme.textMainColor, fontSize: 14.5)),
+              child: Text(label,
+                  style: TextStyle(
+                      color: appTheme.textMainColor,
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w500)),
             ),
-            Icon(Icons.chevron_right_rounded, color: appTheme.textSubColor, size: 20),
+            Icon(Icons.chevron_right_rounded,
+                color: appTheme.textSubColor, size: 20),
           ],
         ),
       ),
@@ -361,7 +376,11 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       (Icons.send_rounded, "Telegram", "https://t.me/kumaanime"),
       (Icons.forum_rounded, "Discord", "https://discord.gg/kumaanime"),
       (Icons.language_rounded, "Website", _repoUrl),
-      (Icons.alternate_email_rounded, "Email", "mailto:pixelraihan77@gmail.com"),
+      (
+        Icons.alternate_email_rounded,
+        "Email",
+        "mailto:pixelraihan77@gmail.com"
+      ),
     ];
 
     return _card(
@@ -377,7 +396,8 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                 borderRadius: BorderRadius.circular(18),
                 child: Container(
                   width: tileWidth,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: _chipColor,
                     borderRadius: BorderRadius.circular(18),
@@ -391,7 +411,10 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
                           link.$2,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              color: appTheme.textMainColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],
@@ -412,16 +435,25 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       isScrollControlled: true,
       backgroundColor: appTheme.modalSheetBackgroundColor,
       builder: (context) => Padding(
-        padding: EdgeInsets.fromLTRB(24, 4, 24, MediaQuery.of(context).padding.bottom + 24),
+        padding: EdgeInsets.fromLTRB(
+            24, 4, 24, MediaQuery.of(context).padding.bottom + 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(title,
+                style: TextStyle(
+                    color: appTheme.textMainColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 14),
             Flexible(
               child: SingleChildScrollView(
-                child: Text(body, style: TextStyle(color: appTheme.textSubColor, fontSize: 14, height: 1.6)),
+                child: Text(body,
+                    style: TextStyle(
+                        color: appTheme.textSubColor,
+                        fontSize: 14,
+                        height: 1.6)),
               ),
             ),
           ],
@@ -444,7 +476,8 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       builder: (context) => AlertDialog(
         backgroundColor: appTheme.modalSheetBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(loc.aiVersionInfo, style: TextStyle(color: appTheme.textMainColor)),
+        title: Text(loc.aiVersionInfo,
+            style: TextStyle(color: appTheme.textMainColor)),
         content: Text(
           "${loc.aiRowVersion}: $_version\n${loc.aiRowBuild}: $_buildNumber\n${loc.aiRowBuildTime}: $_buildTime",
           style: TextStyle(color: appTheme.textSubColor, height: 1.7),
