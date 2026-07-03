@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:kumaanime/core/anime/extractors/desustream.dart';
 import 'package:kumaanime/core/anime/extractors/streamwish.dart';
+import 'package:kumaanime/core/anime/providers/animeLangSource.dart';
 import 'package:kumaanime/core/anime/providers/animeProvider.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
@@ -10,8 +11,14 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as html;
 import 'package:http/http.dart';
 
-class OtakuDesu extends AnimeProvider {
+class OtakuDesu extends AnimeProvider implements AnimeLangSource {
   final String baseUrl = KumaAnimeEnvironment.subIndoBaseUrl;
+
+  @override
+  String get playerSourceId => "otakudesu_inbuilt";
+
+  @override
+  String get watchedNamespace => "id";
 
   static const _headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
