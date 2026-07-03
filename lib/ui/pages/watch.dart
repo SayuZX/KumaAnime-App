@@ -33,10 +33,18 @@ import 'package:screen_brightness/screen_brightness.dart';
 class Watch extends StatefulWidget {
   final VideoController controller;
   final bool localSource;
+  final bool sheetMode;
+  final VoidCallback? onMinimize;
+  final void Function(double dy)? onMinimizeDragUpdate;
+  final void Function(double velocity)? onMinimizeDragEnd;
   const Watch({
     super.key,
     required this.controller,
     this.localSource = false,
+    this.sheetMode = false,
+    this.onMinimize,
+    this.onMinimizeDragUpdate,
+    this.onMinimizeDragEnd,
   });
 
   @override
@@ -465,8 +473,12 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     _applySystemUiForLayout(youtubeLayout);
 
     return PopScope(
-      canPop: youtubeLayout || !Platform.isAndroid,
+      canPop: !widget.sheetMode && (youtubeLayout || !Platform.isAndroid),
       onPopInvokedWithResult: (didPop, result) async {
+        if (widget.sheetMode) {
+          if (!didPop) widget.onMinimize?.call();
+          return;
+        }
         if (!didPop) {
           // back from fullscreen returns to the portrait player instead of leaving
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -707,9 +719,18 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
               behavior: HitTestBehavior.translucent,
               onVerticalDragStart: (details) => setState(() => _minimizeDragging = true),
               onVerticalDragUpdate: (details) {
+                if (widget.sheetMode) {
+                  widget.onMinimizeDragUpdate?.call(details.delta.dy);
+                  return;
+                }
                 setState(() => _minimizeDrag = (_minimizeDrag + details.delta.dy).clamp(0.0, screenHeight));
               },
               onVerticalDragEnd: (details) {
+                if (widget.sheetMode) {
+                  _minimizeDragging = false;
+                  widget.onMinimizeDragEnd?.call(details.primaryVelocity ?? 0);
+                  return;
+                }
                 final fling = (details.primaryVelocity ?? 0) > 700;
                 if (_minimizeDrag > 140 || fling) {
                   Navigator.of(context).maybePop();
@@ -942,8 +963,10 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
       if (!widget.localSource) print("SAVED WATCH DURATION");
     }
 
-    controller.removeListener(_listener);
-    controller.dispose();
+    try {
+      controller.removeListener(_listener);
+    } catch (_) {}
+    if (!widget.sheetMode) controller.dispose();
     _controlsTimer?.cancel();
     _tapTimer?.cancel();
 
