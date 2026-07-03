@@ -9,12 +9,12 @@ import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBarView.dart';
-import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBottomBar.dart';
+import 'package:kumaanime/ui/models/widgets/liquidGlassNavBar.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/pages/genres.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/pages/discover.dart';
 import 'package:kumaanime/ui/pages/home.dart';
-import 'package:kumaanime/ui/pages/newHome.dart';
 import 'package:kumaanime/ui/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,7 +58,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
     provider.init();
   }
 
-  final _floatyBarController = FloatyBottomBarController(length: 3);
+  final _floatyBarController = FloatyBottomBarController(length: 4);
   final _barController = KumaAnimeBottomBarController(length: 3);
 
   bool popInvoked = false;
@@ -127,6 +127,11 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
       onPopInvokedWithResult: (didPop, res) async {
         if (_barController.currentIndex != 0) {
           _barController.currentIndex = 0;
+          return;
+        }
+
+        if (_floatyBarController.currentIndex != 0) {
+          _floatyBarController.currentIndex = 0;
           return;
         }
 
@@ -256,25 +261,34 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                     key: ValueKey("0"),
                     mainNavProvider: mainNavProvider,
                   ),
-                  Discover(
+                  Search(
                     key: ValueKey("1"),
+                  ),
+                  Discover(
+                    key: ValueKey("2"),
                     mainNavProvider: mainNavProvider,
                   ),
-                  Search(
-                    key: ValueKey("2"),
+                  GenresPage(
+                    key: ValueKey("3"),
                   ),
                 ],
               ),
-              FloatyBottomBar(
+              LiquidGlassNavBar(
                 controller: _floatyBarController,
-                accentColor: appTheme.accentColor,
-                backgroundColor:
-                    appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
-                // borderRadius: 12,
+                blurSigma: blurSigmaValue,
                 items: [
-                  FloatyBarItem(title: AppLocalizations.of(context).navHome, icon: Icons.home),
-                  FloatyBarItem(title: AppLocalizations.of(context).navDiscover, icon: Icons.auto_awesome),
-                  FloatyBarItem(title: AppLocalizations.of(context).navSearch, icon: Icons.search),
+                  LiquidGlassNavItem(
+                      icon: Icons.home_outlined, activeIcon: Icons.home_rounded, label: AppLocalizations.of(context).navHome),
+                  LiquidGlassNavItem(
+                      icon: Icons.search_rounded, activeIcon: Icons.search_rounded, label: AppLocalizations.of(context).navSearch),
+                  LiquidGlassNavItem(
+                      icon: Icons.new_releases_outlined,
+                      activeIcon: Icons.new_releases_rounded,
+                      label: AppLocalizations.of(context).navUpdates),
+                  LiquidGlassNavItem(
+                      icon: Icons.grid_view_outlined,
+                      activeIcon: Icons.grid_view_rounded,
+                      label: AppLocalizations.of(context).navCategories),
                 ],
               )
             ],
