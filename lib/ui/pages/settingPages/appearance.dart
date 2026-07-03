@@ -87,6 +87,15 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
               _cardSizeChips(loc, s?.cardScale ?? 1.0),
               const SizedBox(height: 8),
               ToggleItem(
+                label: loc.apLiquidNavbar,
+                description: loc.apLiquidNavbarDesc,
+                value: !(s?.useOldNavbar ?? false),
+                onTapFunction: () {
+                  _write(SettingsModal(useOldNavbar: !(s?.useOldNavbar ?? false)));
+                  appProvider.justRefresh();
+                },
+              ),
+              ToggleItem(
                 label: loc.apAmoledBlack,
                 description: loc.apAmoledBlackDesc,
                 value: s?.amoledBackground ?? false,
