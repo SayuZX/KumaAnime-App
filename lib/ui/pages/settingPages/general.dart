@@ -37,7 +37,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
       fasterDownloads = settings.fasterDownloads!;
       useQueuedDownloads = settings.useQueuedDownloads!;
       enableLogging = settings.enableLogging!;
-      dnsProvider = settings.dnsProvider ?? 'off';
     });
   }
 
@@ -55,18 +54,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
   bool useQueuedDownloads = false;
   bool enableDiscordPresence = false;
   bool enableLogging = false;
-  String dnsProvider = 'auto';
-
-  static const Map<String, String> _dnsOptions = {
-    'auto': 'Automatic',
-    'cloudflare': 'Cloudflare (1.1.1.1)',
-    'google': 'Google (8.8.8.8)',
-    'quad9': 'Quad9 (9.9.9.9)',
-    'adguard': 'AdGuard (94.140.14.14)',
-    'opendns': 'OpenDNS (208.67.222.222)',
-    'dnssb': 'DNS.SB (185.222.222.222)',
-    'off': 'Off',
-  };
 
   final sources = SourceManager.instance.sources;
 
@@ -198,20 +185,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       description: loc.enableLoggingDesc,
                       value: enableLogging,
                     ),
-                    ClickableItem(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          showDragHandle: true,
-                          isScrollControlled: true,
-                          backgroundColor: appTheme.modalSheetBackgroundColor,
-                          builder: (context) => _dnsSheet(context),
-                        );
-                      },
-                      label: loc.genSecureDns,
-                      description: _dnsLabel(dnsProvider, loc),
-                      suffixIcon: Icon(Icons.arrow_drop_down),
-                    )
                   ],
                 ),
               ),
@@ -285,66 +258,4 @@ class _GeneralSettingState extends State<GeneralSetting> {
     );
   }
 
-  String _dnsLabel(String key, AppLocalizations loc) {
-    if (key == 'auto') return loc.genDnsAuto;
-    if (key == 'off') return loc.genDnsOff;
-    return _dnsOptions[key] ?? loc.genDnsOff;
-  }
-
-  Widget _dnsSheet(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return StatefulBuilder(
-      builder: (context, setSheet) => Container(
-        padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-        margin: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(loc.genSecureDns, style: textStyle().copyWith(fontSize: 23)),
-            ),
-            ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              children: _dnsOptions.entries.map((entry) {
-                final selected = entry.key == dnsProvider;
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 5),
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    color: selected ? appTheme.accentColor : appTheme.backgroundSubColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () async {
-                        await writeSettings(SettingsModal(dnsProvider: entry.key));
-                        setState(() {});
-                        setSheet(() {});
-                        if (mounted) Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                        child: Text(
-                          _dnsLabel(entry.key, loc),
-                          style: textStyle().copyWith(
-                            fontSize: 16,
-                            color: selected ? appTheme.onAccent : appTheme.textMainColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
