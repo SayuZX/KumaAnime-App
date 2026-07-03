@@ -137,8 +137,8 @@ class CommonInfo extends StatelessWidget {
       valueListenable: hovered,
       builder: (context, value, _) {
         return MouseRegion(
-          onEnter: (event) => hovered.value = true,
-          onExit: (event) => hovered.value = false,
+          onEnter: (event) => Future.microtask(() => hovered.value = true),
+          onExit: (event) => Future.microtask(() => hovered.value = false),
           cursor: SystemMouseCursors.click,
           child: Container(
             clipBehavior: Clip.antiAlias,
