@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/theme.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/ui/theme/themes.dart';
+import 'package:kumaanime/ui/theme/types.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +23,20 @@ class AppearanceSetting extends StatefulWidget {
 }
 
 class _AppearanceSettingState extends State<AppearanceSetting> {
+  int? _currentThemeId;
+  bool _isAboveAndroid12 = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getTheme().then((value) {
+      if (mounted) setState(() => _currentThemeId = value);
+    });
+    if (Platform.isAndroid) {
+      DeviceInfoPlugin().androidInfo.then((val) => _isAboveAndroid12 = val.version.sdkInt >= 31);
+    }
+  }
+
   static const _keys = [
     'accentColorValue',
     'fontFamily',
@@ -67,6 +85,30 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               settingPagesTitleHeader(context, loc.settingsAppearance),
+              _sectionLabel(loc.uiThemeMode),
+              _themeModeRow(appProvider),
+              ToggleItem(
+                label: loc.uiMaterialTheme,
+                description: loc.uiMaterialThemeDesc,
+                value: s?.materialTheme ?? false,
+                onTapFunction: () async {
+                  if (!_isAboveAndroid12) return floatingSnackBar(loc.uiAndroid12Required);
+                  final enabled = !(s?.materialTheme ?? false);
+                  await _write(SettingsModal(materialTheme: enabled));
+                  if (enabled) return appProvider.justRefresh();
+                  appProvider.applyThemeMode(appProvider.isDark);
+                },
+              ),
+              ToggleItem(
+                label: loc.uiPreferNativeTitles,
+                value: s?.nativeTitle ?? false,
+                onTapFunction: () async {
+                  await _write(SettingsModal(nativeTitle: !(s?.nativeTitle ?? false)));
+                  appProvider.justRefresh();
+                },
+              ),
+              _sectionLabel(loc.uiThemes),
+              _themePicker(appProvider),
               _sectionLabel(loc.apAccentColor),
               _accentGrid(appProvider, s?.accentColorValue),
               _sectionLabel(loc.apFont),
@@ -92,6 +134,16 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                 value: !(s?.useOldNavbar ?? false),
                 onTapFunction: () {
                   _write(SettingsModal(useOldNavbar: !(s?.useOldNavbar ?? false)));
+                  appProvider.justRefresh();
+                },
+              ),
+              _sectionLabel(loc.uiNavbarTransparency),
+              _scaleSlider(
+                value: s?.navbarTranslucency ?? 0.6,
+                min: 0.0,
+                max: 1.0,
+                onChanged: (v) {
+                  _write(SettingsModal(navbarTranslucency: v));
                   appProvider.justRefresh();
                 },
               ),
@@ -121,6 +173,88 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _themeModeRow(AppProvider appProvider) {
+    final dark = currentUserSettings?.darkMode ?? true;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SegmentedButton(
+        segments: [
+          ButtonSegment(
+              value: false,
+              icon: Icon(Icons.wb_sunny_rounded, color: !dark ? appTheme.onAccent : appTheme.textMainColor)),
+          ButtonSegment(
+              value: true,
+              icon: Icon(Icons.nights_stay_rounded, color: dark ? appTheme.onAccent : appTheme.textMainColor)),
+        ],
+        selected: {dark},
+        multiSelectionEnabled: false,
+        showSelectedIcon: false,
+        emptySelectionAllowed: false,
+        onSelectionChanged: (val) async {
+          await _write(SettingsModal(darkMode: val.first));
+          await appProvider.applyThemeMode(val.first);
+        },
+        style: SegmentedButton.styleFrom(
+          selectedBackgroundColor: appTheme.accentColor,
+          selectedForegroundColor: appTheme.onAccent,
+          foregroundColor: appTheme.textMainColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ),
+    );
+  }
+
+  Widget _themePicker(AppProvider appProvider) {
+    return SizedBox(
+      height: 92,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: availableThemes.length,
+        itemBuilder: (context, index) {
+          final ThemeItem item = availableThemes[index];
+          final selected = _currentThemeId == item.id;
+          return GestureDetector(
+            onTap: () async {
+              await setTheme(item.id);
+              final dark = currentUserSettings?.darkMode ?? true;
+              appProvider.applyTheme(dark ? item.theme : item.lightVariant);
+              if (mounted) setState(() => _currentThemeId = item.id);
+            },
+            child: Container(
+              width: 84,
+              margin: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: appTheme.backgroundSubColor,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: selected ? item.theme.accentColor : Colors.transparent, width: 2),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(color: item.theme.accentColor, shape: BoxShape.circle),
+                    child: selected ? Icon(Icons.check_rounded, color: item.theme.onAccent, size: 20) : null,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    item.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: appTheme.textMainColor, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
