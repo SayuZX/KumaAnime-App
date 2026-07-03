@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:kumaanime/core/anime/providers/otakudesu.dart';
+import 'package:kumaanime/core/anime/providers/animeLangSource.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
@@ -25,15 +25,16 @@ import 'package:provider/provider.dart';
 
 class SubIndoDetailPage extends StatefulWidget {
   final String animeId;
+  final AnimeLangSource source;
 
-  const SubIndoDetailPage({super.key, required this.animeId});
+  const SubIndoDetailPage({super.key, required this.animeId, required this.source});
 
   @override
   State<SubIndoDetailPage> createState() => _SubIndoDetailPageState();
 }
 
 class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
-  final _provider = OtakuDesu();
+  late final AnimeLangSource _provider = widget.source;
 
   SubIndoAnimeDetail? _detail;
   DatabaseInfo? _enriched;
@@ -103,7 +104,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
         showDragHandle: true,
         isScrollControlled: true,
         backgroundColor: appTheme.modalSheetBackgroundColor,
-        builder: (_) => _EpisodePickerSheet(detail: detail, animeId: widget.animeId),
+        builder: (_) => _EpisodePickerSheet(detail: detail, animeId: widget.animeId, source: _provider),
       );
     }
   }
@@ -114,7 +115,8 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: appTheme.modalSheetBackgroundColor,
-      builder: (_) => _SubIndoServerSheet(detail: detail, animeId: widget.animeId, episodeIndex: episodeIndex),
+      builder: (_) =>
+          _SubIndoServerSheet(detail: detail, animeId: widget.animeId, episodeIndex: episodeIndex, source: _provider),
     );
   }
 
@@ -504,8 +506,9 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
 class _EpisodePickerSheet extends StatefulWidget {
   final SubIndoAnimeDetail detail;
   final String animeId;
+  final AnimeLangSource source;
 
-  const _EpisodePickerSheet({required this.detail, required this.animeId});
+  const _EpisodePickerSheet({required this.detail, required this.animeId, required this.source});
 
   @override
   State<_EpisodePickerSheet> createState() => _EpisodePickerSheetState();
@@ -515,6 +518,8 @@ class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
   Set<int> _watched = {};
   int? _lastWatched;
 
+  String get _watchKey => "${widget.source.watchedNamespace}:${widget.animeId}";
+
   @override
   void initState() {
     super.initState();
@@ -522,8 +527,8 @@ class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
   }
 
   Future<void> _reload() async {
-    final watched = await SubIndoWatched.getWatched(widget.animeId);
-    final last = await SubIndoWatched.getLast(widget.animeId);
+    final watched = await SubIndoWatched.getWatched(_watchKey);
+    final last = await SubIndoWatched.getLast(_watchKey);
     if (mounted) {
       setState(() {
         _watched = watched;
@@ -538,12 +543,13 @@ class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: appTheme.modalSheetBackgroundColor,
-      builder: (_) => _SubIndoServerSheet(detail: widget.detail, animeId: widget.animeId, episodeIndex: episodeIndex),
+      builder: (_) => _SubIndoServerSheet(
+          detail: widget.detail, animeId: widget.animeId, episodeIndex: episodeIndex, source: widget.source),
     ).then((_) => _reload());
   }
 
   Future<void> _markAll() async {
-    await SubIndoWatched.markAll(widget.animeId, widget.detail.episodeList.map((e) => e.episodeNumber).toList());
+    await SubIndoWatched.markAll(_watchKey, widget.detail.episodeList.map((e) => e.episodeNumber).toList());
     await _reload();
   }
 
@@ -557,7 +563,7 @@ class _EpisodePickerSheetState extends State<_EpisodePickerSheet> {
           TextButton(onPressed: () => Navigator.pop(context), child: Text(loc.sidNo)),
           TextButton(
             onPressed: () async {
-              await SubIndoWatched.reset(widget.animeId);
+              await SubIndoWatched.reset(_watchKey);
               await _reload();
               if (mounted) Navigator.pop(context);
             },
@@ -649,11 +655,13 @@ class _SubIndoServerSheet extends StatefulWidget {
   final SubIndoAnimeDetail detail;
   final String animeId;
   final int episodeIndex;
+  final AnimeLangSource source;
 
   const _SubIndoServerSheet({
     required this.detail,
     required this.animeId,
     required this.episodeIndex,
+    required this.source,
   });
 
   @override
@@ -661,7 +669,7 @@ class _SubIndoServerSheet extends StatefulWidget {
 }
 
 class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
-  final _provider = OtakuDesu();
+  late final AnimeLangSource _provider = widget.source;
 
   List<VideoStream> _streams = [];
   bool _loading = true;
@@ -695,7 +703,8 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
     final detail = widget.detail;
     final streams = _streams;
 
-    SubIndoWatched.mark(widget.animeId, detail.episodeList[widget.episodeIndex].episodeNumber);
+    SubIndoWatched.mark("${widget.source.watchedNamespace}:${widget.animeId}",
+        detail.episodeList[widget.episodeIndex].episodeNumber);
 
     Navigator.pop(context, true);
 
@@ -711,7 +720,7 @@ class _SubIndoServerSheetState extends State<_SubIndoServerSheet> {
                 showTitle: detail.title,
                 coverImageUrl: detail.poster,
                 showId: 0,
-                selectedSource: "otakudesu_inbuilt",
+                selectedSource: widget.source.playerSourceId,
                 startIndex: widget.episodeIndex,
                 altDatabases: const [],
                 lastWatchDuration: null,
