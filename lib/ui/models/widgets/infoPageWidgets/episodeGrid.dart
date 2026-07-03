@@ -57,8 +57,8 @@ class InfoPageEpisodeGrid extends StatelessWidget {
               );
             },
             child: MouseRegion(
-              onEnter: (event) => hovered.value = true,
-              onExit: (event) => hovered.value = false,
+              onEnter: (event) => Future.microtask(() => hovered.value = true),
+              onExit: (event) => Future.microtask(() => hovered.value = false),
               child: ValueListenableBuilder(
                 valueListenable: hovered,
                 builder: (context, value, child) {
@@ -203,8 +203,8 @@ class InfoPageEpisodeGrid extends StatelessWidget {
     final isFiller = episode.isFiller ?? false;
 
     return MouseRegion(
-      onEnter: (_) => hovered.value = true,
-      onExit: (_) => hovered.value = false,
+      onEnter: (_) => Future.microtask(() => hovered.value = true),
+      onExit: (_) => Future.microtask(() => hovered.value = false),
       child: Stack(
         children: [
           Container(
