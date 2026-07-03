@@ -49,7 +49,8 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _enterController = AnimationController(vsync: this, duration: const Duration(milliseconds: 550))..forward();
+    _enterController = AnimationController(vsync: this, duration: const Duration(milliseconds: 550));
+    (currentUserSettings?.reduceMotion ?? false) ? _enterController.value = 1 : _enterController.forward();
     _scrollController.addListener(_onScroll);
     _load(reset: true);
   }
