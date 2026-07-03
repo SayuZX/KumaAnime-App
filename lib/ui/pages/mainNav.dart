@@ -268,7 +268,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
               FloatyBarView(
                 controller: _floatyBarController,
                 children: [
-                  Home(
+                  Discover(
                     key: ValueKey("0"),
                     mainNavProvider: mainNavProvider,
                   ),
@@ -278,7 +278,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   LibraryPage(
                     key: ValueKey("2"),
                   ),
-                  Discover(
+                  Home(
                     key: ValueKey("3"),
                     mainNavProvider: mainNavProvider,
                   ),
