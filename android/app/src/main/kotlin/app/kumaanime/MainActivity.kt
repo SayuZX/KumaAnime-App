@@ -8,6 +8,8 @@ import android.os.Looper
 import android.os.Handler
 import androidx.annotation.NonNull
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -50,6 +52,23 @@ class MainActivity: FlutterActivity() {
                     result.error("MESSAGE_NOT_PROVIDED", "MESSAGE IS NULL OR EMPTY", null)
                 }
                 showToast(message ?: "")
+                }
+                "showSystemBars" -> {
+                    runOnUiThread {
+                        enableEdgeToEdge()
+                        val controller = WindowInsetsControllerCompat(window, window.decorView)
+                        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                        controller.show(WindowInsetsCompat.Type.systemBars())
+                    }
+                    result.success(null)
+                }
+                "hideSystemBars" -> {
+                    runOnUiThread {
+                        val controller = WindowInsetsControllerCompat(window, window.decorView)
+                        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                        controller.hide(WindowInsetsCompat.Type.systemBars())
+                    }
+                    result.success(null)
                 }
                 else -> result.notImplemented()
             }
