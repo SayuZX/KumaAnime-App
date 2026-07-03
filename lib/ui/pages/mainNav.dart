@@ -10,6 +10,7 @@ import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBarView.dart';
 import 'package:kumaanime/core/data/resumeSession.dart';
+import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/liquidGlassNavBar.dart';
 import 'package:kumaanime/ui/models/widgets/miniResumePlayer.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
@@ -63,6 +64,7 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
   }
 
   final _floatyBarController = FloatyBottomBarController(length: 4);
+  final _floatyOldController = FloatyBottomBarController(length: 3);
   final _barController = KumaAnimeBottomBarController(length: 3);
 
   bool popInvoked = false;
@@ -136,6 +138,11 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
 
         if (_floatyBarController.currentIndex != 0) {
           _floatyBarController.currentIndex = 0;
+          return;
+        }
+
+        if (_floatyOldController.currentIndex != 0) {
+          _floatyOldController.currentIndex = 0;
           return;
         }
 
@@ -227,8 +234,8 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
     return (currentUserSettings?.useOldNavbar ?? false)
         ? Stack(
             children: [
-              BottomBarView(
-                controller: _barController,
+              FloatyBarView(
+                controller: _floatyOldController,
                 children: [
                   Home(
                     key: ValueKey("0"),
@@ -243,18 +250,17 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   ),
                 ],
               ),
-              KumaAnimeBottomBar(
-                borderRadius: 12,
+              FloatyBottomBar(
+                controller: _floatyOldController,
                 accentColor: appTheme.accentColor,
-                backgroundColor: appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
+                backgroundColor:
+                    appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
                 items: [
-                  BottomBarItem(title: AppLocalizations.of(context).navHome, icon: Icon(Icons.home)),
-                  BottomBarItem(title: AppLocalizations.of(context).navDiscover, icon: Icon(Icons.auto_awesome)),
-                  BottomBarItem(title: AppLocalizations.of(context).navSearch, icon: Icon(Icons.search))
+                  FloatyBarItem(title: AppLocalizations.of(context).navHome, icon: Icons.home),
+                  FloatyBarItem(title: AppLocalizations.of(context).navDiscover, icon: Icons.auto_awesome),
+                  FloatyBarItem(title: AppLocalizations.of(context).navSearch, icon: Icons.search),
                 ],
-                controller: _barController,
               ),
-              MiniResumePlayer(bottomOffset: MediaQuery.of(context).padding.bottom + 92),
             ],
           )
         : Stack(
