@@ -70,9 +70,9 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> {
         ),
         color: glassColor,
       ),
-      padding: const EdgeInsets.all(6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(widget.items.length, (index) {
           return _NavItem(
             item: widget.items[index],
