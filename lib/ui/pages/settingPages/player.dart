@@ -4,6 +4,7 @@ import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
+import 'package:kumaanime/ui/models/widgets/player/squigglySlider.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
@@ -223,6 +224,7 @@ class PlayerSettingState extends State<PlayerSetting> {
                               ),
                             ),
                           ),
+                          _seekbarStylePicker(loc),
                           ToggleItem(
                               label: loc.plrEnableSuperSpeeds,
                               value: enableSuperSpeeds,
@@ -285,6 +287,78 @@ class PlayerSettingState extends State<PlayerSetting> {
                 )
               : Container(),
         ),
+      ),
+    );
+  }
+
+  Widget _seekbarStylePicker(AppLocalizations loc) {
+    const styles = <String, String>{
+      'standard': 'Standard',
+      'wavy': 'Wavy',
+      'thick': 'Thick',
+      'circular': 'Circular',
+      'simple': 'Simple',
+    };
+    final current = currentUserSettings?.seekbarStyle ?? 'standard';
+
+    return item(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(loc.plrSeekbarStyle, style: textStyle()),
+          Padding(
+            padding: const EdgeInsets.only(top: 2, bottom: 12),
+            child: Text(loc.plrSeekbarStyleDesc,
+                style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12)),
+          ),
+          ...styles.entries.map((entry) {
+            final selected = current == entry.key;
+            return GestureDetector(
+              onTap: () => writeSettings(SettingsModal(seekbarStyle: entry.key)),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: appTheme.backgroundSubColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: selected ? appTheme.accentColor : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 82,
+                      child: Text(
+                        entry.value,
+                        style: textStyle().copyWith(
+                          color: selected ? appTheme.accentColor : appTheme.textMainColor,
+                          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: IgnorePointer(
+                        child: SizedBox(
+                          height: 24,
+                          child: StyledSeekBar(
+                            style: seekbarStyleFromString(entry.key),
+                            value: 0.45,
+                            max: 1,
+                            secondaryValue: 0.7,
+                            isPlaying: true,
+                            activeColor: appTheme.accentColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
