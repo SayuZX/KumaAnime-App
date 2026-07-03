@@ -16,7 +16,7 @@ class PlayerSheet extends ChangeNotifier {
   PlayerDataProvider? dataProvider;
   PlayerProvider? playerProvider;
 
-  final nestedNavKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> nestedNavKey = GlobalKey<NavigatorState>();
 
   static final backInterceptor = _SheetBackObserver();
 
@@ -44,6 +44,7 @@ class PlayerSheet extends ChangeNotifier {
   }) {
     if (active) close();
 
+    nestedNavKey = GlobalKey<NavigatorState>();
     controller = videoController;
     dataProvider = PlayerDataProvider(
       initialStreams: streams,
@@ -130,7 +131,7 @@ class _SheetBackObserver with WidgetsBindingObserver {
     if (!sheet.active) return false;
     if (sheet.visualValue > 0.5) {
       final nav = sheet.nestedNavKey.currentState;
-      if (nav != null) {
+      if (nav != null && nav.canPop()) {
         await nav.maybePop();
       } else {
         sheet.requestMinimize();
