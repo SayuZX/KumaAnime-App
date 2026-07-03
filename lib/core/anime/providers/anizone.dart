@@ -14,15 +14,12 @@ class AniZone extends AnimeProvider {
     final res = await get(Uri.parse(url));
 
     final doc = parse(res.body);
-    final grid = doc.querySelector("div.grid.grid-cols-1.gap-4");
-    if (grid == null) {
-      throw Exception("Got list of children as null.");
-    }
-    final children = grid.children;
-
     final List<Map<String, String?>> searchRes = [];
 
-    for (final child in children) {
+    final grid = doc.querySelector("div.grid.grid-cols-1.gap-4");
+    if (grid == null) return searchRes;
+
+    for (final child in grid.children) {
       final divData = child.attributes['x-data'];
 
       final matchRegEx = RegExp(r"JSON\.parse\('(.+?)'\)", dotAll: true);
@@ -35,17 +32,10 @@ class AniZone extends AnimeProvider {
 
       final title = jsonDecode( match.group(1)!.replaceAll(r'\u0022', '"'))['1'];
 
-      final a = child.querySelector("a");
-      if (a == null) {
-        throw Exception("Found null item.");
-      }
-
-      final href = a.attributes['href'];
+      final href = child.querySelector("a")?.attributes['href'];
 
       final img = child.querySelector("img")?.attributes['src'];
-      if (img == null || href == null || title == null) {
-        throw Exception("Found null image/title/url.");
-      }
+      if (img == null || href == null || title == null) continue;
 
       searchRes.add({
         'name': title,
@@ -146,8 +136,8 @@ class AniZone extends AnimeProvider {
           quality: "multi-quality",
           url: src,
           server: srcName,
-          subtitle: subs.first['url'],
-          subtitleFormat: subs.first['type'],
+          subtitle: subs.isNotEmpty ? subs.first['url'] : null,
+          subtitleFormat: subs.isNotEmpty ? subs.first['type'] : null,
           backup: false)
     ], true);
   }
