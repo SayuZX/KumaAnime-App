@@ -8,7 +8,6 @@ import 'package:kumaanime/ui/pages/settingPages/content.dart';
 import 'package:kumaanime/ui/pages/settingPages/general.dart';
 import 'package:kumaanime/ui/pages/settingPages/notifications.dart';
 import 'package:kumaanime/ui/pages/settingPages/playback.dart';
-import 'package:kumaanime/ui/pages/settingPages/player.dart';
 import 'package:kumaanime/ui/pages/settingPages/storage.dart';
 import 'package:flutter/material.dart';
 
@@ -50,11 +49,6 @@ class _SettingsPageState extends State<SettingsPage> {
           navigateTo: AppearanceSetting()),
       SettingItem(
           icon: Icons.play_circle_fill_rounded,
-          label: loc.settingsPlayer,
-          description: loc.settingsPlayerDesc,
-          navigateTo: PlayerSetting()),
-      SettingItem(
-          icon: Icons.smart_display_outlined,
           label: loc.settingsPlayback,
           description: loc.settingsPlaybackDesc,
           navigateTo: PlaybackSetting()),
