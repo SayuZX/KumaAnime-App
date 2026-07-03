@@ -158,9 +158,8 @@ Future<void> loadAndAssignSettings() async {
     }
 
     if (darkMode) {
-      appTheme = theme.theme;
-      appTheme.backgroundColor =
-          (currentUserSettings!.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor;
+      appTheme = darkThemeFor(theme.theme.accentColor, theme.theme.onAccent);
+      if (currentUserSettings!.amoledBackground ?? false) appTheme.backgroundColor = Colors.black;
     } else {
       final accent = Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
       appTheme = lightThemeFor(accent, theme.lightVariant.onAccent);
@@ -198,13 +197,8 @@ class _KumaAnimeState extends State<KumaAnime> {
       onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-      ),
-    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
 
     // if (currentUserSettings?.enableDiscordPresence ?? false)
     // FlutterDiscordRPC.instance.connect(autoRetry: true, retryDelay: Duration(seconds: 10));
