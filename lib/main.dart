@@ -26,8 +26,6 @@ import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/notification.dart';
 import 'package:kumaanime/ui/models/widgets/kumaSecureWidget.dart';
-import 'package:kumaanime/ui/models/providers/playerSheetController.dart';
-import 'package:kumaanime/ui/models/widgets/playerSheetHost.dart';
 import 'package:kumaanime/ui/models/widgets/themeTransition.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
@@ -56,8 +54,6 @@ void main(List<String> args) async {
     }
 
     WidgetsFlutterBinding.ensureInitialized();
-
-    WidgetsBinding.instance.addObserver(PlayerSheet.backInterceptor);
 
     await SecurityInit.initialize();
 
@@ -397,12 +393,7 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
                       .copyWith(textScaler: TextScaler.linear(scale)),
                   child: RepaintBoundary(
                     key: ThemeTransition.boundaryKey,
-                    child: Stack(
-                      children: [
-                        child!,
-                        const PlayerSheetHost(),
-                      ],
-                    ),
+                    child: child!,
                   ),
                 );
               },

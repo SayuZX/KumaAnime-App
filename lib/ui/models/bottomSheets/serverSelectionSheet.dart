@@ -13,12 +13,16 @@ import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
 import 'package:kumaanime/ui/models/providers/infoProvider.dart';
-import 'package:kumaanime/ui/models/providers/playerSheetController.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
 import 'package:kumaanime/ui/models/widgets/sourceTile.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/ui/pages/watch.dart';
 import 'package:flutter/material.dart';
 import 'package:kumaanime/ui/models/sources.dart';
+import 'package:provider/provider.dart';
 
 class ServerSelectionBottomSheet extends StatefulWidget {
   final InfoProvider provider;
@@ -323,24 +327,44 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
 
                   final controller = Platform.isAndroid ? BetterPlayerWrapper() : FvpWrapper();
                   final provider = widget.provider;
+                  final navigatorState = (Platform.isWindows ? AppWrapper.navKey.currentState : Navigator.of(context));
 
                   Navigator.pop(context, true);
 
-                  PlayerSheet.instance.open(
-                    videoController: controller,
-                    streams: streamSources,
-                    initialStream: streamSources[index],
-                    epLinks: provider.epLinks,
-                    title: title,
-                    cover: widget.provider.data.cover,
-                    showId: provider.id,
-                    selectedSource: provider.selectedSource.identifier,
-                    startIndex: widget.episodeIndex,
-                    altDatabases: provider.altDatabases,
-                    preferDubs: provider.preferDubs,
-                    lastWatchDuration: provider.lastWatchedDurationMap?[
-                        provider.watched < provider.epLinks.length ? provider.watched + 1 : provider.watched],
-                  );
+                  navigatorState
+                      ?.push(
+                    MaterialPageRoute(
+                      builder: (context) => MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                            create: (context) => PlayerDataProvider(
+                              initialStreams: streamSources,
+                              initialStream: streamSources[index],
+                              epLinks: provider.epLinks,
+                              showTitle: title,
+                              coverImageUrl: widget.provider.data.cover,
+                              showId: provider.id,
+                              selectedSource: provider.selectedSource.identifier,
+                              startIndex: widget.episodeIndex,
+                              altDatabases: provider.altDatabases,
+                              preferDubs: provider.preferDubs,
+                              lastWatchDuration: provider.lastWatchedDurationMap?[
+                                  provider.watched < provider.epLinks.length ? provider.watched + 1 : provider.watched],
+                            ),
+                          ),
+                          ChangeNotifierProvider(
+                            create: (context) => PlayerProvider(controller, true),
+                          ),
+                        ],
+                        child: Watch(
+                          controller: controller,
+                        ),
+                      ),
+                    ),
+                  )
+                      .then((value) {
+                    provider.getWatched(refreshLastWatchDuration: true);
+                  });
                 },
               );
             },

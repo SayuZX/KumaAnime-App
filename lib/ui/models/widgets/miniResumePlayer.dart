@@ -7,10 +7,13 @@ import 'package:kumaanime/core/data/resumeSession.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
-import 'package:kumaanime/ui/models/providers/playerSheetController.dart';
+import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
+import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/widgets/player/squigglySlider.dart';
+import 'package:kumaanime/ui/pages/watch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MiniResumePlayer extends StatelessWidget {
   final double bottomOffset;
@@ -27,18 +30,49 @@ class MiniResumePlayer extends StatelessWidget {
         (session['epLinks'] as List).map((e) => EpisodeDetails.fromMap(Map<String, dynamic>.from(e))).toList();
     final controller = Platform.isAndroid ? BetterPlayerWrapper() : FvpWrapper();
 
-    PlayerSheet.instance.open(
-      videoController: controller,
-      streams: [stream],
-      initialStream: stream,
-      epLinks: epLinks,
-      title: session['title'] ?? '',
-      cover: session['cover'],
-      showId: session['showId'] ?? 0,
-      selectedSource: session['selectedSource'] ?? '',
-      startIndex: session['episodeIndex'] ?? 0,
-      preferDubs: session['preferDubs'] ?? false,
-      lastWatchDuration: ((session['progress'] ?? 0.0) as num).toDouble() * 100,
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 380),
+        reverseTransitionDuration: const Duration(milliseconds: 320),
+        pageBuilder: (context, animation, secondaryAnimation) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => PlayerDataProvider(
+                initialStreams: [stream],
+                initialStream: stream,
+                epLinks: epLinks,
+                showTitle: session['title'] ?? '',
+                coverImageUrl: session['cover'],
+                showId: session['showId'] ?? 0,
+                selectedSource: session['selectedSource'] ?? '',
+                startIndex: session['episodeIndex'] ?? 0,
+                altDatabases: const [],
+                preferDubs: session['preferDubs'] ?? false,
+                lastWatchDuration: ((session['progress'] ?? 0.0) as num).toDouble() * 100,
+              ),
+            ),
+            ChangeNotifierProvider(create: (context) => PlayerProvider(controller, true)),
+          ],
+          child: Watch(controller: controller),
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+            reverseCurve: Curves.easeInCubic,
+          );
+          return SlideTransition(
+            position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(curved),
+            child: FadeTransition(
+              opacity: curved,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
+                child: child,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -52,16 +86,6 @@ class MiniResumePlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: PlayerSheet.instance,
-      builder: (context, _) {
-        if (PlayerSheet.instance.active) return const SizedBox.shrink();
-        return _sessionBar(context);
-      },
-    );
-  }
-
-  Widget _sessionBar(BuildContext context) {
     return ValueListenableBuilder<Map<String, dynamic>?>(
       valueListenable: ResumeSession.notifier,
       builder: (context, session, _) {
