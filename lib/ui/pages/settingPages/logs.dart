@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/anime/downloader/downloaderHelper.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
@@ -43,12 +45,7 @@ class _LogScreenState extends State<LogScreen> {
     final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(
-              Icons.arrow_back,
-              color: appTheme.textMainColor,
-            )),
+        leading: KumaBackButton(),
         title: Text(
           loc.logTitle,
           style: TextStyle(color: appTheme.textMainColor),
