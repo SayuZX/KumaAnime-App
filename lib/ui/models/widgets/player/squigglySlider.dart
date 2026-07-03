@@ -153,6 +153,41 @@ class _StyledSeekBarState extends State<StyledSeekBar> with TickerProviderStateM
   }
 }
 
+class SeekbarProgressBar extends StatelessWidget {
+  final SeekbarStyle style;
+  final double value;
+  final Color activeColor;
+  final double height;
+
+  const SeekbarProgressBar({
+    super.key,
+    required this.style,
+    required this.value,
+    required this.activeColor,
+    this.height = 16,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: CustomPaint(
+        painter: _SeekBarPainter(
+          style: style,
+          value: value.clamp(0.0, 1.0),
+          max: 1,
+          buffered: null,
+          phase: 0,
+          amplitude: (style == SeekbarStyle.wavy || style == SeekbarStyle.circular) ? 2.0 : 0,
+          showThumb: true,
+          activeColor: activeColor,
+        ),
+      ),
+    );
+  }
+}
+
 class SeekbarStylePreview extends StatefulWidget {
   final SeekbarStyle style;
   final Color activeColor;
