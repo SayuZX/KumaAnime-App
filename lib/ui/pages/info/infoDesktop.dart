@@ -38,7 +38,7 @@ class _InfoDesktopState extends State<InfoDesktop> {
             initialIndex: 1,
             destinations: [
               KumaAnimeNavDestination(
-                  icon: Icons.arrow_back,
+                  icon: Icons.west_rounded,
                   label: "Back",
                   onClick: () {
                     Navigator.of(context).pop();
