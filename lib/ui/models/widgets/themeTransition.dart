@@ -19,26 +19,34 @@ class ThemeTransition {
       return;
     }
 
-    _running = true;
-
-    ui.Image? image;
+    Offset origin;
+    Size screenSize;
+    double pixelRatio;
     try {
-      image = await boundary.toImage(
-          pixelRatio: View.of(originContext).devicePixelRatio);
+      screenSize = MediaQuery.of(originContext).size;
+      pixelRatio = min(View.of(originContext).devicePixelRatio, 1.5);
+      final box = originContext.findRenderObject() as RenderBox?;
+      origin = (box != null && box.attached)
+          ? box.localToGlobal(box.size.center(Offset.zero))
+          : screenSize.center(Offset.zero);
     } catch (_) {
-      _running = false;
       await switchTheme();
       return;
     }
 
-    Offset origin;
-    Size screenSize;
-    final box = originContext.findRenderObject() as RenderBox?;
-    screenSize = MediaQuery.of(originContext).size;
-    if (box != null && box.attached) {
-      origin = box.localToGlobal(box.size.center(Offset.zero));
-    } else {
-      origin = screenSize.center(Offset.zero);
+    _running = true;
+
+    ui.Image? image;
+    try {
+      image = await boundary.toImage(pixelRatio: pixelRatio);
+    } catch (_) {
+      image = null;
+    }
+
+    if (image == null) {
+      _running = false;
+      await switchTheme();
+      return;
     }
 
     final maxRadius = [
