@@ -233,16 +233,16 @@ class PlayerSettingState extends State<PlayerSetting> {
                                 enableSuperSpeeds = !enableSuperSpeeds;
                                 writeSettings(SettingsModal(enableSuperSpeeds: enableSuperSpeeds));
                               }),
-                            ToggleItem(
-                              onTapFunction: () {
-                                doubleTapToSkip = !doubleTapToSkip;
-                                writeSettings(SettingsModal(doubleTapToSkip: doubleTapToSkip));
-                              },
-                              label: loc.plrDoubleTapToSeek,
-                              description: loc.plrDoubleTapToSeekDesc(skipDuration ?? 10),
-                              value: doubleTapToSkip,
-                              mobileOnly: true,
-                            ),
+                          ToggleItem(
+                            onTapFunction: () {
+                              doubleTapToSkip = !doubleTapToSkip;
+                              writeSettings(SettingsModal(doubleTapToSkip: doubleTapToSkip));
+                            },
+                            label: loc.plrDoubleTapToSeek,
+                            description: loc.plrDoubleTapToSeekDesc(skipDuration ?? 10),
+                            value: doubleTapToSkip,
+                            mobileOnly: true,
+                          ),
                           ToggleItem(
                             label: loc.plrAutoPip,
                             description: loc.plrAutoPipDesc,
@@ -279,7 +279,7 @@ class PlayerSettingState extends State<PlayerSetting> {
                             description: loc.plrPlayerGesturesDesc,
                             value: enablePlayerGestures,
                             mobileOnly: true,
-                            )
+                          )
                         ],
                       ),
                     )
@@ -342,26 +342,29 @@ class PlayerSettingState extends State<PlayerSetting> {
         backgroundColor: appTheme.modalSheetBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: rows.map((row) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  ...row.map(
-                    (entry) => Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: _styleOptionCard(dialogContext, entry.key, entry.value, current == entry.key),
+        content: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: rows.map((row) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    ...row.map(
+                      (entry) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: _styleOptionCard(dialogContext, entry.key, entry.value, current == entry.key),
+                        ),
                       ),
                     ),
-                  ),
-                  ...List.generate(3 - row.length, (index) => const Expanded(child: SizedBox())),
-                ],
-              ),
-            );
-          }).toList(),
+                    ...List.generate(3 - row.length, (index) => const Expanded(child: SizedBox())),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ),
         actions: [
           TextButton(
@@ -395,14 +398,9 @@ class PlayerSettingState extends State<PlayerSetting> {
             children: [
               Expanded(
                 child: Center(
-                  child: IgnorePointer(
-                    child: StyledSeekBar(
-                      style: seekbarStyleFromString(styleKey),
-                      value: 0.5,
-                      max: 1,
-                      isPlaying: true,
-                      activeColor: appTheme.accentColor,
-                    ),
+                  child: SeekbarStylePreview(
+                    style: seekbarStyleFromString(styleKey),
+                    activeColor: appTheme.accentColor,
                   ),
                 ),
               ),
