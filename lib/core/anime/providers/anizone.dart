@@ -26,9 +26,7 @@ class AniZone extends AnimeProvider {
 
       final match = matchRegEx.firstMatch(divData ?? "");
 
-      if (match == null) {
-        throw Exception("Couldn't find anime data");
-      }
+      if (match == null) continue;
 
       final title = jsonDecode( match.group(1)!.replaceAll(r'\u0022', '"'))['1'];
 
@@ -69,15 +67,13 @@ class AniZone extends AnimeProvider {
 
       final match = matchRegEx.firstMatch(divData ?? "");
 
-      if (match == null) {
-        throw Exception("Couldn't find anime data");
-      }
+      if (match == null) continue;
 
       final title = jsonDecode( match.group(1)!.replaceAll(r'\u0022', '"'))['1'];
 
       final epLink = item.querySelector("a")?.attributes['href'];
+      if (epLink == null) continue;
       final epImg = item.querySelector("img")?.attributes['src'];
-      // final title = item.querySelector("h3")?.text;
       epList.add({
         'episodeLink': epLink,
         'episodeNumber': i,
