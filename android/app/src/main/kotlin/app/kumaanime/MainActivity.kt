@@ -1,9 +1,11 @@
 package app.kumaanime
 
 import android.widget.Toast
+import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
 import androidx.annotation.NonNull
+import androidx.core.view.WindowCompat
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -13,6 +15,11 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity: FlutterActivity() {
 
     private lateinit var channel: MethodChannel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
