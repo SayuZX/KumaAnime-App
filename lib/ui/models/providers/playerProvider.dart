@@ -4,6 +4,7 @@ import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/extractQuality.dart';
+import 'package:kumaanime/core/commons/systemBars.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/widgets/appWrapper.dart';
@@ -144,8 +145,9 @@ class PlayerProvider extends ChangeNotifier {
 
     if (Platform.isWindows) {
       val ? _enablePip() : _disablePip();
-    } else {
-      await controller.setPip(true); // doesnt really matter for android since disabling is done by the system
+    } else if (val) {
+      final entered = await enterPip();
+      if (!entered) await controller.setPip(true);
     }
     notifyListeners();
   }
