@@ -58,18 +58,11 @@ class AppProvider with ChangeNotifier {
     _theme = selectedTheme;
 
     final dark = currentUserSettings?.darkMode ?? true;
+    final accent = _accentFor(selectedTheme.accentColor);
 
-    appTheme = KumaAnimeTheme(
-      accentColor: _accentFor(selectedTheme.accentColor),
-      //set background color only if dark theme and amoled bg are true, otherwise set respective theme's default bg
-      backgroundColor:
-          ((currentUserSettings?.amoledBackground ?? false) && dark) ? Colors.black : selectedTheme.backgroundColor,
-      backgroundSubColor: selectedTheme.backgroundSubColor,
-      textMainColor: selectedTheme.textMainColor,
-      textSubColor: selectedTheme.textSubColor,
-      modalSheetBackgroundColor: selectedTheme.modalSheetBackgroundColor,
-      onAccent: selectedTheme.onAccent,
-    );
+    appTheme = dark ? darkThemeFor(accent, selectedTheme.onAccent) : lightThemeFor(accent, selectedTheme.onAccent);
+
+    if (dark && (currentUserSettings?.amoledBackground ?? false)) appTheme.backgroundColor = Colors.black;
 
     notifyListeners();
   }
