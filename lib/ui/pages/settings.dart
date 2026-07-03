@@ -10,7 +10,6 @@ import 'package:kumaanime/ui/pages/settingPages/notifications.dart';
 import 'package:kumaanime/ui/pages/settingPages/playback.dart';
 import 'package:kumaanime/ui/pages/settingPages/player.dart';
 import 'package:kumaanime/ui/pages/settingPages/storage.dart';
-import 'package:kumaanime/ui/pages/settingPages/ui.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -44,8 +43,6 @@ class _SettingsPageState extends State<SettingsPage> {
           label: loc.settingsAccount,
           description: loc.settingsAccountDesc,
           navigateTo: AccountSetting()),
-      SettingItem(
-          icon: Icons.brush_rounded, label: loc.settingsUi, description: loc.settingsUiDesc, navigateTo: ThemeSetting()),
       SettingItem(
           icon: Icons.palette_outlined,
           label: loc.settingsAppearance,
