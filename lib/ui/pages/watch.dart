@@ -5,6 +5,7 @@ import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/animeSpecificPreference.dart';
+import 'package:kumaanime/core/data/resumeSession.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/core/social/socialService.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
@@ -477,6 +478,23 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
               lastWatchDuration: {playerDataProvider.state.currentEpIndex + 1: watchPercentage * 100},
             ),
           );
+
+          if (watchPercentage >= 0.9 || widget.localSource) {
+            await ResumeSession.clear();
+          } else {
+            await ResumeSession.save({
+              'showId': playerDataProvider.showId,
+              'title': playerDataProvider.showTitle,
+              'cover': playerDataProvider.coverImageUrl,
+              'episodeIndex': playerDataProvider.state.currentEpIndex,
+              'episodeNumber': playerDataProvider.epLinks[playerDataProvider.state.currentEpIndex].episodeNumber,
+              'progress': watchPercentage,
+              'stream': playerDataProvider.state.currentStream.toMap(),
+              'epLinks': playerDataProvider.epLinks.map((e) => e.toMap()).toList(),
+              'selectedSource': playerDataProvider.selectedSource,
+              'preferDubs': playerDataProvider.preferDubs,
+            });
+          }
         }
         await context.read<AppProvider>()
           ..setFullScreen(false)
