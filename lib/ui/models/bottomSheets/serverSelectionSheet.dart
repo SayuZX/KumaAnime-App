@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
+import 'package:kumaanime/core/anime/providers/providerDetails.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
@@ -93,7 +94,11 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
         if (mounted)
           setState(() {
             if (finished) {
-              _isLoading = (widget.type == ServerSheetType.download) ? true : false;
+              if (widget.type == ServerSheetType.watch) {
+                _aggregateOtherProviders(provider);
+              } else {
+                _isLoading = true;
+              }
             }
             streamSources = streamSources + list;
             if (widget.type == ServerSheetType.download) {
@@ -142,6 +147,78 @@ class ServerSelectionBottomSheetState extends State<ServerSelectionBottomSheet> 
       //     _isLoading = false;
       qualities = qualities + mainList;
     });
+  }
+
+  bool _aggregating = false;
+
+  void _mergeStreams(List<VideoStream> incoming) {
+    final existing = streamSources.map((e) => e.url).toSet();
+    for (final stream in incoming) {
+      if (existing.add(stream.url)) streamSources.add(stream);
+    }
+  }
+
+  Future<List<VideoStream>> _resolveProviderStreams(
+      ProviderDetails source, String query, String romaji, int targetEpNum, bool dub) async {
+    src.useInbuiltProviders = source.version == "0.0.0.0";
+
+    List<Map<String, String?>> results = [];
+    for (final q in [query, romaji]) {
+      if (q.trim().isEmpty) continue;
+      results = await src.searchInSource(source.identifier, q);
+      if (results.isNotEmpty) break;
+    }
+    if (results.isEmpty) return [];
+
+    final exact = results.where((e) => (e['name'] ?? '').toLowerCase() == query.toLowerCase()).toList();
+    final match = exact.isNotEmpty ? exact.first : results.first;
+    final alias = match['alias'];
+    if (alias == null) return [];
+
+    final episodes = await src.getAnimeEpisodes(source.identifier, alias, dub: dub);
+    if (episodes.isEmpty) return [];
+
+    final ep = episodes.firstWhere(
+      (e) => e.episodeNumber == targetEpNum,
+      orElse: () => widget.episodeIndex < episodes.length ? episodes[widget.episodeIndex] : episodes.first,
+    );
+
+    final collected = <VideoStream>[];
+    await src.getStreams(source.identifier, ep.episodeLink, dub: dub, metadata: ep.metadata, (list, finished) {
+      collected.addAll(list);
+    });
+    return collected;
+  }
+
+  Future<void> _aggregateOtherProviders(InfoProvider provider) async {
+    if (_aggregating) return;
+    _aggregating = true;
+
+    final titles = provider.data.title;
+    final query = (titles['english'] ?? titles['romaji'] ?? '').trim();
+    final romaji = (titles['romaji'] ?? '').trim();
+    final targetEpNum = provider.epLinks[widget.episodeIndex].episodeNumber;
+    final dub = provider.preferDubs;
+
+    final selectedId = provider.selectedSource.identifier.replaceAll("_inbuilt", "");
+    final seen = <String>{selectedId};
+    final others =
+        src.inbuiltSources.where((s) => seen.add(s.identifier.replaceAll("_inbuilt", ""))).toList();
+
+    for (final source in others) {
+      if (!mounted) break;
+      try {
+        final streams =
+            await _resolveProviderStreams(source, query, romaji, targetEpNum, dub).timeout(const Duration(seconds: 12));
+        if (streams.isEmpty || !mounted) continue;
+        setState(() => _mergeStreams(streams));
+      } catch (err) {
+        Logs.app.log("[AGGREGATE] ${source.identifier} failed: $err");
+      }
+    }
+
+    if (mounted) setState(() => _isLoading = false);
+    _aggregating = false;
   }
 
   @override
