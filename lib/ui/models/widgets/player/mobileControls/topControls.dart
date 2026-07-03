@@ -1,8 +1,9 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
-import 'package:kumaanime/ui/pages/settingPages/player.dart';
+import 'package:kumaanime/ui/pages/settingPages/playback.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,15 +35,12 @@ class TopControls extends StatelessWidget {
           child: Row(
             children: [
               if (!dataProvider.state.controlsLocked)
-                InkWell(
+                KumaBackButton(
+                  color: Colors.white,
+                  size: 25,
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white,
-                    size: 25,
-                  ),
                 ),
               Expanded(
                 child: dataProvider.state.controlsLocked
@@ -112,7 +110,7 @@ class TopControls extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PlayerSetting(
+                            builder: (context) => PlaybackSetting(
                                   fromWatchPage: true,
                                 ))).then((val) {
                       dataProvider.initSubsettings();
