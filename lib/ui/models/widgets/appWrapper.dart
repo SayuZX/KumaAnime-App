@@ -104,14 +104,12 @@ class _WindowButtonState extends State<WindowButton> {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (event) {
-        hovered = true;
-        setState(() {});
-      },
-      onExit: (event) {
-        hovered = false;
-        setState(() {});
-      },
+      onEnter: (event) => Future.microtask(() {
+        if (mounted) setState(() => hovered = true);
+      }),
+      onExit: (event) => Future.microtask(() {
+        if (mounted) setState(() => hovered = false);
+      }),
       child: GestureDetector(
         onTap: widget.onClick,
         child: Container(
