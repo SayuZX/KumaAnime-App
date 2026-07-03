@@ -14,6 +14,7 @@ import 'package:kumaanime/ui/pages/genres.dart';
 import 'package:kumaanime/ui/pages/info.dart';
 import 'package:kumaanime/ui/pages/news.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
+import 'package:kumaanime/core/anime/providers/englishSource.dart';
 import 'package:kumaanime/ui/pages/subIndo.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -136,6 +137,19 @@ class _DiscoverState extends State<Discover> {
                       icon: Icons.subtitles_rounded,
                       label: AppLocalizations.of(context).subIndo,
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubIndoPage())),
+                    ),
+                    _navChip(
+                      icon: Icons.translate_rounded,
+                      label: AppLocalizations.of(context).subEng,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => SubIndoPage(
+                            source: EnglishSource(),
+                            pageTitle: AppLocalizations.of(context).subEng,
+                            searchHint: AppLocalizations.of(context).subEngSearchHint,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
