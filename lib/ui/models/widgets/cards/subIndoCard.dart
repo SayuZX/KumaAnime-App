@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class SubIndoCard extends StatelessWidget {
   final SubIndoAnime anime;
   final void Function() onTap;
+  final String? badge;
 
   const SubIndoCard({
     super.key,
     required this.anime,
     required this.onTap,
+    this.badge,
   });
 
   @override
@@ -56,7 +58,7 @@ class SubIndoCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        AppLocalizations.of(context).subIndo.toUpperCase(),
+                        (badge ?? AppLocalizations.of(context).subIndo).toUpperCase(),
                         style: TextStyle(
                           fontSize: 10,
                           letterSpacing: 0.5,
