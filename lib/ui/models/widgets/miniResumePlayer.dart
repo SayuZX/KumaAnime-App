@@ -64,8 +64,8 @@ class MiniResumePlayer extends StatelessWidget {
         return AnimatedPositioned(
           duration: const Duration(milliseconds: 350),
           curve: Curves.easeOutCubic,
-          left: 14,
-          right: 14,
+          left: 16,
+          right: 16,
           bottom: session == null ? -(90 + bottomOffset) : bottomOffset,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 300),
@@ -86,7 +86,7 @@ class MiniResumePlayer extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(28),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
             child: Material(
@@ -95,7 +95,7 @@ class MiniResumePlayer extends StatelessWidget {
                 onTap: () => _resume(context, session),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(28),
                     border: Border.all(color: Colors.white.withValues(alpha: _isDark ? 0.08 : 0.35), width: 1),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -103,17 +103,17 @@ class MiniResumePlayer extends StatelessWidget {
                       colors: [Colors.white.withValues(alpha: _isDark ? 0.06 : 0.22), Colors.transparent],
                     ),
                   ),
-                  padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                  padding: const EdgeInsets.fromLTRB(12, 10, 10, 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                             child: cover == null || cover.isEmpty
-                                ? Container(width: 42, height: 42, color: appTheme.backgroundColor)
-                                : CachedNetworkImage(imageUrl: cover, width: 42, height: 42, fit: BoxFit.cover),
+                                ? Container(width: 46, height: 46, color: appTheme.backgroundColor)
+                                : CachedNetworkImage(imageUrl: cover, width: 46, height: 46, fit: BoxFit.cover),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
