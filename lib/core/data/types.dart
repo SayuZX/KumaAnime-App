@@ -93,6 +93,7 @@ class SettingsModal {
   final double? textScale;
   final bool? reduceMotion;
   final String? listLayout;
+  final String? seekbarStyle;
   final double? cardScale;
   final bool? heroBlur;
   final bool? hardwareAcceleration;
@@ -150,6 +151,7 @@ class SettingsModal {
     this.textScale,
     this.reduceMotion,
     this.listLayout,
+    this.seekbarStyle,
     this.cardScale,
     this.heroBlur,
     this.hardwareAcceleration,
@@ -209,6 +211,7 @@ class SettingsModal {
       textScale: (map['textScale'] as num?)?.toDouble() ?? 1.0,
       reduceMotion: map['reduceMotion'] ?? false,
       listLayout: map['listLayout'] ?? 'grid',
+      seekbarStyle: map['seekbarStyle'] ?? 'standard',
       cardScale: (map['cardScale'] as num?)?.toDouble() ?? 1.0,
       heroBlur: map['heroBlur'] ?? true,
       hardwareAcceleration: map['hardwareAcceleration'] ?? true,
@@ -269,6 +272,7 @@ class SettingsModal {
       'textScale': textScale,
       'reduceMotion': reduceMotion,
       'listLayout': listLayout,
+      'seekbarStyle': seekbarStyle,
       'cardScale': cardScale,
       'heroBlur': heroBlur,
       'hardwareAcceleration': hardwareAcceleration,
