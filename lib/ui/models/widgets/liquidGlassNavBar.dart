@@ -13,7 +13,7 @@ class LiquidGlassNavItem {
       : activeIcon = activeIcon ?? icon;
 }
 
-/// Frosted liquid-glass pill navigation bar with a sliding capsule indicator,
+/// Frosted liquid-glass pill navigation bar with an animated capsule indicator,
 /// ported from OpenTune's FloatingNavigationToolbar.
 class LiquidGlassNavBar extends StatefulWidget {
   final List<LiquidGlassNavItem> items;
@@ -32,16 +32,10 @@ class LiquidGlassNavBar extends StatefulWidget {
 }
 
 class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> {
-  late final List<GlobalKey> _itemKeys;
-  final _stackKey = GlobalKey();
-  Rect? _pillRect;
-
   @override
   void initState() {
     super.initState();
-    _itemKeys = List.generate(widget.items.length, (_) => GlobalKey());
     widget.controller.currentIndexNotifier.addListener(_onIndexChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measurePill());
   }
 
   @override
@@ -51,19 +45,7 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> {
   }
 
   void _onIndexChanged() {
-    if (!mounted) return;
-    setState(() {});
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measurePill());
-  }
-
-  void _measurePill() {
-    if (!mounted) return;
-    final stackBox = _stackKey.currentContext?.findRenderObject() as RenderBox?;
-    final itemBox = _itemKeys[widget.controller.currentIndex].currentContext?.findRenderObject() as RenderBox?;
-    if (stackBox == null || itemBox == null) return;
-    final topLeft = itemBox.localToGlobal(Offset.zero, ancestor: stackBox);
-    final rect = topLeft & itemBox.size;
-    if (rect != _pillRect) setState(() => _pillRect = rect);
+    if (mounted) setState(() {});
   }
 
   bool get _isDark => currentUserSettings?.darkMode ?? true;
@@ -89,42 +71,21 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> {
         color: glassColor,
       ),
       padding: const EdgeInsets.all(6),
-      child: Stack(
-        key: _stackKey,
-        children: [
-          if (_pillRect != null)
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 350),
-              curve: Curves.easeOutCubic,
-              left: _pillRect!.left,
-              top: _pillRect!.top,
-              width: _pillRect!.width,
-              height: _pillRect!.height,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: appTheme.accentColor,
-                  borderRadius: BorderRadius.circular(28),
-                ),
-              ),
-            ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(widget.items.length, (index) {
-              return _NavItem(
-                key: _itemKeys[index],
-                item: widget.items[index],
-                selected: widget.controller.currentIndex == index,
-                onTap: () => widget.controller.currentIndex = index,
-              );
-            }),
-          ),
-        ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(widget.items.length, (index) {
+          return _NavItem(
+            item: widget.items[index],
+            selected: widget.controller.currentIndex == index,
+            onTap: () => widget.controller.currentIndex = index,
+          );
+        }),
       ),
     );
 
     return Positioned(
-      left: 0,
-      right: 0,
+      left: 16,
+      right: 16,
       bottom: bottomInset + 14,
       child: Center(
         child: ConstrainedBox(
@@ -149,7 +110,7 @@ class _NavItem extends StatefulWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _NavItem({super.key, required this.item, required this.selected, required this.onTap});
+  const _NavItem({required this.item, required this.selected, required this.onTap});
 
   @override
   State<_NavItem> createState() => _NavItemState();
@@ -175,9 +136,13 @@ class _NavItemState extends State<_NavItem> {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutBack,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 320),
           curve: Curves.easeOutCubic,
-          padding: EdgeInsets.symmetric(horizontal: widget.selected ? 16 : 12, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: widget.selected ? 16 : 12, vertical: 11),
+          decoration: BoxDecoration(
+            color: widget.selected ? appTheme.accentColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(28),
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -188,7 +153,7 @@ class _NavItemState extends State<_NavItem> {
                 child: Icon(
                   widget.selected ? widget.item.activeIcon : widget.item.icon,
                   color: color,
-                  size: 23,
+                  size: 22,
                 ),
               ),
               AnimatedSize(
@@ -197,14 +162,14 @@ class _NavItemState extends State<_NavItem> {
                 alignment: Alignment.centerLeft,
                 child: widget.selected
                     ? Padding(
-                        padding: const EdgeInsets.only(left: 8),
+                        padding: const EdgeInsets.only(left: 7),
                         child: Text(
                           widget.item.label,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: color,
-                            fontSize: 13,
+                            fontSize: 12.5,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
