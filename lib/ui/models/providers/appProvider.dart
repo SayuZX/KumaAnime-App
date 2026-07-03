@@ -95,15 +95,8 @@ class AppProvider with ChangeNotifier {
     final theme = availableThemes.firstWhere((thm) => thm.id == themeId, orElse: () => availableThemes[0]);
 
     if (dark) {
-      appTheme = KumaAnimeTheme(
-        accentColor: _accentFor(theme.theme.accentColor),
-        backgroundColor: (currentUserSettings?.amoledBackground ?? false) ? Colors.black : theme.theme.backgroundColor,
-        backgroundSubColor: theme.theme.backgroundSubColor,
-        textMainColor: theme.theme.textMainColor,
-        textSubColor: theme.theme.textSubColor,
-        modalSheetBackgroundColor: theme.theme.modalSheetBackgroundColor,
-        onAccent: theme.theme.onAccent,
-      );
+      appTheme = darkThemeFor(_accentFor(theme.theme.accentColor), theme.theme.onAccent);
+      if (currentUserSettings?.amoledBackground ?? false) appTheme.backgroundColor = Colors.black;
     } else {
       final accent = Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
       appTheme = lightThemeFor(accent, theme.lightVariant.onAccent);
