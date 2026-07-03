@@ -102,12 +102,10 @@ void main(List<String> args) async {
     FlutterError.onError = (details) {
       FlutterError.presentError(details);
       Logs.app.log("[ERROR] ${details.exceptionAsString()}");
-      floatingSnackBar("Error: ${details.exceptionAsString()}");
     };
 
     WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
       Logs.app.log("[ERROR] ${error.toString()}");
-      floatingSnackBar("Error: ${error.toString()}");
       return true;
     };
 
