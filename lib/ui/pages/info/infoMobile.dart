@@ -1,6 +1,5 @@
 import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/data/watching.dart';
-import 'package:kumaanime/ui/models/bottomSheets/commentSection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -857,43 +856,20 @@ class _InfoMobileState extends State<InfoMobile> {
             ),
           ),
         ),
-        Container(
-          margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Material(
-                color: Colors.black.withValues(alpha: 0.45),
-                shape: const CircleBorder(),
-                clipBehavior: Clip.hardEdge,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.arrow_back_rounded,
-                      color: Colors.white, size: 24),
-                ),
+        Positioned(
+          top: MediaQuery.of(context).padding.top + 8,
+          left: 12,
+          child: Material(
+            color: Colors.black.withValues(alpha: 0.4),
+            shape: const CircleBorder(),
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              onTap: () => Navigator.of(context).pop(),
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
               ),
-              Material(
-                color: Colors.black.withValues(alpha: 0.45),
-                shape: const CircleBorder(),
-                clipBehavior: Clip.hardEdge,
-                child: IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        useSafeArea: true,
-                        builder: (context) {
-                          return Commentsection(
-                              mediaId: provider.id, userId: storedUserData?.id);
-                        });
-                  },
-                  icon: const Icon(Icons.comment_rounded,
-                      color: Colors.white, size: 24),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ],
