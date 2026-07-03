@@ -1,11 +1,13 @@
 package app.kumaanime
 
 import android.widget.Toast
+import android.app.PictureInPictureParams
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
+import android.util.Rational
 import androidx.annotation.NonNull
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -69,6 +71,21 @@ class MainActivity: FlutterActivity() {
                         controller.hide(WindowInsetsCompat.Type.systemBars())
                     }
                     result.success(null)
+                }
+                "enterPip" -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        try {
+                            val params = PictureInPictureParams.Builder()
+                                .setAspectRatio(Rational(16, 9))
+                                .build()
+                            enterPictureInPictureMode(params)
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.success(false)
+                        }
+                    } else {
+                        result.success(false)
+                    }
                 }
                 else -> result.notImplemented()
             }
