@@ -60,12 +60,8 @@ android {
 
         externalNativeBuild {
             cmake {
-                arguments "-DCMAKE_BUILD_TYPE=Release"
+                cppFlags += "-std=c++17"
             }
-        }
-
-        ndk {
-            abiFilters "arm64-v8a", "armeabi-v7a", "x86_64"
         }
     }
 
@@ -77,23 +73,40 @@ android {
     }
 
     signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
         }
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.release
+        signingConfig keystorePropertiesFile.exists() ? signingConfigs.getByName("release") : signingConfigs.getByName("debug")
+        minifyEnabled true
+        shrinkResources true
+        proguardFiles getDefaultProguardFile(
+                'proguard-android-optimize.txt'),
+                'proguard-rules.pro'
         }
 
         debug {
         }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
