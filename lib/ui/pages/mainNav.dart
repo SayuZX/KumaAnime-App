@@ -14,7 +14,7 @@ import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/liquidGlassNavBar.dart';
 import 'package:kumaanime/ui/models/widgets/miniResumePlayer.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
-import 'package:kumaanime/ui/pages/genres.dart';
+import 'package:kumaanime/ui/pages/library.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/pages/discover.dart';
 import 'package:kumaanime/ui/pages/home.dart';
@@ -275,12 +275,12 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   Search(
                     key: ValueKey("1"),
                   ),
-                  Discover(
+                  LibraryPage(
                     key: ValueKey("2"),
-                    mainNavProvider: mainNavProvider,
                   ),
-                  GenresPage(
+                  Discover(
                     key: ValueKey("3"),
+                    mainNavProvider: mainNavProvider,
                   ),
                 ],
               ),
@@ -293,13 +293,13 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   LiquidGlassNavItem(
                       icon: Icons.search_rounded, activeIcon: Icons.search_rounded, label: AppLocalizations.of(context).navSearch),
                   LiquidGlassNavItem(
-                      icon: Icons.new_releases_outlined,
-                      activeIcon: Icons.new_releases_rounded,
-                      label: AppLocalizations.of(context).navUpdates),
+                      icon: Icons.video_library_outlined,
+                      activeIcon: Icons.video_library_rounded,
+                      label: AppLocalizations.of(context).navLibrary),
                   LiquidGlassNavItem(
                       icon: Icons.grid_view_outlined,
                       activeIcon: Icons.grid_view_rounded,
-                      label: AppLocalizations.of(context).navCategories),
+                      label: AppLocalizations.of(context).navMore),
                 ],
               ),
               MiniResumePlayer(bottomOffset: MediaQuery.of(context).padding.bottom + 86),
