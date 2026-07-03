@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/database/anilist/queries.dart';
 import 'package:kumaanime/core/database/anilist/types.dart';
@@ -76,13 +78,7 @@ class _UserStatsState extends State<UserStats> {
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            color: appTheme.textMainColor,
-          ),
-        ),
+        leading: KumaBackButton(),
         backgroundColor: appTheme.backgroundColor,
         title: Text(
           loc.stStats,
