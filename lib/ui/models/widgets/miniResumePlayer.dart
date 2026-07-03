@@ -9,6 +9,7 @@ import 'package:kumaanime/ui/models/playerControllers/betterPlayer.dart';
 import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
+import 'package:kumaanime/ui/models/widgets/player/squigglySlider.dart';
 import 'package:kumaanime/ui/pages/watch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,10 @@ class MiniResumePlayer extends StatelessWidget {
     final controller = Platform.isAndroid ? BetterPlayerWrapper() : FvpWrapper();
 
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MultiProvider(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 380),
+        reverseTransitionDuration: const Duration(milliseconds: 320),
+        pageBuilder: (context, animation, secondaryAnimation) => MultiProvider(
           providers: [
             ChangeNotifierProvider(
               create: (context) => PlayerDataProvider(
@@ -53,8 +56,33 @@ class MiniResumePlayer extends StatelessWidget {
           ],
           child: Watch(controller: controller),
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+            reverseCurve: Curves.easeInCubic,
+          );
+          return SlideTransition(
+            position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(curved),
+            child: FadeTransition(
+              opacity: curved,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
+                child: child,
+              ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  static String _formatMs(int ms) {
+    final d = Duration(milliseconds: ms);
+    final h = d.inHours;
+    final m = d.inMinutes.remainder(60).toString().padLeft(h > 0 ? 2 : 1, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return h > 0 ? "$h:$m:$s" : "$m:$s";
   }
 
   @override
@@ -71,7 +99,14 @@ class MiniResumePlayer extends StatelessWidget {
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 300),
             opacity: session == null ? 0 : 1,
-            child: session == null ? const SizedBox.shrink() : _bar(context, session),
+            child: session == null
+                ? const SizedBox.shrink()
+                : GestureDetector(
+                    onVerticalDragEnd: (details) {
+                      if ((details.primaryVelocity ?? 0) < -250) _resume(context, session);
+                    },
+                    child: _bar(context, session),
+                  ),
           ),
         );
       },
@@ -169,15 +204,28 @@ class MiniResumePlayer extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 6, left: 2, right: 2),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              minHeight: 3,
-                              backgroundColor: appTheme.textSubColor.withValues(alpha: 0.25),
-                              valueColor: AlwaysStoppedAnimation(appTheme.accentColor),
-                            ),
+                          padding: const EdgeInsets.only(top: 2, left: 2, right: 2),
+                          child: Row(
+                            children: [
+                              Text(
+                                _formatMs(((session['positionMs'] ?? 0) as num).toInt()),
+                                style: TextStyle(color: appTheme.textSubColor, fontSize: 10.5),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: SeekbarProgressBar(
+                                  style: seekbarStyleFromString(currentUserSettings?.seekbarStyle),
+                                  value: progress,
+                                  activeColor: appTheme.accentColor,
+                                  height: 18,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _formatMs(((session['durationMs'] ?? 0) as num).toInt()),
+                                style: TextStyle(color: appTheme.textSubColor, fontSize: 10.5),
+                              ),
+                            ],
                           ),
                         ),
                       ],
