@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/enums.dart';
@@ -200,16 +202,7 @@ class _AnimeListsState extends State<AnimeLists> with TickerProviderStateMixin {
                     children: [
                       Row(
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: appTheme.textMainColor,
-                              size: 28,
-                            ),
-                          ),
+                          KumaBackButton(size: 28),
                           Container(
                             padding: EdgeInsets.only(left: 10, right: 20),
                             child: Text(
