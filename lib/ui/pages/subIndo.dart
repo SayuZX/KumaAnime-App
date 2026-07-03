@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/anime/providers/animeLangSource.dart';
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
@@ -237,12 +239,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             color: appTheme.backgroundSubColor,
             shape: const CircleBorder(),
             clipBehavior: Clip.hardEdge,
-            child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              constraints: const BoxConstraints.tightFor(width: 40, height: 40),
-              padding: EdgeInsets.zero,
-              icon: Icon(Icons.arrow_back_rounded, color: appTheme.textMainColor, size: 22),
-            ),
+            child: KumaBackButton(size: 22),
           ),
           const SizedBox(height: 14),
           Text(
@@ -573,7 +570,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                             Icon(Icons.local_fire_department_rounded, color: appTheme.accentColor, size: 17),
                             const SizedBox(width: 5),
                             Text(
-                              loc.subIndoPopular.toUpperCase(),
+                              loc.subIndoPopular,
                               style: TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1.2,
