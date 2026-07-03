@@ -58,9 +58,9 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
 
   bool get _isDark => currentUserSettings?.darkMode ?? true;
 
-  Color get _cardColor => _isDark
-      ? appTheme.backgroundSubColor
-      : Color.alphaBlend(Colors.black.withValues(alpha: 0.03), appTheme.backgroundSubColor);
+  Color get _cardColor => _isDark ? const Color(0xFF1E1F22) : Colors.white;
+
+  Color get _chipColor => _isDark ? const Color(0xFF2A2B2F) : const Color(0xFFF1F1F4);
 
   @override
   Widget build(BuildContext context) {
@@ -190,13 +190,13 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: filled ? appTheme.accentColor : appTheme.accentColor.withValues(alpha: 0.14),
+        color: filled ? appTheme.accentColor : _chipColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: filled ? appTheme.onAccent : appTheme.accentColor,
+          color: filled ? appTheme.onAccent : appTheme.textMainColor,
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
@@ -259,12 +259,12 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: appTheme.accentColor.withValues(alpha: 0.14),
+        color: _chipColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         role,
-        style: TextStyle(color: appTheme.accentColor, fontSize: 11, fontWeight: FontWeight.w600),
+        style: TextStyle(color: appTheme.textMainColor, fontSize: 11, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -365,33 +365,42 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
     ];
 
     return _card(
-      child: Wrap(
-        spacing: 10,
-        runSpacing: 10,
-        children: links.map((link) {
-          return InkWell(
-            onTap: () => _open(link.$3),
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: appTheme.accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(link.$1, color: appTheme.accentColor, size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    link.$2,
-                    style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.w600),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final tileWidth = (constraints.maxWidth - 10) / 2;
+          return Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: links.map((link) {
+              return InkWell(
+                onTap: () => _open(link.$3),
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  width: tileWidth,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _chipColor,
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                ],
-              ),
-            ),
+                  child: Row(
+                    children: [
+                      Icon(link.$1, color: appTheme.accentColor, size: 18),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          link.$2,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
           );
-        }).toList(),
+        },
       ),
     );
   }
