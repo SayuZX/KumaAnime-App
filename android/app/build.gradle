@@ -11,6 +11,8 @@ def stempelVersi = new SimpleDateFormat("yyyyMMddHHmm").format(new Date())
 
 def versiDasar = "4.10"
 
+def kodeVersi = (System.currentTimeMillis() / 60000L).toInteger()
+
 def keystoreProperties = new Properties()
 
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -40,7 +42,7 @@ android {
         applicationId "app.kumaanime"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode (System.currentTimeMillis() / 60000L).toInteger()
+        versionCode kodeVersi
         versionName "${versiDasar}.${stempelVersi}"
 
         externalNativeBuild {
