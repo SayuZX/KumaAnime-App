@@ -60,8 +60,12 @@ android {
     }
 
     signingConfigs {
+        debug {
+            // Debug signing config
+        }
+
         if (keystorePropertiesFile.exists()) {
-            create("release") {
+            release {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
                 storeFile = file(keystoreProperties["storeFile"] as String)
@@ -72,12 +76,12 @@ android {
 
     buildTypes {
         release {
-        signingConfig keystorePropertiesFile.exists() ? signingConfigs.getByName("release") : signingConfigs.getByName("debug")
-        minifyEnabled true
-        shrinkResources true
-        proguardFiles getDefaultProguardFile(
-                'proguard-android-optimize.txt'),
-                'proguard-rules.pro'
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.getByName("release") : signingConfigs.getByName("debug")
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
 
         debug {
