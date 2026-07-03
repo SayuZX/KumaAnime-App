@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/anime/downloader/downloadManager.dart';
 import 'package:kumaanime/core/anime/downloader/types.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
@@ -71,14 +73,7 @@ class _DownloadsPageState extends State<DownloadsPage> with TickerProviderStateM
             loc.dlTitle,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).maybePop(),
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              size: 28,
-              color: appTheme.textMainColor,
-            ),
-          ),
+          leading: KumaBackButton(size: 28),
           actions: [
             // if (kDebugMode)
             IconButton(
