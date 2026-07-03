@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:kumaanime/core/anime/providers/animeLangSource.dart';
 import 'package:kumaanime/core/anime/providers/otakudesu.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
@@ -15,14 +16,18 @@ import 'package:flutter/material.dart';
 enum _SubIndoMode { ongoing, completed, genre, search }
 
 class SubIndoPage extends StatefulWidget {
-  const SubIndoPage({super.key});
+  final AnimeLangSource? source;
+  final String? pageTitle;
+  final String? searchHint;
+
+  const SubIndoPage({super.key, this.source, this.pageTitle, this.searchHint});
 
   @override
   State<SubIndoPage> createState() => _SubIndoPageState();
 }
 
 class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStateMixin {
-  final _provider = OtakuDesu();
+  late final AnimeLangSource _provider = widget.source ?? OtakuDesu();
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
   late final AnimationController _enterController;
@@ -158,7 +163,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
 
   void _openDetail(SubIndoAnime anime) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => SubIndoDetailPage(animeId: anime.animeId)),
+      MaterialPageRoute(builder: (context) => SubIndoDetailPage(animeId: anime.animeId, source: _provider)),
     );
   }
 
@@ -241,7 +246,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
           ),
           const SizedBox(height: 14),
           Text(
-            loc.subIndo,
+            widget.pageTitle ?? loc.subIndo,
             style: TextStyle(
               color: appTheme.textMainColor,
               fontSize: 34,
@@ -263,7 +268,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       },
       style: TextStyle(color: appTheme.textMainColor, ),
       decoration: InputDecoration(
-        hintText: loc.subIndoSearchHint,
+        hintText: widget.searchHint ?? loc.subIndoSearchHint,
         hintStyle: TextStyle(color: appTheme.textSubColor, ),
         prefixIcon: Icon(Icons.search_rounded, color: appTheme.textSubColor, size: 22),
         filled: true,
@@ -419,7 +424,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                   itemCount: _items.length,
                   itemBuilder: (context, index) {
                     final anime = _items[index];
-                    return SubIndoCard(anime: anime, onTap: () => _openDetail(anime));
+                    return SubIndoCard(anime: anime, badge: widget.pageTitle, onTap: () => _openDetail(anime));
                   },
                 ),
         ),
