@@ -171,12 +171,14 @@ class _MobileControlsState extends State<MobileControls> {
                                       value: dataProvider.state.sliderValue.toDouble(),
                                       max: (provider.controller.duration ?? 0) / 1000,
                                       secondaryValue: provider.controller.buffered?.toDouble(),
-                                      isPlaying: provider.controller.isPlaying ?? true,
+                                      isPlaying: provider.state.playerState == PlayerState.playing,
                                       showThumb: !dataProvider.state.controlsLocked,
                                       activeColor: appTheme.accentColor,
                                       onChangeStart: (val) => provider.controller.pause(),
-                                      onChanged: (val) => setState(
-                                          () => provider.controller.seekTo(Duration(seconds: val.toInt()))),
+                                      onChanged: (val) {
+                                        provider.controller.seekTo(Duration(seconds: val.toInt()));
+                                        if (mounted) setState(() {});
+                                      },
                                       onChangeEnd: (val) => provider.controller.play(),
                                     ),
                                   ),
