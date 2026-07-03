@@ -47,8 +47,8 @@ class _AnimeCardState extends State<AnimeCard> {
   late final double height = (Platform.isWindows || Platform.isLinux ? 200.0 : 160.0) * _scale;
 
   void updateFocus(bool val) {
-    return setState(() {
-      isFocused = val;
+    Future.microtask(() {
+      if (mounted) setState(() => isFocused = val);
     });
   }
 
