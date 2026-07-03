@@ -31,7 +31,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   late final AnimeLangSource _provider = widget.source ?? OtakuDesu();
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
-  late final AnimationController _enterController;
 
   _SubIndoMode _mode = _SubIndoMode.ongoing;
   SubIndoGenre? _selectedGenre;
@@ -49,8 +48,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _enterController = AnimationController(vsync: this, duration: const Duration(milliseconds: 550));
-    (currentUserSettings?.reduceMotion ?? false) ? _enterController.value = 1 : _enterController.forward();
     _scrollController.addListener(_onScroll);
     _load(reset: true);
   }
@@ -59,7 +56,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   void dispose() {
     _heroTimer?.cancel();
     _heroController.dispose();
-    _enterController.dispose();
     _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -75,17 +71,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       final next = (_heroIndex + 1) % pool;
       _heroController.animateToPage(next, duration: const Duration(milliseconds: 550), curve: Curves.easeOutCubic);
     });
-  }
-
-  Widget _entrance(Widget child, double start, double end) {
-    final anim = CurvedAnimation(parent: _enterController, curve: Interval(start, end, curve: Curves.easeOut));
-    return FadeTransition(
-      opacity: anim,
-      child: SlideTransition(
-        position: Tween(begin: const Offset(0, 0.18), end: Offset.zero).animate(anim),
-        child: child,
-      ),
-    );
   }
 
   void _onScroll() {
@@ -160,107 +145,92 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _entrance(_vintageHeader(context, loc), 0.0, 0.6),
-          Expanded(
-            child: Stack(
-              children: [
-                _body(loc),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: IgnorePointer(
-                    child: Container(
-                      height: 28,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            appTheme.backgroundColor,
-                            appTheme.backgroundColor.withValues(alpha: 0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      body: _body(loc),
     );
   }
 
-  Widget _vintageHeader(BuildContext context, AppLocalizations loc) {
-    final topInset = MediaQuery.of(context).padding.top;
-    return Padding(
-      padding: EdgeInsets.only(top: topInset + 10, left: 20, right: 20, bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Material(
-            color: appTheme.backgroundSubColor,
-            shape: const CircleBorder(),
-            clipBehavior: Clip.hardEdge,
-            child: KumaBackButton(size: 22),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            widget.pageTitle ?? loc.subIndo,
-            style: TextStyle(
-              color: appTheme.textMainColor,
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              height: 1.0,
-            ),
-          ),
-        ],
+  SliverAppBar _collapsingHeader(AppLocalizations loc) {
+    return SliverAppBar(
+      pinned: false,
+      floating: true,
+      snap: true,
+      elevation: 0,
+      backgroundColor: appTheme.backgroundColor,
+      surfaceTintColor: Colors.transparent,
+      expandedHeight: 132,
+      collapsedHeight: 56,
+      leadingWidth: 60,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
+        child: Material(
+          color: appTheme.backgroundSubColor,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.hardEdge,
+          child: KumaBackButton(size: 22),
+        ),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        expandedTitleScale: 1.9,
+        titlePadding: const EdgeInsets.only(left: 20, bottom: 14),
+        title: Text(
+          widget.pageTitle ?? loc.subIndo,
+          style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
 
   Widget _body(AppLocalizations loc) {
     if (_loading) {
-      return Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 40));
+      return CustomScrollView(slivers: [
+        _collapsingHeader(loc),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(child: KumaAnimeLoading(color: appTheme.accentColor, size: 40)),
+        ),
+      ]);
     }
 
     if (_error && _items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              loc.subIndoLoadError,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
+      return CustomScrollView(slivers: [
+        _collapsingHeader(loc),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  loc.subIndoLoadError,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: () => _load(reset: true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: appTheme.accentColor,
+                    foregroundColor: appTheme.onAccent,
+                  ),
+                  child: Text(loc.retry),
+                ),
+              ],
             ),
-            const SizedBox(height: 15),
-            ElevatedButton(
-              onPressed: () => _load(reset: true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: appTheme.accentColor,
-                foregroundColor: appTheme.onAccent,
-              ),
-              child: Text(loc.retry),
-            ),
-          ],
+          ),
         ),
-      );
+      ]);
     }
 
     if (_items.isEmpty) {
-      return Center(
-        child: Text(
-          loc.subIndoEmpty,
-          style: TextStyle(color: appTheme.textSubColor, fontSize: 18),
+      return CustomScrollView(slivers: [
+        _collapsingHeader(loc),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Text(loc.subIndoEmpty, style: TextStyle(color: appTheme.textSubColor, fontSize: 18)),
+          ),
         ),
-      );
+      ]);
     }
 
     final desktop = Platform.isWindows || Platform.isLinux;
@@ -269,6 +239,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
+        _collapsingHeader(loc),
         if (showHero) SliverToBoxAdapter(child: _heroCarousel()),
         SliverPadding(
           padding: EdgeInsets.only(top: 16, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
