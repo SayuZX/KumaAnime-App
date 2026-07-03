@@ -4,6 +4,7 @@ import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/widgets/player/mobileControls/bottomControls.dart';
 import 'package:kumaanime/ui/models/widgets/player/mobileControls/topControls.dart';
+import 'package:kumaanime/ui/models/widgets/player/squigglySlider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -165,36 +166,18 @@ class _MobileControlsState extends State<MobileControls> {
                                 child: IgnorePointer(
                                   ignoring: dataProvider.state.controlsLocked,
                                   child: Container(
-                                    child: SliderTheme(
-                                      data: SliderThemeData(
-                                          trackHeight: 1.3,
-                                          thumbColor: appTheme.accentColor,
-                                          activeTrackColor: appTheme.accentColor,
-                                          inactiveTrackColor: Color.fromARGB(255, 121, 121, 121),
-                                          secondaryActiveTrackColor: Color.fromARGB(255, 167, 167, 167),
-                                          thumbShape: dataProvider.state.controlsLocked
-                                              ? SliderComponentShape.noThumb
-                                              : RoundSliderThumbShape(enabledThumbRadius: 6),
-                                          trackShape: EdgeToEdgeTrackShape(),
-                                          overlayShape: SliderComponentShape.noThumb),
-                                      child: Slider(
-                                        value: dataProvider.state.sliderValue.toDouble(),
-                                        secondaryTrackValue: provider.controller.buffered?.toDouble(),
-                                        onChanged: (val) {
-                                          setState(() {
-                                            // provider.state = provider.state.copyWith();
-                                            provider.controller.seekTo(Duration(seconds: val.toInt()));
-                                          });
-                                        },
-                                        onChangeStart: (value) {
-                                          provider.controller.pause();
-                                        },
-                                        onChangeEnd: (value) {
-                                          provider.controller.play();
-                                        },
-                                        min: 0,
-                                        max: (provider.controller.duration ?? 0) / 1000,
-                                      ),
+                                    child: StyledSeekBar(
+                                      style: seekbarStyleFromString(currentUserSettings?.seekbarStyle),
+                                      value: dataProvider.state.sliderValue.toDouble(),
+                                      max: (provider.controller.duration ?? 0) / 1000,
+                                      secondaryValue: provider.controller.buffered?.toDouble(),
+                                      isPlaying: provider.controller.isPlaying ?? true,
+                                      showThumb: !dataProvider.state.controlsLocked,
+                                      activeColor: appTheme.accentColor,
+                                      onChangeStart: (val) => provider.controller.pause(),
+                                      onChanged: (val) => setState(
+                                          () => provider.controller.seekTo(Duration(seconds: val.toInt()))),
+                                      onChangeEnd: (val) => provider.controller.play(),
                                     ),
                                   ),
                                 ),
