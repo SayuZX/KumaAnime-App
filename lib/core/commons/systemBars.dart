@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 
 const _channel = MethodChannel('kumaanime.app/utils');
 
-/// Forces the Android system bars visible through the native window controller.
 Future<void> showSystemBars() async {
   if (!Platform.isAndroid) return;
   try {
@@ -12,10 +11,19 @@ Future<void> showSystemBars() async {
   } catch (_) {}
 }
 
-/// Hides the Android system bars for immersive playback.
 Future<void> hideSystemBars() async {
   if (!Platform.isAndroid) return;
   try {
     await _channel.invokeMethod('hideSystemBars');
   } catch (_) {}
+}
+
+Future<bool> enterPip() async {
+  if (!Platform.isAndroid) return false;
+  try {
+    final ok = await _channel.invokeMethod('enterPip');
+    return ok == true;
+  } catch (_) {
+    return false;
+  }
 }
