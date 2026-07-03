@@ -342,7 +342,7 @@ class ViewMode {
 
 final List<ViewMode> viewModes = [
   ViewMode(
-    icon: Icons.fullscreen,
+    icon: Icons.fit_screen_rounded,
     desc: "fit",
     value: BoxFit.contain,
   ),
