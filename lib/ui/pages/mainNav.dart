@@ -9,7 +9,9 @@ import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/widgets/bottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/controller.dart';
 import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBarView.dart';
+import 'package:kumaanime/core/data/resumeSession.dart';
 import 'package:kumaanime/ui/models/widgets/liquidGlassNavBar.dart';
+import 'package:kumaanime/ui/models/widgets/miniResumePlayer.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/pages/genres.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
@@ -38,6 +40,8 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
 
     // open the box for the whole app life time!
     DownloadHistory.initBox();
+
+    ResumeSession.load();
 
     //check for app updates & show prompt
     checkForUpdates().then((data) => {
@@ -249,7 +253,8 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   BottomBarItem(title: AppLocalizations.of(context).navSearch, icon: Icon(Icons.search))
                 ],
                 controller: _barController,
-              )
+              ),
+              MiniResumePlayer(bottomOffset: MediaQuery.of(context).padding.bottom + 92),
             ],
           )
         : Stack(
@@ -290,7 +295,8 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                       activeIcon: Icons.grid_view_rounded,
                       label: AppLocalizations.of(context).navCategories),
                 ],
-              )
+              ),
+              MiniResumePlayer(bottomOffset: MediaQuery.of(context).padding.bottom + 86),
             ],
           );
   }
