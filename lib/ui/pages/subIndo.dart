@@ -46,6 +46,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
 
   int _heroIndex = 0;
   Timer? _heroTimer;
+  final _heroController = PageController(viewportFraction: 0.82);
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   @override
   void dispose() {
     _heroTimer?.cancel();
+    _heroController.dispose();
     _enterController.dispose();
     _scrollController.dispose();
     _searchController.dispose();
@@ -70,9 +72,10 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     final isHeroMode = _mode == _SubIndoMode.ongoing || _mode == _SubIndoMode.completed;
     if (!isHeroMode || _items.length < 2) return;
     _heroTimer = Timer.periodic(const Duration(seconds: 6), (_) {
-      if (!mounted) return;
+      if (!mounted || !_heroController.hasClients) return;
       final pool = _items.length < 8 ? _items.length : 8;
-      setState(() => _heroIndex = (_heroIndex + 1) % pool);
+      final next = (_heroIndex + 1) % pool;
+      _heroController.animateToPage(next, duration: const Duration(milliseconds: 550), curve: Curves.easeOutCubic);
     });
   }
 
@@ -389,16 +392,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
-        if (showHero)
-          SliverToBoxAdapter(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 450),
-              child: KeyedSubtree(
-                key: ValueKey(_items[_heroIndex.clamp(0, _items.length - 1)].animeId),
-                child: _hero(_items[_heroIndex.clamp(0, _items.length - 1)]),
-              ),
-            ),
-          ),
+        if (showHero) SliverToBoxAdapter(child: _heroCarousel()),
         SliverPadding(
           padding: EdgeInsets.only(top: 16, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
           sliver: _layout == 'list'
@@ -504,144 +498,128 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     );
   }
 
-  Widget _hero(SubIndoAnime anime) {
-    final loc = AppLocalizations.of(context);
-    return GestureDetector(
-      onTap: () => _openDetail(anime),
-      child: Container(
-        height: 214,
-        margin: const EdgeInsets.only(left: 15, right: 15, top: 16),
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 18, offset: const Offset(0, 8)),
-          ],
+  Widget _heroCarousel() {
+    final pool = _items.take(8).toList();
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: SizedBox(
+        height: 250,
+        child: PageView.builder(
+          controller: _heroController,
+          itemCount: pool.length,
+          onPageChanged: (i) => _heroIndex = i,
+          itemBuilder: (context, index) => _heroCard(pool[index], index),
         ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: CachedNetworkImage(
+      ),
+    );
+  }
+
+  Widget _heroCard(SubIndoAnime anime, int index) {
+    final loc = AppLocalizations.of(context);
+    return AnimatedBuilder(
+      animation: _heroController,
+      builder: (context, child) {
+        double page = index.toDouble();
+        if (_heroController.hasClients && _heroController.position.haveDimensions) {
+          page = _heroController.page ?? index.toDouble();
+        }
+        final delta = (page - index).abs().clamp(0.0, 1.0);
+        final scale = 1 - delta * 0.12;
+        return Transform.scale(scale: scale, child: child);
+      },
+      child: GestureDetector(
+        onTap: () => _openDetail(anime),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 10)),
+            ],
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
                 imageUrl: anime.poster,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(color: appTheme.backgroundSubColor),
                 errorWidget: (context, url, error) => Container(color: appTheme.backgroundSubColor),
               ),
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
-                  colors: [Colors.black.withValues(alpha: 0.4), Colors.black.withValues(alpha: 0.9)],
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.transparent, Colors.black.withValues(alpha: 0.85)],
+                    stops: const [0.0, 0.45, 1.0],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
+              if (anime.score != null && anime.score!.trim().isNotEmpty)
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 12, offset: const Offset(0, 4)),
-                      ],
                     ),
-                    clipBehavior: Clip.hardEdge,
-                    child: CachedNetworkImage(
-                      imageUrl: anime.poster,
-                      width: 112,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(color: appTheme.backgroundSubColor, width: 112),
-                      errorWidget: (context, url, error) => Container(color: appTheme.backgroundSubColor, width: 112),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.local_fire_department_rounded, color: appTheme.accentColor, size: 17),
-                            const SizedBox(width: 5),
-                            Text(
-                              loc.subIndoPopular,
-                              style: TextStyle(
-                                fontSize: 11,
-                                letterSpacing: 1.2,
-                                color: appTheme.accentColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
+                        const Icon(Icons.star_rounded, color: Color(0xFFF5C518), size: 14),
+                        const SizedBox(width: 3),
+                        Text(anime.score!,
+                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.local_fire_department_rounded, color: appTheme.accentColor, size: 16),
+                        const SizedBox(width: 5),
                         Text(
-                          anime.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            height: 1.15,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            if (anime.score != null && anime.score!.trim().isNotEmpty) ...[
-                              const Icon(Icons.star_rounded, color: Color(0xFFF5C518), size: 15),
-                              const SizedBox(width: 3),
-                              Text(
-                                anime.score!,
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(width: 10),
-                            ],
-                            if (anime.episodes != null && anime.episodes!.isNotEmpty)
-                              Text(
-                                "${anime.episodes} ${loc.subIndoEpisodes}",
-                                style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
+                          loc.subIndoPopular,
+                          style: TextStyle(
+                            fontSize: 11,
+                            letterSpacing: 1.1,
                             color: appTheme.accentColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.play_arrow_rounded, color: appTheme.onAccent, size: 18),
-                              const SizedBox(width: 4),
-                              Text(
-                                loc.subIndoWatchNow,
-                                style: TextStyle(
-                                  color: appTheme.onAccent,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    Text(
+                      anime.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold, height: 1.15),
+                    ),
+                    if (anime.episodes != null && anime.episodes!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        "${anime.episodes} ${loc.subIndoEpisodes}",
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 12),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
