@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
+
 import 'package:kumaanime/core/anime/providers/animeLangSource.dart';
 import 'package:kumaanime/core/anime/providers/subIndoTypes.dart';
 import 'package:kumaanime/core/anime/providers/types.dart';
@@ -137,7 +139,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     return SafeArea(
       child: Stack(
         children: [
-          _circleButton(Icons.arrow_back_rounded, () => Navigator.of(context).pop()),
+          KumaBackButton(),
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -164,21 +166,6 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
     );
   }
 
-  Widget _circleButton(IconData icon, void Function() onTap) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Material(
-        color: Colors.black.withValues(alpha: 0.45),
-        shape: const CircleBorder(),
-        clipBehavior: Clip.hardEdge,
-        child: IconButton(
-          onPressed: onTap,
-          icon: Icon(icon, color: Colors.white, size: 24),
-        ),
-      ),
-    );
-  }
-
   Widget _content(AppLocalizations loc) {
     final detail = _detail!;
     return CustomScrollView(
@@ -189,7 +176,7 @@ class _SubIndoDetailPageState extends State<SubIndoDetailPage> {
           backgroundColor: appTheme.backgroundColor,
           surfaceTintColor: Colors.transparent,
           leadingWidth: 60,
-          leading: _circleButton(Icons.arrow_back_rounded, () => Navigator.of(context).pop()),
+          leading: KumaBackButton(color: Colors.white),
           flexibleSpace: FlexibleSpaceBar(
             titlePadding: const EdgeInsets.only(left: 56, right: 16, bottom: 14),
             title: LayoutBuilder(
