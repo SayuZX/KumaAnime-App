@@ -6,8 +6,11 @@ import "package:flutter/services.dart";
 
 void floatingSnackBar(String message, {int? duration, bool waitForPreviousToFinish = false}) {
   final isWindows = Platform.isWindows;
-  if (!waitForPreviousToFinish) KumaAnime.snackbarKey.currentState?.removeCurrentSnackBar();
-  KumaAnime.snackbarKey.currentState?.showSnackBar(
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final messenger = KumaAnime.snackbarKey.currentState;
+    if (messenger == null) return;
+    if (!waitForPreviousToFinish) messenger.removeCurrentSnackBar();
+    messenger.showSnackBar(
       SnackBar(
         content: Center(
           child: Text(message, style: TextStyle(color: Colors.white, fontSize: 14)),
@@ -17,10 +20,11 @@ void floatingSnackBar(String message, {int? duration, bool waitForPreviousToFini
         behavior: SnackBarBehavior.floating,
         dismissDirection: DismissDirection.down,
         margin: isWindows ? null : EdgeInsets.only(bottom: 40, left: 20, right: 20),
-        width: isWindows ? MediaQuery.of(KumaAnime.snackbarKey.currentState!.context).size.width / 5 : null,
+        width: isWindows ? MediaQuery.of(messenger.context).size.width / 5 : null,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
+  });
 }
 
 void showToast(String message) async {
