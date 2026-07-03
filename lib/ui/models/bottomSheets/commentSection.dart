@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/env.dart';
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/enums.dart';
@@ -145,13 +146,12 @@ class _CommentsectionState extends State<Commentsection> {
                     ),
                   ),
                   if (replyMode)
-                    IconButton(
-                      onPressed: () {
+                    KumaBackButton(
+                      onTap: () {
                         setState(() {
                           replyMode = false;
                         });
                       },
-                      icon: Icon(Icons.arrow_back_ios_new_rounded),
                     ),
                 ],
               ),
