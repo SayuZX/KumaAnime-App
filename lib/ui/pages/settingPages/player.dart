@@ -291,74 +291,128 @@ class PlayerSettingState extends State<PlayerSetting> {
     );
   }
 
+  static const _seekbarStyles = <String, String>{
+    'standard': 'Standard',
+    'wavy': 'Wavy',
+    'thick': 'Thick',
+    'circular': 'Circular',
+    'simple': 'Simple',
+  };
+
   Widget _seekbarStylePicker(AppLocalizations loc) {
-    const styles = <String, String>{
-      'standard': 'Standard',
-      'wavy': 'Wavy',
-      'thick': 'Thick',
-      'circular': 'Circular',
-      'simple': 'Simple',
-    };
     final current = currentUserSettings?.seekbarStyle ?? 'standard';
 
-    return item(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(loc.plrSeekbarStyle, style: textStyle()),
-          Padding(
-            padding: const EdgeInsets.only(top: 2, bottom: 12),
-            child: Text(loc.plrSeekbarStyleDesc,
-                style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12)),
-          ),
-          ...styles.entries.map((entry) {
-            final selected = current == entry.key;
-            return GestureDetector(
-              onTap: () => writeSettings(SettingsModal(seekbarStyle: entry.key)),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: appTheme.backgroundSubColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: selected ? appTheme.accentColor : Colors.transparent,
-                    width: 2,
+    return InkWell(
+      onTap: () => _showSeekbarStyleDialog(loc, current),
+      child: item(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(loc.plrSeekbarStyle, style: textStyle()),
+                Text(
+                  _seekbarStyles[current] ?? 'Standard',
+                  style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12),
+                ),
+              ],
+            ),
+            Icon(Icons.arrow_forward_ios_rounded),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSeekbarStyleDialog(AppLocalizations loc, String current) {
+    final rows = <List<MapEntry<String, String>>>[];
+    final entries = _seekbarStyles.entries.toList();
+    for (var i = 0; i < entries.length; i += 3) {
+      rows.add(entries.sublist(i, (i + 3).clamp(0, entries.length)));
+    }
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: appTheme.modalSheetBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: rows.map((row) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  ...row.map(
+                    (entry) => Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: _styleOptionCard(dialogContext, entry.key, entry.value, current == entry.key),
+                      ),
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 82,
-                      child: Text(
-                        entry.value,
-                        style: textStyle().copyWith(
-                          color: selected ? appTheme.accentColor : appTheme.textMainColor,
-                          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: IgnorePointer(
-                        child: SizedBox(
-                          height: 24,
-                          child: StyledSeekBar(
-                            style: seekbarStyleFromString(entry.key),
-                            value: 0.45,
-                            max: 1,
-                            secondaryValue: 0.7,
-                            isPlaying: true,
-                            activeColor: appTheme.accentColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ...List.generate(3 - row.length, (index) => const Expanded(child: SizedBox())),
+                ],
               ),
             );
-          }),
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(loc.stgCancel, style: TextStyle(color: appTheme.accentColor)),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _styleOptionCard(BuildContext dialogContext, String styleKey, String label, bool selected) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: InkWell(
+        onTap: () {
+          writeSettings(SettingsModal(seekbarStyle: styleKey));
+          Navigator.of(dialogContext).pop();
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: selected ? appTheme.accentColor : appTheme.textSubColor.withValues(alpha: 0.3),
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: IgnorePointer(
+                    child: StyledSeekBar(
+                      style: seekbarStyleFromString(styleKey),
+                      value: 0.5,
+                      max: 1,
+                      isPlaying: true,
+                      activeColor: appTheme.accentColor,
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                label,
+                style: textStyle().copyWith(
+                  fontSize: 12,
+                  fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                  color: selected ? appTheme.accentColor : appTheme.textMainColor,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
