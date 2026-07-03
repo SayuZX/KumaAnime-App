@@ -1,19 +1,11 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 
 Widget topRow(BuildContext context, String title) {
   return Row(
     children: [
-      IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: Icon(
-          Icons.arrow_back_rounded,
-          color: appTheme.textMainColor,
-          size: 32,
-        ),
-      ),
+      const KumaBackButton(),
       Padding(
         padding: const EdgeInsets.only(left: 10),
         child: Text(
@@ -39,15 +31,7 @@ PreferredSizeWidget settingPagesAppBar(BuildContext context) {
         right: MediaQuery.of(context).padding.right + 10,
         bottom: 10,
       ),
-      child: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            color: appTheme.textMainColor,
-            size: 35,
-          )),
+      child: const KumaBackButton(),
     ),
   );
 }
@@ -64,15 +48,7 @@ Widget settingPagesTitleHeader(BuildContext context, String title) {
           right: 10,
           bottom: 10,
         ),
-        child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: appTheme.textMainColor,
-              size: 35,
-            )),
+        child: const KumaBackButton(),
       ),
       Container(
         padding: EdgeInsets.only(top: 40, left: 20, bottom: 40),
