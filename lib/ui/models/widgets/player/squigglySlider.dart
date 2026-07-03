@@ -60,12 +60,24 @@ class _StyledSeekBarState extends State<StyledSeekBar> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _phase = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100))..repeat();
+    _phase = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
     _amplitude = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 350),
       value: widget.isPlaying ? 1 : 0,
     );
+    _amplitude.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) _phase.stop();
+    });
+    _syncPhase();
+  }
+
+  void _syncPhase() {
+    if (_wavy && widget.isPlaying) {
+      if (!_phase.isAnimating) _phase.repeat();
+    } else if (_amplitude.value == 0 && _phase.isAnimating) {
+      _phase.stop();
+    }
   }
 
   @override
@@ -74,6 +86,7 @@ class _StyledSeekBarState extends State<StyledSeekBar> with TickerProviderStateM
     if (widget.isPlaying != oldWidget.isPlaying) {
       widget.isPlaying ? _amplitude.forward() : _amplitude.reverse();
     }
+    _syncPhase();
   }
 
   @override
