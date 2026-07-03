@@ -153,6 +153,30 @@ class _StyledSeekBarState extends State<StyledSeekBar> with TickerProviderStateM
   }
 }
 
+class SeekbarStylePreview extends StatelessWidget {
+  final SeekbarStyle style;
+  final Color activeColor;
+
+  const SeekbarStylePreview({super.key, required this.style, required this.activeColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: const Size(64, 24),
+      painter: _SeekBarPainter(
+        style: style,
+        value: 0.5,
+        max: 1,
+        buffered: null,
+        phase: 0,
+        amplitude: (style == SeekbarStyle.wavy || style == SeekbarStyle.circular) ? 2.5 : 0,
+        showThumb: true,
+        activeColor: activeColor,
+      ),
+    );
+  }
+}
+
 class _SeekBarPainter extends CustomPainter {
   final SeekbarStyle style;
   final double value;
