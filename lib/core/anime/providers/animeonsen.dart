@@ -110,13 +110,16 @@ class AnimeOnsen extends AnimeProvider {
 
     final jsoned = jsonDecode(res.body);
 
-    jsoned['result'].forEach((item) {
+    final results = jsoned is Map ? jsoned['result'] : null;
+    if (results is! List) return searchResults;
+
+    for (final item in results) {
       searchResults.add({
         'name': item['content_title_en'] ?? item['content_title'],
         'alias': item['content_id'],
         'imageUrl': "https://api.animeonsen.xyz/v4/image/210x300/${item['content_id']}",
       });
-    });
+    }
 
     return searchResults;
   }
