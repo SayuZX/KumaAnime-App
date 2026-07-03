@@ -19,8 +19,13 @@ class FvpWrapper implements VideoController {
   int? get buffered => controller.value.buffered.lastOrNull?.end.inSeconds;
 
   @override
-  void dispose() async {
-    await controller.dispose();
+  void dispose() {
+    final old = controller;
+    for (final listener in listeners) {
+      old.removeListener(listener);
+    }
+    listeners.clear();
+    Future(() => old.dispose());
   }
 
   @override
@@ -37,7 +42,11 @@ class FvpWrapper implements VideoController {
 
     // kill the last controller
     if(controllerInitialized) {
-      await controller.dispose();
+      final old = controller;
+      for (final listener in listeners) {
+        old.removeListener(listener);
+      }
+      Future(() => old.dispose());
       controllerInitialized = false;
     }
 
