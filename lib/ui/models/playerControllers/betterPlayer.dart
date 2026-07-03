@@ -107,7 +107,12 @@ class BetterPlayerWrapper implements VideoController {
 
   @override
   void dispose() {
-    return controller.dispose();
+    for (final cb in listeners) {
+      if (cb != null) controller.videoPlayerController?.removeListener(cb);
+    }
+    listeners.clear();
+    final old = controller;
+    Future(() => old.dispose());
   }
 
   @override
