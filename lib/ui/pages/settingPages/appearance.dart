@@ -118,8 +118,8 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                 value: s?.textScale ?? 1.0,
                 min: 0.8,
                 max: 1.4,
-                onChanged: (v) {
-                  _write(SettingsModal(textScale: v));
+                onChanged: (v) async {
+                  await _write(SettingsModal(textScale: v));
                   appProvider.justRefresh();
                 },
               ),
@@ -132,8 +132,8 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                 label: loc.apLiquidNavbar,
                 description: loc.apLiquidNavbarDesc,
                 value: !(s?.useOldNavbar ?? false),
-                onTapFunction: () {
-                  _write(SettingsModal(useOldNavbar: !(s?.useOldNavbar ?? false)));
+                onTapFunction: () async {
+                  await _write(SettingsModal(useOldNavbar: !(s?.useOldNavbar ?? false)));
                   appProvider.justRefresh();
                 },
               ),
@@ -142,8 +142,8 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                 value: s?.navbarTranslucency ?? 0.6,
                 min: 0.0,
                 max: 1.0,
-                onChanged: (v) {
-                  _write(SettingsModal(navbarTranslucency: v));
+                onChanged: (v) async {
+                  await _write(SettingsModal(navbarTranslucency: v));
                   appProvider.justRefresh();
                 },
               ),
