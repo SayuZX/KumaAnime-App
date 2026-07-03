@@ -58,7 +58,7 @@ class SubIndoCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        (badge ?? AppLocalizations.of(context).subIndo).toUpperCase(),
+                        badge ?? AppLocalizations.of(context).subIndo,
                         style: TextStyle(
                           fontSize: 10,
                           letterSpacing: 0.5,
