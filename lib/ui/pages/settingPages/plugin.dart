@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -56,13 +57,7 @@ class _PluginPageState extends State<PluginPage> with TickerProviderStateMixin {
                 children: [
                   Row(
                     children: [
-                      IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(
-                            Icons.arrow_back_rounded,
-                            color: appTheme.textMainColor,
-                            size: 28,
-                          )),
+                      KumaBackButton(size: 28),
                       Container(
                         padding: EdgeInsets.only(left: 10, right: 20),
                         child: Text(
