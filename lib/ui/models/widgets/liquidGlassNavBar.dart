@@ -54,17 +54,20 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final blur = widget.blurSigma.clamp(0.0, 40.0);
-    final glassColor = appTheme.backgroundSubColor.withValues(alpha: blur > 0 ? (_isDark ? 0.55 : 0.6) : 0.96);
+    final glassColor = _isDark
+        ? appTheme.backgroundSubColor.withValues(alpha: blur > 0 ? 0.55 : 0.96)
+        : Color.alphaBlend(Colors.black.withValues(alpha: 0.06), appTheme.backgroundSubColor)
+            .withValues(alpha: blur > 0 ? 0.85 : 1.0);
 
     final bar = Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(36),
-        border: Border.all(color: Colors.white.withValues(alpha: _isDark ? 0.08 : 0.35), width: 1),
+        border: Border.all(color: (_isDark ? Colors.white : Colors.black).withValues(alpha: 0.08), width: 1),
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.white.withValues(alpha: _isDark ? 0.06 : 0.25),
+            Colors.white.withValues(alpha: _isDark ? 0.06 : 0.45),
             Colors.transparent,
           ],
         ),
@@ -90,14 +93,26 @@ class _LiquidGlassNavBarState extends State<LiquidGlassNavBar> {
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(36),
-            child: blur > 0
-                ? BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                    child: bar,
-                  )
-                : bar,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(36),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: _isDark ? 0.25 : 0.14),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(36),
+              child: blur > 0
+                  ? BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                      child: bar,
+                    )
+                  : bar,
+            ),
           ),
         ),
       ),
