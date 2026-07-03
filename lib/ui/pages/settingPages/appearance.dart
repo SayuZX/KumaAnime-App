@@ -9,6 +9,7 @@ import 'package:kumaanime/ui/theme/types.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
+import 'package:kumaanime/ui/models/widgets/themeTransition.dart';
 import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -181,7 +182,8 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
     final dark = currentUserSettings?.darkMode ?? true;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SegmentedButton(
+      child: Builder(
+        builder: (buttonContext) => SegmentedButton(
         segments: [
           ButtonSegment(
               value: false,
@@ -195,14 +197,17 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
         showSelectedIcon: false,
         emptySelectionAllowed: false,
         onSelectionChanged: (val) async {
-          await _write(SettingsModal(darkMode: val.first));
-          await appProvider.applyThemeMode(val.first);
+          await ThemeTransition.run(buttonContext, () async {
+            await _write(SettingsModal(darkMode: val.first));
+            await appProvider.applyThemeMode(val.first);
+          });
         },
         style: SegmentedButton.styleFrom(
           selectedBackgroundColor: appTheme.accentColor,
           selectedForegroundColor: appTheme.onAccent,
           foregroundColor: appTheme.textMainColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
         ),
       ),
     );
