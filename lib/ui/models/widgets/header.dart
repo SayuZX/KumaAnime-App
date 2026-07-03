@@ -1,5 +1,4 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
-import 'package:kumaanime/ui/pages/downloads.dart';
 import 'package:kumaanime/ui/pages/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -19,17 +18,6 @@ Container buildHeader(String title, BuildContext context, {void Function()? afte
         ),
         Row(
           children: [
-            IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => DownloadsPage())).then((val) {
-                    if (afterNavigation != null) afterNavigation();
-                  });
-                },
-                icon: Icon(
-                  Icons.download_rounded,
-                  color: appTheme.textMainColor,
-                  size: 32,
-                )),
             IconButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingsPage())).then((val) {
