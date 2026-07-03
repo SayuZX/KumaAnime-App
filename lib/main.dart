@@ -41,7 +41,8 @@ import 'package:fvp/fvp.dart' as fvp;
 class _HttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..userAgent = AppValues.defaultClientUserAgent;
+    return super.createHttpClient(context)
+      ..userAgent = AppValues.defaultClientUserAgent;
   }
 }
 
@@ -70,7 +71,8 @@ void main(List<String> args) async {
 
     if (Platform.isWindows || Platform.isLinux) {
       await windowManager.ensureInitialized();
-      await windowManager.setTitleBarStyle(TitleBarStyle.hidden, windowButtonVisibility: false);
+      await windowManager.setTitleBarStyle(TitleBarStyle.hidden,
+          windowButtonVisibility: false);
 
       // No frameless for now!
       // if (currentUserSettings?.useFramelessWindow ?? true) await windowManager.setAsFrameless();
@@ -109,6 +111,14 @@ void main(List<String> args) async {
       return true;
     };
 
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ));
+
     runApp(
       ChangeNotifierProvider(
         create: (context) => AppProvider(),
@@ -141,7 +151,8 @@ Future<void> loadAndAssignSettings() async {
   await getTheme().then((themeId) {
     // ignore the themeid limit checks for debug mode
     if ((themeId > availableThemes.length && !kDebugMode) || themeId < 1) {
-      Logs.app.log("[STARTUP] Failed to apply theme with ID $themeId, Applying default theme");
+      Logs.app.log(
+          "[STARTUP] Failed to apply theme with ID $themeId, Applying default theme");
       showToast("Failed to apply theme. Using default theme");
       setTheme(01);
       themeId = 01;
@@ -149,19 +160,25 @@ Future<void> loadAndAssignSettings() async {
 
     final darkMode = currentUserSettings!.darkMode!;
 
-    ThemeItem? theme = availableThemes.where((theme) => theme.id == themeId).toList().firstOrNull;
+    ThemeItem? theme = availableThemes
+        .where((theme) => theme.id == themeId)
+        .toList()
+        .firstOrNull;
 
     if (theme == null) {
       // Set default theme incase of any corruptions/issues n stuff
       theme = LimeZest();
-      Logs.app.log("[STARTUP] Failed to apply theme with ID $themeId, Applying default theme");
+      Logs.app.log(
+          "[STARTUP] Failed to apply theme with ID $themeId, Applying default theme");
     }
 
     if (darkMode) {
       appTheme = darkThemeFor(theme.theme.accentColor, theme.theme.onAccent);
-      if (currentUserSettings!.amoledBackground ?? false) appTheme.backgroundColor = Colors.black;
+      if (currentUserSettings!.amoledBackground ?? false)
+        appTheme.backgroundColor = Colors.black;
     } else {
-      final accent = Color.alphaBlend(Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
+      final accent = Color.alphaBlend(
+          Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
       appTheme = lightThemeFor(accent, theme.lightVariant.onAccent);
     }
 
@@ -175,14 +192,15 @@ Future<void> loadAndAssignSettings() async {
 class KumaAnime extends StatefulWidget {
   const KumaAnime({super.key});
 
-  static final GlobalKey<ScaffoldMessengerState> snackbarKey = GlobalKey<ScaffoldMessengerState>();
+  static final GlobalKey<ScaffoldMessengerState> snackbarKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   static final navigatorKey = GlobalKey<NavigatorState>();
   @override
   State<KumaAnime> createState() => _KumaAnimeState();
 }
 
-class _KumaAnimeState extends State<KumaAnime> {
+class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
   StreamSubscription<Uri>? _sub;
   late AppLinks _appLinks;
 
@@ -192,18 +210,16 @@ class _KumaAnimeState extends State<KumaAnime> {
 
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-      onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: Colors.transparent,
-      systemNavigationBarContrastEnforced: false,
-    ));
+    WidgetsBinding.instance.addObserver(this);
+    _applyEdgeToEdge();
 
     // if (currentUserSettings?.enableDiscordPresence ?? false)
     // FlutterDiscordRPC.instance.connect(autoRetry: true, retryDelay: Duration(seconds: 10));
@@ -211,8 +227,25 @@ class _KumaAnimeState extends State<KumaAnime> {
     super.initState();
   }
 
+  void _applyEdgeToEdge() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ));
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _applyEdgeToEdge();
+    super.didChangeAppLifecycleState(state);
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
 
     // if (currentUserSettings?.enableDiscordPresence ?? false) {
@@ -255,18 +288,8 @@ class _KumaAnimeState extends State<KumaAnime> {
   // This widget is the root of *my* application.
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = currentUserSettings?.darkMode ?? true;
-    return AnnotatedRegion(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-        statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarContrastEnforced: false,
-        systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-      ),
-      child: DynamicColorBuilder(
-        builder: (lightScheme, darkScheme) {
+    return DynamicColorBuilder(
+      builder: (lightScheme, darkScheme) {
           late KumaAnimeTheme scheme;
 
           //just checks for dark mode and sets the appTheme variable with suitable theme
@@ -276,20 +299,26 @@ class _KumaAnimeState extends State<KumaAnime> {
               backgroundColor: (currentUserSettings?.amoledBackground ?? false)
                   ? Colors.black
                   : darkScheme?.surface ?? appTheme.backgroundColor,
-              backgroundSubColor: darkScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
+              backgroundSubColor:
+                  darkScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
               textMainColor: darkScheme?.onSurface ?? appTheme.textMainColor,
-              textSubColor: darkScheme?.onSurfaceVariant ?? appTheme.textSubColor,
-              modalSheetBackgroundColor: darkScheme?.surface ?? appTheme.modalSheetBackgroundColor,
+              textSubColor:
+                  darkScheme?.onSurfaceVariant ?? appTheme.textSubColor,
+              modalSheetBackgroundColor:
+                  darkScheme?.surface ?? appTheme.modalSheetBackgroundColor,
               onAccent: darkScheme?.onPrimary ?? appTheme.onAccent,
             );
           } else {
             scheme = KumaAnimeTheme(
               accentColor: lightScheme?.primary ?? appTheme.accentColor,
               backgroundColor: lightScheme?.surface ?? appTheme.accentColor,
-              backgroundSubColor: lightScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
+              backgroundSubColor: lightScheme?.secondaryContainer ??
+                  appTheme.backgroundSubColor,
               textMainColor: lightScheme?.onSurface ?? appTheme.textMainColor,
-              textSubColor: lightScheme?.onSurfaceVariant ?? appTheme.textSubColor,
-              modalSheetBackgroundColor: lightScheme?.surface ?? appTheme.modalSheetBackgroundColor,
+              textSubColor:
+                  lightScheme?.onSurfaceVariant ?? appTheme.textSubColor,
+              modalSheetBackgroundColor:
+                  lightScheme?.surface ?? appTheme.modalSheetBackgroundColor,
               onAccent: lightScheme?.onPrimary ?? appTheme.onAccent,
             );
           }
@@ -320,49 +349,62 @@ class _KumaAnimeState extends State<KumaAnime> {
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness: themeProvider.isDark ? Brightness.light : Brightness.dark,
-              statusBarBrightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
+              statusBarIconBrightness:
+                  themeProvider.isDark ? Brightness.light : Brightness.dark,
+              statusBarBrightness:
+                  themeProvider.isDark ? Brightness.dark : Brightness.light,
               systemNavigationBarColor: Colors.transparent,
               systemNavigationBarContrastEnforced: false,
-              systemNavigationBarIconBrightness: themeProvider.isDark ? Brightness.light : Brightness.dark,
+              systemNavigationBarIconBrightness:
+                  themeProvider.isDark ? Brightness.light : Brightness.dark,
             ),
             child: MaterialApp(
-            title: 'Kuma Anime',
-            navigatorKey: KumaAnime.navigatorKey,
-            scaffoldMessengerKey: KumaAnime.snackbarKey,
-            locale: Locale(currentUserSettings?.locale ?? 'en'),
-            supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            theme: ThemeData(
-                useMaterial3: true,
-                brightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
-                fontFamily: currentUserSettings?.fontFamily ?? "NotoSans",
-                textTheme: Theme.of(context)
-                    .textTheme
-                    .apply(bodyColor: appTheme.textMainColor, fontFamily: currentUserSettings?.fontFamily ?? "NotoSans"),
-                scaffoldBackgroundColor: appTheme.backgroundColor,
-                bottomSheetTheme: BottomSheetThemeData(backgroundColor: appTheme.modalSheetBackgroundColor),
-                colorScheme: ColorScheme.fromSeed(
-                  brightness: themeProvider.isDark ? Brightness.dark : Brightness.light,
-                  seedColor: (currentUserSettings?.materialTheme ?? false) ? scheme.accentColor : appTheme.accentColor,
-                ),
-                iconTheme: IconThemeData(color: appTheme.textMainColor)),
-            builder: (context, child) {
-              final scale = (currentUserSettings?.textScale ?? 1.0).clamp(0.8, 1.4);
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
-                child: child!,
-              );
-            },
-            home: ChangeNotifierProvider(
-              create: (context) => MainNavProvider(),
-              child: Platform.isWindows || Platform.isLinux ? AppWrapper(firstPage: MainNavigator()) : MainNavigator(),
-            ),
-            debugShowCheckedModeBanner: false,
+              title: 'Kuma Anime',
+              navigatorKey: KumaAnime.navigatorKey,
+              scaffoldMessengerKey: KumaAnime.snackbarKey,
+              locale: Locale(currentUserSettings?.locale ?? 'en'),
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              theme: ThemeData(
+                  useMaterial3: true,
+                  brightness:
+                      themeProvider.isDark ? Brightness.dark : Brightness.light,
+                  fontFamily: currentUserSettings?.fontFamily ?? "NotoSans",
+                  textTheme: Theme.of(context).textTheme.apply(
+                      bodyColor: appTheme.textMainColor,
+                      fontFamily:
+                          currentUserSettings?.fontFamily ?? "NotoSans"),
+                  scaffoldBackgroundColor: appTheme.backgroundColor,
+                  bottomSheetTheme: BottomSheetThemeData(
+                      backgroundColor: appTheme.modalSheetBackgroundColor),
+                  colorScheme: ColorScheme.fromSeed(
+                    brightness: themeProvider.isDark
+                        ? Brightness.dark
+                        : Brightness.light,
+                    seedColor: (currentUserSettings?.materialTheme ?? false)
+                        ? scheme.accentColor
+                        : appTheme.accentColor,
+                  ),
+                  iconTheme: IconThemeData(color: appTheme.textMainColor)),
+              builder: (context, child) {
+                final scale =
+                    (currentUserSettings?.textScale ?? 1.0).clamp(0.8, 1.4);
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: TextScaler.linear(scale)),
+                  child: child!,
+                );
+              },
+              home: ChangeNotifierProvider(
+                create: (context) => MainNavProvider(),
+                child: Platform.isWindows || Platform.isLinux
+                    ? AppWrapper(firstPage: MainNavigator())
+                    : MainNavigator(),
+              ),
+              debugShowCheckedModeBanner: false,
             ),
           );
         },
-      ),
     );
   }
 }
