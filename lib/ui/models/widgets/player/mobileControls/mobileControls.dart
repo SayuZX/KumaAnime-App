@@ -12,6 +12,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/commons/systemBars.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
@@ -205,10 +206,12 @@ class _MobileControlsState extends State<MobileControls> {
       onTap: () {
         if (isMini) {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+          hideSystemBars();
           SystemChrome.setPreferredOrientations(
               const [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
         } else {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          showSystemBars();
           SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
         }
       },
