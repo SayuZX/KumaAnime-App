@@ -399,19 +399,29 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
           ),
         SliverPadding(
           padding: EdgeInsets.only(top: 16, left: 15, right: 15, bottom: MediaQuery.of(context).padding.bottom + 20),
-          sliver: SliverGrid.builder(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: (desktop ? 165.0 : 125.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
-              mainAxisExtent: (desktop ? 300.0 : 240.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: _items.length,
-            itemBuilder: (context, index) {
-              final anime = _items[index];
-              return SubIndoCard(anime: anime, onTap: () => _openDetail(anime));
-            },
-          ),
+          sliver: _layout == 'list'
+              ? SliverList.builder(
+                  itemCount: _items.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _listRow(_items[index]),
+                  ),
+                )
+              : SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: (_layout == 'compact' ? (desktop ? 120.0 : 95.0) : (desktop ? 165.0 : 125.0)) *
+                        (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+                    mainAxisExtent: (_layout == 'compact' ? (desktop ? 230.0 : 185.0) : (desktop ? 300.0 : 240.0)) *
+                        (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: _items.length,
+                  itemBuilder: (context, index) {
+                    final anime = _items[index];
+                    return SubIndoCard(anime: anime, onTap: () => _openDetail(anime));
+                  },
+                ),
         ),
         if (_loadingMore)
           SliverToBoxAdapter(
@@ -421,6 +431,74 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
             ),
           ),
       ],
+    );
+  }
+
+  String get _layout => currentUserSettings?.listLayout ?? 'grid';
+
+  Widget _listRow(SubIndoAnime anime) {
+    return GestureDetector(
+      onTap: () => _openDetail(anime),
+      child: Container(
+        decoration: BoxDecoration(color: appTheme.backgroundSubColor, borderRadius: BorderRadius.circular(14)),
+        clipBehavior: Clip.hardEdge,
+        child: Row(
+          children: [
+            CachedNetworkImage(
+              imageUrl: anime.poster,
+              width: 64,
+              height: 92,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(width: 64, height: 92, color: appTheme.backgroundColor),
+              errorWidget: (context, url, error) => Container(width: 64, height: 92, color: appTheme.backgroundColor),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(anime.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: appTheme.textMainColor, fontSize: 14, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        if (anime.score != null && anime.score!.isNotEmpty) ...[
+                          const Icon(Icons.star_rounded, size: 14, color: Color(0xFFF5C518)),
+                          const SizedBox(width: 3),
+                          Text(anime.score!, style: TextStyle(color: appTheme.textSubColor, fontSize: 12)),
+                          const SizedBox(width: 10),
+                        ],
+                        if (anime.episodes != null && anime.episodes!.isNotEmpty)
+                          Text("${anime.episodes} eps", style: TextStyle(color: appTheme.textSubColor, fontSize: 12)),
+                        if (anime.status != null && anime.status!.isNotEmpty) ...[
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: Text(anime.status!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: appTheme.textSubColor, fontSize: 12)),
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (anime.genres.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(anime.genres.take(3).map((g) => g.title).join(' • '),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: appTheme.textSubColor, fontSize: 11)),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
