@@ -153,25 +153,50 @@ class _StyledSeekBarState extends State<StyledSeekBar> with TickerProviderStateM
   }
 }
 
-class SeekbarStylePreview extends StatelessWidget {
+class SeekbarStylePreview extends StatefulWidget {
   final SeekbarStyle style;
   final Color activeColor;
 
   const SeekbarStylePreview({super.key, required this.style, required this.activeColor});
 
   @override
+  State<SeekbarStylePreview> createState() => _SeekbarStylePreviewState();
+}
+
+class _SeekbarStylePreviewState extends State<SeekbarStylePreview> with SingleTickerProviderStateMixin {
+  late final AnimationController _phase;
+
+  bool get _wavy => widget.style == SeekbarStyle.wavy || widget.style == SeekbarStyle.circular;
+
+  @override
+  void initState() {
+    super.initState();
+    _phase = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100));
+    if (_wavy) _phase.repeat();
+  }
+
+  @override
+  void dispose() {
+    _phase.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(64, 24),
-      painter: _SeekBarPainter(
-        style: style,
-        value: 0.5,
-        max: 1,
-        buffered: null,
-        phase: 0,
-        amplitude: (style == SeekbarStyle.wavy || style == SeekbarStyle.circular) ? 2.5 : 0,
-        showThumb: true,
-        activeColor: activeColor,
+    return AnimatedBuilder(
+      animation: _phase,
+      builder: (context, _) => CustomPaint(
+        size: const Size(64, 24),
+        painter: _SeekBarPainter(
+          style: widget.style,
+          value: 0.5,
+          max: 1,
+          buffered: null,
+          phase: _phase.value * 2 * pi,
+          amplitude: _wavy ? 2.5 : 0,
+          showThumb: true,
+          activeColor: widget.activeColor,
+        ),
       ),
     );
   }
