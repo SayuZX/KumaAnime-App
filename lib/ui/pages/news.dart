@@ -1,4 +1,5 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/ui/models/widgets/backButton.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 import 'package:kumaanime/core/news/animenews.dart';
 import 'package:kumaanime/core/news/kaoriNews.dart';
@@ -69,13 +70,7 @@ class _NewsState extends State<News> {
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            color: appTheme.textMainColor,
-          ),
-        ),
+        leading: KumaBackButton(),
         backgroundColor: appTheme.backgroundColor,
         title: Text(
           loc.newsTitle,
