@@ -5,6 +5,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:flutter/services.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
 class SubtitleSelectorSheet extends StatelessWidget {
   final SubtitleController controller;
@@ -39,7 +40,7 @@ class SubtitleSelectorSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Subtitle (Beta)",
+                AppLocalizations.of(context).subSelectorTitle,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: appTheme.textMainColor,
                   fontWeight: FontWeight.bold,
@@ -58,14 +59,14 @@ class SubtitleSelectorSheet extends StatelessWidget {
                   });
                 },
                 icon: Icon(Icons.settings_outlined, color: appTheme.accentColor),
-                tooltip: "Pengaturan Subtitle",
+                tooltip: AppLocalizations.of(context).subSelectorTooltip,
               ),
             ],
           ),
           const SizedBox(height: 16),
           _buildLanguageTile(
             context: context,
-            label: "Off",
+            label: AppLocalizations.of(context).subSelectorOff,
             isSelected: controller.selectedTrack == null,
             onTap: () {
               controller.changeTrack(null);
@@ -87,7 +88,7 @@ class SubtitleSelectorSheet extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  "Subtitle tidak tersedia untuk episode ini",
+                  AppLocalizations.of(context).subSelectorUnavailable,
                   style: theme.textTheme.bodyMedium?.copyWith(color: appTheme.textSubColor),
                 ),
               ),
