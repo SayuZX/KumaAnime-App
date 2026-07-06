@@ -10,6 +10,7 @@ import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:kumaanime/core/database/anilist/anilist.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/header.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
 class TerbaruPage extends StatefulWidget {
   const TerbaruPage({super.key});
@@ -40,16 +41,16 @@ class _TerbaruPageState extends State<TerbaruPage> with SingleTickerProviderStat
       body: SafeArea(
         child: Column(
           children: [
-            buildHeader("Terbaru", context),
+            buildHeader(AppLocalizations.of(context).tabTerbaru, context),
             TabBar(
               controller: _tabController,
               indicatorColor: appTheme.accentColor,
               labelColor: appTheme.accentColor,
               unselectedLabelColor: appTheme.textSubColor,
-              tabs: const [
-                Tab(text: "Episode Baru"),
-                Tab(text: "Anime Baru"),
-                Tab(text: "Manga Baru"),
+              tabs: [
+                Tab(text: AppLocalizations.of(context).tabTerbaruEpisodes),
+                Tab(text: AppLocalizations.of(context).tabTerbaruAnime),
+                Tab(text: AppLocalizations.of(context).tabTerbaruManga),
               ],
             ),
             Expanded(
@@ -293,11 +294,11 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
 
     if (isEpisode) {
       final epNum = raw['episode'] as int? ?? 0;
-      badgeText = "Ep $epNum";
+      badgeText = AppLocalizations.of(context).cbEpisodeNumber(epNum);
       final airingTime = raw['airingAt'] as int? ?? 0;
       subText = _formatRelativeTime(airingTime);
     } else {
-      badgeText = "NEW";
+      badgeText = AppLocalizations.of(context).badgeNew;
     }
 
     return {
@@ -316,13 +317,13 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
     final diff = now.difference(airingTime);
 
     if (diff.inDays > 0) {
-      return "${diff.inDays} hari yang lalu";
+      return AppLocalizations.of(context).labelAiringTimeDaysAgo(diff.inDays);
     } else if (diff.inHours > 0) {
-      return "${diff.inHours} jam yang lalu";
+      return AppLocalizations.of(context).labelAiringTimeHoursAgo(diff.inHours);
     } else if (diff.inMinutes > 0) {
-      return "${diff.inMinutes} menit yang lalu";
+      return AppLocalizations.of(context).labelAiringTimeMinutesAgo(diff.inMinutes);
     } else {
-      return "Baru saja";
+      return AppLocalizations.of(context).labelAiringTimeJustNow;
     }
   }
 
@@ -403,7 +404,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
           Icon(Icons.error_outline_rounded, size: 50, color: appTheme.textSubColor),
           const SizedBox(height: 12),
           Text(
-            "Gagal memuat data terbaru",
+            AppLocalizations.of(context).stateError,
             style: TextStyle(color: appTheme.textMainColor, fontSize: 16),
           ),
           const SizedBox(height: 16),
@@ -413,7 +414,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
               backgroundColor: appTheme.accentColor,
               foregroundColor: appTheme.onAccent,
             ),
-            child: const Text("Coba Lagi"),
+            child: Text(AppLocalizations.of(context).btnRetry),
           ),
         ],
       ),
@@ -428,12 +429,12 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
           Icon(Icons.wifi_off_rounded, size: 55, color: appTheme.textSubColor),
           const SizedBox(height: 12),
           Text(
-            "Koneksi Internet Terputus",
+            AppLocalizations.of(context).stateOffline,
             style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(
-            "Periksa jaringan Anda dan coba lagi",
+            AppLocalizations.of(context).stateOfflineSub,
             style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
           ),
           const SizedBox(height: 20),
@@ -443,7 +444,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
               backgroundColor: appTheme.accentColor,
               foregroundColor: appTheme.onAccent,
             ),
-            child: const Text("Coba Lagi"),
+            child: Text(AppLocalizations.of(context).btnRetry),
           ),
         ],
       ),
@@ -480,7 +481,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
           child: _items.isEmpty
               ? Center(
                   child: Text(
-                    "Tidak ada data tersedia",
+                    AppLocalizations.of(context).stateEmpty,
                     style: TextStyle(color: appTheme.textSubColor, fontSize: 14),
                   ),
                 )
@@ -560,9 +561,9 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
             child: Container(
               color: Colors.redAccent,
               padding: const EdgeInsets.symmetric(vertical: 4),
-              child: const Text(
-                "Anda sedang offline. Menampilkan data lokal (cached).",
-                style: TextStyle(color: Colors.white, fontSize: 12),
+              child: Text(
+                AppLocalizations.of(context).stateOfflineCacheAlert,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
                 textAlign: TextAlign.center,
               ),
             ),
