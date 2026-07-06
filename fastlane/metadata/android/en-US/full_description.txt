@@ -1,0 +1,1 @@
+Kuma Anime is a beautiful, open-source application to stream and download anime directly on your Android device. It supports highly customizable external subtitles, weekly airing schedules, recent updates, and local download management, all packaged in a modern Material 3 interface.
