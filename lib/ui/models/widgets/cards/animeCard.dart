@@ -197,7 +197,51 @@ class _AnimeCardState extends State<AnimeCard> {
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  if (widget.subText != null)
+                    Positioned(
+                      left: 0,
+                      bottom: 10,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: const Radius.circular(15),
+                            bottomLeft: Radius.circular(widget.isMobile
+                                ? 15
+                                : isFocused
+                                    ? 4
+                                    : 9),
+                          ),
+                          color: Colors.black.withValues(alpha: 0.65),
+                        ),
+                        constraints: BoxConstraints(maxWidth: width / 2),
+                        padding: const EdgeInsets.only(left: 6, right: 6, top: 3, bottom: 3),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.subIcon != null) ...[
+                              Icon(
+                                widget.subIcon,
+                                size: 10,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 3),
+                            ],
+                            Flexible(
+                              child: Text(
+                                widget.subText!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
               Text(
@@ -210,33 +254,6 @@ class _AnimeCardState extends State<AnimeCard> {
                     fontSize: 15,
                     color: isFocused ? appTheme.accentColor : appTheme.textMainColor),
               ),
-              if (widget.subText != null) ...[
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (widget.subIcon != null) ...[
-                      Icon(
-                        widget.subIcon,
-                        size: 11,
-                        color: appTheme.textSubColor,
-                      ),
-                      const SizedBox(width: 4),
-                    ],
-                    Flexible(
-                      child: Text(
-                        widget.subText!,
-                        style: TextStyle(
-                          color: appTheme.textSubColor,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ]
             ],
           ),
         ),
