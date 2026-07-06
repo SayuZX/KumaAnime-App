@@ -12,6 +12,7 @@ enum EpisodeViewModes { tile, grid, list }
 
 enum SubtitleFormat {
   ASS,
+  SSA,
   VTT,
   SRT;
 
@@ -19,6 +20,7 @@ enum SubtitleFormat {
     return switch (name.toLowerCase()) {
       "vtt" => SubtitleFormat.VTT,
       "ass" => SubtitleFormat.ASS,
+      "ssa" => SubtitleFormat.SSA,
       "srt" => SubtitleFormat.SRT,
       _ => throw ArgumentError("$name doesnt exist on SubtitleFormat enum"),
     };
