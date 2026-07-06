@@ -20,6 +20,10 @@ class SubtitleSettings {
   final bool bold;
   final bool enableShadows;
 
+  final double opacity;
+  final double offset; // in seconds
+  final String defaultLanguage;
+
   const SubtitleSettings({
     this.backgroundColor = Colors.black,
     this.backgroundTransparency = 0,
@@ -31,6 +35,9 @@ class SubtitleSettings {
     this.fontFamily = "Rubik",
     this.bold = false,
     this.enableShadows = true,
+    this.opacity = 1.0,
+    this.offset = 0.0,
+    this.defaultLanguage = "Indonesia",
   });
 
   SubtitleSettings copyWith({
@@ -44,6 +51,9 @@ class SubtitleSettings {
     double? backgroundTransparency,
     bool? bold,
     bool? enableShadows,
+    double? opacity,
+    double? offset,
+    String? defaultLanguage,
   }) {
     return SubtitleSettings(
       textColor: textColor ?? this.textColor,
@@ -56,6 +66,9 @@ class SubtitleSettings {
       backgroundTransparency: backgroundTransparency ?? this.backgroundTransparency,
       bold: bold ?? this.bold,
       enableShadows: enableShadows ?? this.enableShadows,
+      opacity: opacity ?? this.opacity,
+      offset: offset ?? this.offset,
+      defaultLanguage: defaultLanguage ?? this.defaultLanguage,
     );
   }
 
@@ -71,21 +84,28 @@ class SubtitleSettings {
       'backgroundTransparency': backgroundTransparency,
       'bold': bold,
       'enableShadows': enableShadows,
+      'opacity': opacity,
+      'offset': offset,
+      'defaultLanguage': defaultLanguage,
     };
   }
 
   factory SubtitleSettings.fromMap(Map<dynamic, dynamic> map) {
     return SubtitleSettings(
-        textColor: Color(map['textColor'] as int? ?? Colors.white.toInt()),
-        strokeColor: Color(map['strokeColor'] as int? ?? Colors.black.toInt()),
-        backgroundColor: Color((map['backgroundColor'] ?? Colors.black.toInt()) as int),
-        fontFamily: map['fontFamily'] != null ? map['fontFamily'] as String : "Rubik",
-        strokeWidth: (map['strokeWidth'] ?? 1.1) as double,
-        fontSize: (map['fontSize'] ?? 24) as double,
-        bottomMargin: (map['bottomMargin'] ?? 30) as double,
-        backgroundTransparency: (map['backgroundTransparency'] ?? 0) as double,
-        bold: (map['bold'] ?? false) as bool,
-        enableShadows: (map['enableShadows'] ?? true) as bool);
+      textColor: Color(map['textColor'] as int? ?? Colors.white.toInt()),
+      strokeColor: Color(map['strokeColor'] as int? ?? Colors.black.toInt()),
+      backgroundColor: Color((map['backgroundColor'] ?? Colors.black.toInt()) as int),
+      fontFamily: map['fontFamily'] != null ? map['fontFamily'] as String : "Rubik",
+      strokeWidth: (map['strokeWidth'] ?? 1.1) as double,
+      fontSize: (map['fontSize'] ?? 24) as double,
+      bottomMargin: (map['bottomMargin'] ?? 30) as double,
+      backgroundTransparency: (map['backgroundTransparency'] ?? 0) as double,
+      bold: (map['bold'] ?? false) as bool,
+      enableShadows: (map['enableShadows'] ?? true) as bool,
+      opacity: (map['opacity'] ?? 1.0) as double,
+      offset: (map['offset'] ?? 0.0) as double,
+      defaultLanguage: (map['defaultLanguage'] ?? "Indonesia") as String,
+    );
   }
 
   String toJson() => json.encode(toMap());
@@ -95,6 +115,6 @@ class SubtitleSettings {
 
   @override
   String toString() {
-    return 'SubtitleSettings(textColor: $textColor, strokeColor: $strokeColor, backgroundColor: $backgroundColor, fontFamily: $fontFamily, strokeWidth: $strokeWidth, fontSize: $fontSize, bottomMargin: $bottomMargin, backgroundTransparency: $backgroundTransparency, bold: $bold, enableShadows: $enableShadows)';
+    return 'SubtitleSettings(textColor: $textColor, strokeColor: $strokeColor, backgroundColor: $backgroundColor, fontFamily: $fontFamily, strokeWidth: $strokeWidth, fontSize: $fontSize, bottomMargin: $bottomMargin, backgroundTransparency: $backgroundTransparency, bold: $bold, enableShadows: $enableShadows, opacity: $opacity, offset: $offset, defaultLanguage: $defaultLanguage)';
   }
 }
