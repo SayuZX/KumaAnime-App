@@ -174,8 +174,7 @@ class _AnimeCardState extends State<AnimeCard> {
                                     : 9)),
                         color: appTheme.accentColor,
                       ),
-                      width: width / 2,
-                      padding: EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
+                      padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -214,7 +213,7 @@ class _AnimeCardState extends State<AnimeCard> {
                           ),
                           color: Colors.black.withValues(alpha: 0.65),
                         ),
-                        constraints: BoxConstraints(maxWidth: width / 2),
+                        constraints: BoxConstraints(maxWidth: width * 0.7),
                         padding: const EdgeInsets.only(left: 6, right: 6, top: 3, bottom: 3),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
