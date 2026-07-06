@@ -9,6 +9,7 @@ import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:kumaanime/core/database/anilist/anilist.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/header.dart';
+import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
 class JadwalPage extends StatefulWidget {
   const JadwalPage({super.key});
@@ -24,15 +25,6 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
   bool _isError = false;
   bool _isOffline = false;
 
-  final List<String> _days = [
-    "Senin",
-    "Selasa",
-    "Rabu",
-    "Kamis",
-    "Jumat",
-    "Sabtu",
-    "Minggu",
-  ];
 
   @override
   void initState() {
@@ -244,7 +236,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
           Icon(Icons.error_outline_rounded, size: 50, color: appTheme.textSubColor),
           const SizedBox(height: 12),
           Text(
-            "Gagal memuat jadwal tayang",
+            AppLocalizations.of(context).stateErrorJadwal,
             style: TextStyle(color: appTheme.textMainColor, fontSize: 16),
           ),
           const SizedBox(height: 16),
@@ -257,7 +249,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
               backgroundColor: appTheme.accentColor,
               foregroundColor: appTheme.onAccent,
             ),
-            child: const Text("Coba Lagi"),
+            child: Text(AppLocalizations.of(context).btnRetry),
           ),
         ],
       ),
@@ -272,12 +264,12 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
           Icon(Icons.wifi_off_rounded, size: 55, color: appTheme.textSubColor),
           const SizedBox(height: 12),
           Text(
-            "Koneksi Internet Terputus",
+            AppLocalizations.of(context).stateOffline,
             style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(
-            "Periksa jaringan Anda dan coba lagi",
+            AppLocalizations.of(context).stateOfflineSub,
             style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
           ),
           const SizedBox(height: 20),
@@ -290,7 +282,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
               backgroundColor: appTheme.accentColor,
               foregroundColor: appTheme.onAccent,
             ),
-            child: const Text("Coba Lagi"),
+            child: Text(AppLocalizations.of(context).btnRetry),
           ),
         ],
       ),
@@ -302,7 +294,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
     if (list.isEmpty) {
       return Center(
         child: Text(
-          "Tidak ada anime rilis hari ini",
+          AppLocalizations.of(context).stateEmptyJadwal,
           style: TextStyle(color: appTheme.textSubColor, fontSize: 14),
         ),
       );
@@ -339,7 +331,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  "Ep ${item['episode']}",
+                  AppLocalizations.of(context).cbEpisodeNumber(item['episode'] as int),
                   style: TextStyle(
                     color: appTheme.onAccent,
                     fontSize: 10,
@@ -359,7 +351,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  "Tayang ${item['time']}",
+                  AppLocalizations.of(context).labelAiringTime(item['time'] as String),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 9,
@@ -378,6 +370,16 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final days = [
+      AppLocalizations.of(context).daysSenin,
+      AppLocalizations.of(context).daysSelasa,
+      AppLocalizations.of(context).daysRabu,
+      AppLocalizations.of(context).daysKamis,
+      AppLocalizations.of(context).daysJumat,
+      AppLocalizations.of(context).daysSabtu,
+      AppLocalizations.of(context).daysMinggu,
+    ];
+
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SafeArea(
@@ -387,14 +389,14 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
           backgroundColor: appTheme.backgroundSubColor,
           child: Column(
             children: [
-              buildHeader("Jadwal", context),
+              buildHeader(AppLocalizations.of(context).tabJadwal, context),
               TabBar(
                 controller: _tabController,
                 isScrollable: true,
                 indicatorColor: appTheme.accentColor,
                 labelColor: appTheme.accentColor,
                 unselectedLabelColor: appTheme.textSubColor,
-                tabs: _days.map((day) => Tab(text: day)).toList(),
+                tabs: days.map((day) => Tab(text: day)).toList(),
               ),
               Expanded(
                 child: _isLoading
@@ -417,9 +419,9 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
                                       child: Container(
                                         color: Colors.redAccent,
                                         padding: const EdgeInsets.symmetric(vertical: 4),
-                                        child: const Text(
-                                          "Anda sedang offline. Menampilkan data lokal (cached).",
-                                          style: TextStyle(color: Colors.white, fontSize: 12),
+                                        child: Text(
+                                          AppLocalizations.of(context).stateOfflineCacheAlert,
+                                          style: const TextStyle(color: Colors.white, fontSize: 12),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
