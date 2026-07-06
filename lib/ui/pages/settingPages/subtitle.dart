@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:kumaanime/ui/models/widgets/backButton.dart';
-
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/preferences.dart';
 import 'package:kumaanime/core/data/types.dart';
@@ -23,21 +22,50 @@ class SubtitleSettingPage extends StatefulWidget {
 }
 
 class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
+  bool initialised = false;
+  bool previewMode = false;
+  int ind = 0;
+  late SubtitleSettings settings;
+
+  final fonts = ["Rubik", "Poppins", "NotoSans", "NunitoSans", "Inter", "OpenSans"];
+  final languages = ["Indonesia", "Jepang", "English"];
+
+  final textColors = [
+    Colors.white,
+    Colors.yellow,
+    Colors.cyan,
+    Colors.greenAccent,
+    Colors.redAccent,
+    Colors.pinkAccent,
+  ];
+
+  final strokeColors = [
+    Colors.black,
+    Colors.grey,
+    Colors.white,
+    Colors.red,
+    Colors.blue,
+  ];
+
+  final backgroundColors = [
+    Colors.black,
+    Colors.grey,
+    Colors.blueGrey,
+    Colors.indigo,
+    Colors.transparent,
+  ];
+
   @override
   void initState() {
     super.initState();
-
     if (widget.fromWatchPage) {
-      SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.portraitUp, DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft
+      ]);
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
-
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
-    // subtitleSettings = SubtitleSettings();
-    // settings = subtitleSettings;
     readSubSettings();
   }
 
@@ -47,8 +75,11 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
       SystemChrome.setPreferredOrientations(watchPreferredOrientations());
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     } else {
-      SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.portraitUp, DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft
+      ]);
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
     super.dispose();
@@ -57,7 +88,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
   void readSubSettings() async {
     UserPreferences.getUserPreferences().then((value) {
       setState(() {
-        settings = value.subtitleSettings ?? SubtitleSettings();
+        settings = value.subtitleSettings ?? const SubtitleSettings();
         initialised = true;
       });
     });
@@ -65,7 +96,6 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
 
   Future<void> saveSubSettings() async {
     await UserPreferences.saveUserPreferences(UserPreferencesModal(subtitleSettings: settings));
-    print("Sub preference saved!");
   }
 
   List<String> _sentences(AppLocalizations loc) => [
@@ -78,25 +108,13 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
     return _sentences(loc)[index];
   }
 
-  int ind = 0;
-
-  final fonts = ["Rubik", "Poppins", "NotoSans", "NunitoSans", "Inter", "OpenSans"];
-
-  bool initialised = false;
-  bool previewMode = false;
-
-  late SubtitleSettings settings;
-
   TextStyle subTextStyle() {
     return TextStyle(
       fontSize: (Platform.isWindows || Platform.isLinux) ? settings.fontSize * 1.5 : settings.fontSize,
       fontFamily: settings.fontFamily ?? "Rubik",
-      color: settings.textColor,
+      color: settings.textColor.withValues(alpha: settings.opacity),
       fontWeight: settings.bold ? FontWeight.w700 : FontWeight.w500,
-      // letterSpacing: -0.2,
-      // wordSpacing: 1,
-      fontFamilyFallback: ["Poppins"],
-      // backgroundColor: widget.settings.backgroundColor.withValues(alpha: widget.settings.backgroundTransparency),
+      fontFamilyFallback: const ["Poppins"],
     );
   }
 
@@ -107,15 +125,15 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
       canPop: !previewMode,
       onPopInvokedWithResult: (didPop, result) {
         if (previewMode) {
-          SystemChrome.setPreferredOrientations(
-              [DeviceOrientation.portraitUp, DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.landscapeRight,
+            DeviceOrientation.landscapeLeft
+          ]);
           setState(() {
             previewMode = false;
           });
         }
-        // else {
-        // Navigator.of(context).pop();
-        // }
       },
       child: Scaffold(
         backgroundColor: appTheme.backgroundColor,
@@ -124,13 +142,21 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
             : Padding(
                 padding: MediaQuery.paddingOf(context),
                 child: !initialised
-                    ? KumaBackButton(size: 35)
+                    ? const KumaBackButton(size: 35)
                     : Column(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              KumaBackButton(size: 35),
+                              const KumaBackButton(size: 35),
+                              const SizedBox(width: 10),
+                              Text(
+                                "Pengaturan Subtitle",
+                                style: TextStyle(
+                                  color: appTheme.textMainColor,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                           Stack(
@@ -138,9 +164,9 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                               Container(
                                 alignment: Alignment.bottomCenter,
                                 padding: EdgeInsets.only(top: 20, bottom: settings.bottomMargin),
-                                color: Colors.white,
-                                constraints: BoxConstraints(minHeight: 170),
-                                margin: EdgeInsets.only(bottom: 40),
+                                color: Colors.black26,
+                                constraints: const BoxConstraints(minHeight: 170),
+                                margin: const EdgeInsets.only(bottom: 20),
                                 child: Container(
                                   width: MediaQuery.of(context).size.width / 1.6,
                                   alignment: Alignment.bottomCenter,
@@ -156,39 +182,63 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                 ),
                               ),
                               Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: IconButton(
-                                      onPressed: () {
-                                        SystemChrome.setPreferredOrientations(
-                                            [DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
-                                        setState(() {
-                                          previewMode = true;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        Icons.fullscreen,
-                                        color: Colors.black,
-                                      ))),
+                                alignment: Alignment.bottomRight,
+                                child: IconButton(
+                                  onPressed: () {
+                                    SystemChrome.setPreferredOrientations([
+                                      DeviceOrientation.landscapeRight,
+                                      DeviceOrientation.landscapeLeft
+                                    ]);
+                                    setState(() {
+                                      previewMode = true;
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.fullscreen,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                           Expanded(
                             child: ListView(
-                              padding: EdgeInsets.only(bottom: 40),
+                              padding: const EdgeInsets.only(bottom: 40),
                               shrinkWrap: true,
                               children: [
+                                _sectionTitle("Bahasa Default"),
+                                _languageSelector(),
+                                const SizedBox(height: 16),
+                                _sectionTitle("Warna Teks"),
+                                _colorRow(textColors, settings.textColor, (c) {
+                                  setState(() => settings = settings.copyWith(textColor: c));
+                                  saveSubSettings();
+                                }),
+                                const SizedBox(height: 16),
+                                _sectionTitle("Warna Outline"),
+                                _colorRow(strokeColors, settings.strokeColor, (c) {
+                                  setState(() => settings = settings.copyWith(strokeColor: c));
+                                  saveSubSettings();
+                                }),
+                                const SizedBox(height: 16),
+                                _sectionTitle("Warna Background"),
+                                _colorRow(backgroundColors, settings.backgroundColor, (c) {
+                                  setState(() => settings = settings.copyWith(backgroundColor: c));
+                                  saveSubSettings();
+                                }),
+                                const SizedBox(height: 16),
                                 _itemTitle(loc.subFontFamily),
                                 Container(
-                                  margin: EdgeInsets.only(bottom: 20),
+                                  margin: const EdgeInsets.only(bottom: 20),
                                   height: 220,
                                   child: GridView(
-                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 20),
-                                    physics: NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
                                       childAspectRatio: 2,
                                       mainAxisExtent: 75,
                                     ),
-                                    // shrinkWrap: true,
                                     children: [
                                       for (var i = 0; i < fonts.length; i++)
                                         GestureDetector(
@@ -199,7 +249,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                             saveSubSettings();
                                           },
                                           child: Container(
-                                            margin: EdgeInsets.all(5),
+                                            margin: const EdgeInsets.all(5),
                                             decoration: BoxDecoration(
                                               color: settings.fontFamily == fonts[i]
                                                   ? appTheme.accentColor
@@ -257,6 +307,24 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: (30 - 15),
                                   ),
                                 ),
+                                _itemTitle("Opacity Teks"),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
+                                  child: CustomSlider(
+                                    value: settings.opacity,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        settings = settings.copyWith(opacity: val);
+                                      });
+                                    },
+                                    onDragEnd: (value) {
+                                      saveSubSettings();
+                                    },
+                                    min: 0.0,
+                                    max: 1.0,
+                                    divisions: 10,
+                                  ),
+                                ),
                                 _itemTitle(loc.subStrokeWidth),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
@@ -272,7 +340,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     },
                                     min: 0,
                                     max: 6,
-                                    divisions: 10,
+                                    divisions: 12,
                                   ),
                                 ),
                                 _itemTitle(loc.subBackgroundOpacity),
@@ -294,12 +362,27 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: 10,
                                   ),
                                 ),
+                                _itemTitle("Sinkronisasi Kecepatan (Offset Delay)"),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
+                                  child: CustomSlider(
+                                    value: settings.offset,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        settings = settings.copyWith(offset: double.parse(val.toStringAsFixed(1)));
+                                      });
+                                    },
+                                    onDragEnd: (value) {
+                                      saveSubSettings();
+                                    },
+                                    min: -5.0,
+                                    max: 5.0,
+                                    divisions: 100,
+                                  ),
+                                ),
                                 _itemTitle(loc.subBottomMargin),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 20,
-                                    right: 20,
-                                  ),
+                                  padding: const EdgeInsets.only(left: 20, right: 20),
                                   child: CustomSlider(
                                     value: settings.bottomMargin,
                                     onChanged: (val) {
@@ -332,9 +415,8 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
       Container(
         alignment: Alignment.bottomCenter,
         padding: EdgeInsets.only(top: 20, bottom: settings.bottomMargin),
-        color: Colors.white,
+        color: Colors.black26,
         height: MediaQuery.of(context).size.height,
-        // margin: EdgeInsets.only(bottom: settings.bottomMargin),
         child: Container(
           margin: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
           width: MediaQuery.of(context).size.width / 1.6,
@@ -364,7 +446,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
               children: [
                 Text(
                   loc.subPreviewMode,
-                  style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                     onPressed: () {
@@ -377,9 +459,9 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                         previewMode = false;
                       });
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.close,
-                      color: Colors.black,
+                      color: Colors.white,
                       size: 30,
                     )),
               ],
@@ -397,8 +479,8 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                       });
                     },
                     icon: Text("${index + 1}",
-                        style: TextStyle(
-                          color: Colors.black,
+                        style: const TextStyle(
+                          color: Colors.white,
                         )),
                   ),
                 );
@@ -410,10 +492,90 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
     ]);
   }
 
+  Widget _sectionTitle(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: appTheme.textMainColor,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _languageSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Wrap(
+        spacing: 10,
+        children: languages.map((lang) {
+          final isSelected = settings.defaultLanguage == lang;
+          return ChoiceChip(
+            label: Text(lang),
+            selected: isSelected,
+            onSelected: (val) {
+              if (val) {
+                setState(() => settings = settings.copyWith(defaultLanguage: lang));
+                saveSubSettings();
+              }
+            },
+            selectedColor: appTheme.accentColor,
+            labelStyle: TextStyle(
+              color: isSelected ? appTheme.onAccent : appTheme.textMainColor,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _colorRow(List<Color> colors, Color selectedColor, ValueChanged<Color> onSelected) {
+    return SizedBox(
+      height: 50,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: colors.length,
+        itemBuilder: (context, index) {
+          final color = colors[index];
+          final isSelected = selectedColor == color || (color == Colors.transparent && selectedColor.a == 0);
+          return GestureDetector(
+            onTap: () => onSelected(color),
+            child: Container(
+              width: 40,
+              height: 40,
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected
+                      ? (color == Colors.white ? Colors.black54 : Colors.white)
+                      : Colors.grey.withValues(alpha: 0.3),
+                  width: isSelected ? 3 : 1,
+                ),
+              ),
+              child: isSelected
+                  ? Icon(
+                      Icons.check,
+                      color: color == Colors.white ? Colors.black87 : Colors.white,
+                      size: 20,
+                    )
+                  : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Center _itemTitle(String title) => Center(
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          padding: const EdgeInsets.only(bottom: 20, top: 10),
+          child: Text(title, style: TextStyle(color: appTheme.textMainColor, fontSize: 20, fontWeight: FontWeight.bold)),
         ),
       );
 }
