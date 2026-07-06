@@ -55,11 +55,12 @@ class PlayerDataProvider extends ChangeNotifier {
 
   PlayerDataProviderState get state => _state;
 
-  late SubtitleSettings subtitleSettings;
+  SubtitleSettings? _subtitleSettings;
+  SubtitleSettings get subtitleSettings => _subtitleSettings ?? SubtitleSettings();
 
   /// Call this to refresh/init subs settings
   void initSubsettings() => UserPreferences.getUserPreferences().then((val) {
-        subtitleSettings = val.subtitleSettings ?? SubtitleSettings();
+        _subtitleSettings = val.subtitleSettings ?? SubtitleSettings();
         _state = _state.copyWith(subsInited: true);
         notifyListeners();
       });
@@ -201,7 +202,8 @@ class PlayerDataProvider extends ChangeNotifier {
 
   /// Update subtitle settings
   void updateSubtitleSettings(SubtitleSettings settings) {
-    subtitleSettings = settings;
+    _subtitleSettings = settings;
+    notifyListeners();
   }
 
   /// Update any value from state
