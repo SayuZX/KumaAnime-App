@@ -149,6 +149,7 @@ class Cards {
     bool shouldNavigate = true,
     bool isAnime = true,
     String? subText = null,
+    IconData? subIcon = null,
     double? rating = null,
     bool? isMobile,
     void Function()? afterNavigation,
@@ -163,6 +164,7 @@ class Cards {
       shouldNavigate: shouldNavigate,
       isAnime: isAnime,
       subText: subText,
+      subIcon: subIcon,
       rating: rating,
       isMobile: isMobile ?? Platform.isAndroid,
     );
