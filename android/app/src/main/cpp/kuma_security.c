@@ -96,3 +96,49 @@ int kuma_anti_debug(void) {
     while (*p == ' ' || *p == '\t') p++;
     return (*p != '0') ? 1 : 0;
 }
+
+__attribute__((visibility("default")))
+void kuma_xor_buffer(uint8_t *buffer, uint32_t length, const uint8_t *key, uint32_t key_len) {
+    if (!buffer || !key || key_len == 0) return;
+    
+    for (uint32_t i = 0; i < length; i++) {
+        buffer[i] ^= key[i % key_len];
+    }
+}
+
+__attribute__((visibility("default")))
+uint64_t kuma_derive_seed(uint64_t base, uint64_t salt) {
+    uint64_t result = kuma_rotl(base, 17);
+    result ^= salt;
+    result = kuma_rotl(result, 31);
+    result *= 0x100000001B3ull;
+    result ^= kuma_rotl(salt, 7);
+    return result;
+}
+
+__attribute__((visibility("default")))
+int kuma_check_root(void) {
+    const char *paths[] = {
+        "/system/bin/su",
+        "/system/xbin/su",
+        "/sbin/su",
+        "/system/su",
+        NULL
+    };
+    
+    for (int i = 0; paths[i] != NULL; i++) {
+        if (access(paths[i], F_OK) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+__attribute__((visibility("default")))
+void kuma_secure_zero(void *ptr, size_t len) {
+    if (!ptr || len == 0) return;
+    volatile uint8_t *vptr = (volatile uint8_t *)ptr;
+    for (size_t i = 0; i < len; i++) {
+        vptr[i] = 0;
+    }
+}
