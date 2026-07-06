@@ -19,6 +19,7 @@ class AnimeCard extends StatefulWidget {
   final bool isAnime;
   final bool isMobile;
   final String? subText;
+  final IconData? subIcon;
   final double? rating;
   final void Function()? afterNavigation;
 
@@ -33,6 +34,7 @@ class AnimeCard extends StatefulWidget {
     this.rating = null,
     this.shouldNavigate = true,
     this.subText = null,
+    this.subIcon = null,
     this.isMobile = true,
   });
 
@@ -208,11 +210,33 @@ class _AnimeCardState extends State<AnimeCard> {
                     fontSize: 15,
                     color: isFocused ? appTheme.accentColor : appTheme.textMainColor),
               ),
-              if (widget.subText != null)
-                Text(
-                  widget.subText!,
-                  style: TextStyle(color: appTheme.textSubColor),
-                )
+              if (widget.subText != null) ...[
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.subIcon != null) ...[
+                      Icon(
+                        widget.subIcon,
+                        size: 11,
+                        color: appTheme.textSubColor,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    Flexible(
+                      child: Text(
+                        widget.subText!,
+                        style: TextStyle(
+                          color: appTheme.textSubColor,
+                          fontSize: 12,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ]
             ],
           ),
         ),
