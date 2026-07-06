@@ -1,9 +1,10 @@
+import 'package:kumaanime/controllers/subtitle_controller.dart';
+import 'package:kumaanime/ui/models/bottomSheets/subtitleSelectorSheet.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/ui/models/bottomSheets/customControlsSheet.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
-import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -218,17 +219,19 @@ class BottomControls extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        playerProvider.toggleSubs();
-                      },
-                      onLongPress: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (ctx) => SubtitleSettingPage(
-                                      fromWatchPage: true,
-                                    )))
-                            .then((v) {
-                          dataProvider.initSubsettings();
-                        });
+                        final subController = context.read<SubtitleController>();
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => SubtitleSelectorSheet(
+                            controller: subController,
+                            playerProvider: playerProvider,
+                            onSettingsChanged: () {
+                              dataProvider.initSubsettings();
+                            },
+                          ),
+                        );
                       },
                       tooltip: loc.bcSubtitles,
                       icon: Icon(
