@@ -563,5 +563,7 @@
   "@labelAiringTimeHoursAgo": {"placeholders":{"count":{"type":"int"}}},
   "labelAiringTimeMinutesAgo": "{count} menit yang lalu",
   "@labelAiringTimeMinutesAgo": {"placeholders":{"count":{"type":"int"}}},
-  "labelAiringTimeJustNow": "Baru saja"
+  "labelAiringTimeJustNow": "Baru saja",
+  "labelAiringTimeDaysAgo": "{count} hari yang lalu",
+  "@labelAiringTimeDaysAgo": {"placeholders":{"count":{"type":"int"}}}
 }

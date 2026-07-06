@@ -613,5 +613,7 @@
   "@labelAiringTimeHoursAgo": {"placeholders":{"count":{"type":"int"}}},
   "labelAiringTimeMinutesAgo": "{count} minutes ago",
   "@labelAiringTimeMinutesAgo": {"placeholders":{"count":{"type":"int"}}},
-  "labelAiringTimeJustNow": "Just now"
+  "labelAiringTimeJustNow": "Just now",
+  "labelAiringTimeDaysAgo": "{count} days ago",
+  "@labelAiringTimeDaysAgo": {"placeholders":{"count":{"type":"int"}}}
 }
