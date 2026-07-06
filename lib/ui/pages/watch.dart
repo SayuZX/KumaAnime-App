@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'package:kumaanime/controllers/subtitle_controller.dart';
 import 'package:kumaanime/core/commons/enums.dart';
 import 'package:kumaanime/core/data/watching.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
@@ -45,6 +46,9 @@ class Watch extends StatefulWidget {
 
 class _WatchState extends State<Watch> with WidgetsBindingObserver {
   late VideoController controller;
+  late final SubtitleController _subController;
+  VoidCallback? _dataProviderListener;
+  bool? _lastYoutubeLayout;
 
   int? _countedEpIndex;
 
@@ -54,6 +58,8 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     setWatchMode();
 
     controller = widget.controller;
+    _subController = SubtitleController();
+    _subController.addListener(_onSubtitleError);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initialize();
@@ -61,6 +67,22 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     });
 
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  void _onSubtitleError() {
+    if (_subController.errorMessage != null && mounted) {
+      floatingSnackBar(_subController.errorMessage!);
+    }
+  }
+
+  void _loadExternalSubtitles() {
+    if (!widget.localSource && mounted) {
+      final dataProvider = context.read<PlayerDataProvider>();
+      final animeId = dataProvider.showId;
+      final epNum = dataProvider.epLinks[dataProvider.state.currentEpIndex].episodeNumber;
+      final defaultLang = dataProvider.subtitleSettings.defaultLanguage;
+      _subController.loadSubtitlesForEpisode(animeId, epNum, defaultLang);
+    }
   }
 
   @override
@@ -104,6 +126,16 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     Logs.player.log("Initializing stream ${dataProvider.state.currentStream}");
 
     dataProvider.initSubsettings();
+
+    int lastEpIndex = dataProvider.state.currentEpIndex;
+    _dataProviderListener = () {
+      if (dataProvider.state.currentEpIndex != lastEpIndex) {
+        lastEpIndex = dataProvider.state.currentEpIndex;
+        _loadExternalSubtitles();
+      }
+    };
+    dataProvider.addListener(_dataProviderListener!);
+    _loadExternalSubtitles();
 
     if (!widget.localSource) {
       await dataProvider.extractCurrentStreamQualities();
@@ -464,8 +496,10 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
     final youtubeLayout = _useYoutubeLayout(MediaQuery.orientationOf(context));
     _applySystemUiForLayout(youtubeLayout);
 
-    return PopScope(
-      canPop: youtubeLayout || !Platform.isAndroid,
+    return ChangeNotifierProvider<SubtitleController>.value(
+      value: _subController,
+      child: PopScope(
+        canPop: youtubeLayout || !Platform.isAndroid,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           // back from fullscreen returns to the portrait player instead of leaving
@@ -608,14 +642,17 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
               child: Stack(
                 children: [
                   Player(controller),
-                  if (playerProvider.state.showSubs && playerDataProvider.state.currentStream.subtitle != null)
-                    SubViewer(
-                      controller: controller,
-                      format: SubtitleFormat.fromName(
-                          playerDataProvider.state.currentStream.subtitleFormat ?? SubtitleFormat.ASS.name),
-                      subtitleSource: playerDataProvider.state.currentStream.subtitle!,
-                      settings: playerDataProvider.subtitleSettings,
-                      headers: playerDataProvider.state.currentStream.customHeaders,
+                  if (playerProvider.state.showSubs)
+                    ListenableBuilder(
+                      listenable: _subController,
+                      builder: (context, _) {
+                        return SubViewer(
+                          controller: controller,
+                          subs: _subController.parsedSubtitles,
+                          isLoading: _subController.isLoading,
+                          settings: playerDataProvider.subtitleSettings,
+                        );
+                      },
                     ),
                   isInitiated
                       ? AnimatedOpacity(
@@ -657,10 +694,9 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
           ),
         ),
       ),
+    ),
     );
   }
-
-  bool? _lastYoutubeLayout;
 
   bool _useYoutubeLayout(Orientation orientation) {
     switch (currentUserSettings?.playerOrientation ?? 'auto') {
@@ -933,6 +969,11 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _subController.removeListener(_onSubtitleError);
+    _subController.dispose();
+    if (_dataProviderListener != null) {
+      context.read<PlayerDataProvider>().removeListener(_dataProviderListener!);
+    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     showSystemBars();
     SystemChrome.setPreferredOrientations(
