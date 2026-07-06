@@ -3,6 +3,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId
+        && !request.resource.data.keys().hasAny(['role', 'badges']);
+      allow update: if request.auth != null && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'badges']);
+
+      match /bookmarks/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      match /history/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
     match /social_users/{userId} {
       allow read: if true;
       allow write: if request.auth != null && request.auth.uid == userId;

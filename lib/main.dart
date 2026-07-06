@@ -13,6 +13,12 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:kumaanime/core/auth/providers/auth_provider.dart';
+import 'package:kumaanime/core/auth/repositories/auth_repository_impl.dart';
+import 'package:kumaanime/core/auth/repositories/user_repository.dart';
+import 'package:kumaanime/core/auth/services/auth0_service.dart';
+import 'package:kumaanime/core/auth/services/account_linking_service.dart';
 
 import 'package:kumaanime/core/anime/providers/animeonsen.dart';
 import 'package:kumaanime/core/app/logging.dart';
@@ -64,7 +70,19 @@ void main(List<String> args) async {
 
     await loadAndAssignSettings();
 
-    if (Platform.isAndroid) await SocialService.instance.init();
+    AuthProvider? authProvider;
+    if (Platform.isAndroid) {
+      await Firebase.initializeApp();
+      
+      final userRepository = UserRepository();
+      final auth0Service = Auth0Service();
+      final linkingService = AccountLinkingService(userRepository);
+      final authRepository = AuthRepositoryImpl(auth0Service, userRepository, linkingService);
+      authProvider = AuthProvider(authRepository);
+      await authProvider.initialize();
+      
+      await SocialService.instance.init();
+    }
 
     if (!Platform.isAndroid) {
       fvp.registerWith();
@@ -119,8 +137,11 @@ void main(List<String> args) async {
     ));
 
     runApp(
-      ChangeNotifierProvider(
-        create: (context) => AppProvider(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => AppProvider()),
+          if (authProvider != null) ChangeNotifierProvider.value(value: authProvider),
+        ],
         child: const KumaSecureWidget(child: KumaAnime()),
       ),
     );

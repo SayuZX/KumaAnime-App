@@ -9,3 +9,9 @@
 
 # Do not warn about the native security library loader
 -dontwarn app.kumaanime.**
+
+-dontwarn com.google.android.play.core.**
+-keep class com.google.android.play.core.** { *; }
+
+-keep class io.flutter.embedding.engine.deferredcomponents.** { *; }
+-keep class io.flutter.embedding.android.FlutterPlayStoreSplitApplication { *; }
