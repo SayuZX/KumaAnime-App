@@ -150,7 +150,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                               const KumaBackButton(size: 35),
                               const SizedBox(width: 10),
                               Text(
-                                "Pengaturan Subtitle",
+                                loc.subSettingsTitle,
                                 style: TextStyle(
                                   color: appTheme.textMainColor,
                                   fontSize: 22,
@@ -206,22 +206,22 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                               padding: const EdgeInsets.only(bottom: 40),
                               shrinkWrap: true,
                               children: [
-                                _sectionTitle("Bahasa Default"),
-                                _languageSelector(),
+                                _sectionTitle(loc.subSettingsDefaultLang),
+                                _languageSelector(loc),
                                 const SizedBox(height: 16),
-                                _sectionTitle("Warna Teks"),
+                                _sectionTitle(loc.subSettingsTextColor),
                                 _colorRow(textColors, settings.textColor, (c) {
                                   setState(() => settings = settings.copyWith(textColor: c));
                                   saveSubSettings();
                                 }),
                                 const SizedBox(height: 16),
-                                _sectionTitle("Warna Outline"),
+                                _sectionTitle(loc.subSettingsStrokeColor),
                                 _colorRow(strokeColors, settings.strokeColor, (c) {
                                   setState(() => settings = settings.copyWith(strokeColor: c));
                                   saveSubSettings();
                                 }),
                                 const SizedBox(height: 16),
-                                _sectionTitle("Warna Background"),
+                                _sectionTitle(loc.subSettingsBgColor),
                                 _colorRow(backgroundColors, settings.backgroundColor, (c) {
                                   setState(() => settings = settings.copyWith(backgroundColor: c));
                                   saveSubSettings();
@@ -307,7 +307,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: (30 - 15),
                                   ),
                                 ),
-                                _itemTitle("Opacity Teks"),
+                                _itemTitle(loc.subSettingsTextOpacity),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
                                   child: CustomSlider(
@@ -362,7 +362,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
                                     divisions: 10,
                                   ),
                                 ),
-                                _itemTitle("Sinkronisasi Kecepatan (Offset Delay)"),
+                                _itemTitle(loc.subSettingsOffset),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
                                   child: CustomSlider(
@@ -506,7 +506,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
     );
   }
 
-  Widget _languageSelector() {
+  Widget _languageSelector(AppLocalizations loc) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Wrap(
@@ -514,7 +514,7 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
         children: languages.map((lang) {
           final isSelected = settings.defaultLanguage == lang;
           return ChoiceChip(
-            label: Text(lang),
+            label: Text(_getTranslatedLanguageName(lang, loc)),
             selected: isSelected,
             onSelected: (val) {
               if (val) {
@@ -530,6 +530,15 @@ class _SubtitleSettingPageState extends State<SubtitleSettingPage> {
         }).toList(),
       ),
     );
+  }
+
+  String _getTranslatedLanguageName(String lang, AppLocalizations loc) {
+    if (lang == "Indonesia") return loc.subIndo;
+    if (lang == "English") return loc.subEng;
+    if (lang == "Jepang") {
+      return loc.localeName == "id" ? "Jepang" : "Japanese";
+    }
+    return lang;
   }
 
   Widget _colorRow(List<Color> colors, Color selectedColor, ValueChanged<Color> onSelected) {
