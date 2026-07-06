@@ -173,9 +173,9 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                           Icons.update_rounded,
                           color: _barController.currentIndex == 1 ? appTheme.onAccent : appTheme.textMainColor,
                         ),
-                        label: const Text(
-                          "Terbaru",
-                          style: TextStyle(fontSize: 18),
+                        label: Text(
+                          AppLocalizations.of(context).tabTerbaru,
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                       NavigationRailDestination(
@@ -183,9 +183,9 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                           Icons.calendar_today_rounded,
                           color: _barController.currentIndex == 2 ? appTheme.onAccent : appTheme.textMainColor,
                         ),
-                        label: const Text(
-                          "Jadwal",
-                          style: TextStyle(fontSize: 18),
+                        label: Text(
+                          AppLocalizations.of(context).tabJadwal,
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                       NavigationRailDestination(
@@ -267,8 +267,8 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                     appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
                 items: [
                   FloatyBarItem(title: AppLocalizations.of(context).navHome, icon: Icons.home),
-                  const FloatyBarItem(title: "Terbaru", icon: Icons.update_rounded),
-                  const FloatyBarItem(title: "Jadwal", icon: Icons.calendar_today_rounded),
+                  FloatyBarItem(title: AppLocalizations.of(context).tabTerbaru, icon: Icons.update_rounded),
+                  FloatyBarItem(title: AppLocalizations.of(context).tabJadwal, icon: Icons.calendar_today_rounded),
                   FloatyBarItem(title: AppLocalizations.of(context).navLibrary, icon: Icons.video_library_rounded),
                   FloatyBarItem(title: AppLocalizations.of(context).navMore, icon: Icons.grid_view_rounded),
                 ],
@@ -308,15 +308,15 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                     activeIcon: Icons.home_rounded,
                     label: AppLocalizations.of(context).navHome,
                   ),
-                  const LiquidGlassNavItem(
+                  LiquidGlassNavItem(
                     icon: Icons.update_outlined,
                     activeIcon: Icons.update_rounded,
-                    label: "Terbaru",
+                    label: AppLocalizations.of(context).tabTerbaru,
                   ),
-                  const LiquidGlassNavItem(
+                  LiquidGlassNavItem(
                     icon: Icons.calendar_today_outlined,
                     activeIcon: Icons.calendar_today_rounded,
-                    label: "Jadwal",
+                    label: AppLocalizations.of(context).tabJadwal,
                   ),
                   LiquidGlassNavItem(
                     icon: Icons.video_library_outlined,
