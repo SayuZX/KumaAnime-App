@@ -16,6 +16,15 @@ typedef _TokenDart = int Function(int, int);
 typedef _ValidateNative = Int32 Function(Uint64, Uint64, Uint64);
 typedef _ValidateDart = int Function(int, int, int);
 
+typedef _XorBufferNative = Void Function(Pointer<Uint8>, Uint32, Pointer<Uint8>, Uint32);
+typedef _XorBufferDart = void Function(Pointer<Uint8>, int, Pointer<Uint8>, int);
+
+typedef _DeriveSeedNative = Uint64 Function(Uint64, Uint64);
+typedef _DeriveSeedDart = int Function(int, int);
+
+typedef _SecureZeroNative = Void Function(Pointer<Uint8>, Uint32);
+typedef _SecureZeroDart = void Function(Pointer<Uint8>, int);
+
 class SecurityBindings {
   static DynamicLibrary? _lib;
 
@@ -54,4 +63,15 @@ class SecurityBindings {
     }
     return String.fromCharCodes(bytes);
   }
+
+  static void xorBuffer(Pointer<Uint8> buffer, int length, Pointer<Uint8> key, int keyLen) =>
+      _lib!.lookupFunction<_XorBufferNative, _XorBufferDart>('kuma_xor_buffer')(buffer, length, key, keyLen);
+
+  static int deriveSeed(int base, int salt) =>
+      _lib!.lookupFunction<_DeriveSeedNative, _DeriveSeedDart>('kuma_derive_seed')(base, salt);
+
+  static int checkRoot() => _lib!.lookupFunction<_IntNative, _IntDart>('kuma_check_root')();
+
+  static void secureZero(Pointer<Uint8> ptr, int len) =>
+      _lib!.lookupFunction<_SecureZeroNative, _SecureZeroDart>('kuma_secure_zero')(ptr, len);
 }
