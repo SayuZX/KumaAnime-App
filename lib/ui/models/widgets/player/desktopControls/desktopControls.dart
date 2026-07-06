@@ -5,11 +5,11 @@ import 'package:kumaanime/ui/models/bottomSheets/customControlsSheet.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
-import 'package:kumaanime/ui/models/widgets/ContextMenu.dart';
 import 'package:kumaanime/ui/models/widgets/player/desktopControls/pipMode.dart';
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
-import 'package:kumaanime/ui/pages/settingPages/subtitle.dart';
+import 'package:kumaanime/controllers/subtitle_controller.dart';
+import 'package:kumaanime/ui/models/bottomSheets/subtitleSelectorSheet.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -342,23 +342,23 @@ class _DesktopControlsState extends State<DesktopControls> {
                               ),
                             ),
 
-                            ContextMenu(
-                              menuItems: [
-                                ContextMenuItem(
-                                    icon: Icons.open_in_new,
-                                    label: loc.dcCustomizeSubs,
-                                    onClick: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(builder: (ctx) => SubtitleSettingPage()))
-                                          .then((v) => dataProvider.initSubsettings());
-                                    })
-                              ],
-                              child: IconButton(
-                                  onPressed: () {
-                                    provider.toggleSubs();
-                                  },
-                                  icon: makeIcon(provider.state.showSubs ? Icons.subtitles : Icons.subtitles_outlined)),
-                            ),
+                            IconButton(
+                                onPressed: () {
+                                  final subController = context.read<SubtitleController>();
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => SubtitleSelectorSheet(
+                                      controller: subController,
+                                      playerProvider: provider,
+                                      onSettingsChanged: () {
+                                        dataProvider.initSubsettings();
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: makeIcon(provider.state.showSubs ? Icons.subtitles : Icons.subtitles_outlined)),
                             // IconButton(
                             //   onPressed: () {
 
