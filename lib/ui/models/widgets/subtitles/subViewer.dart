@@ -1,30 +1,23 @@
 import 'dart:io';
 
-import 'package:kumaanime/core/app/logging.dart';
-import 'package:kumaanime/core/commons/enums.dart';
-import 'package:kumaanime/core/commons/subtitleParsers/subtitleParsers.dart';
-import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/playerControllers/videoController.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subtitle.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subtitleSettings.dart';
 import 'package:kumaanime/ui/models/widgets/subtitles/subtitleText.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class SubViewer extends StatefulWidget {
   final VideoController controller;
-  final String subtitleSource;
-  final Map<String, String>? headers;
-  final SubtitleFormat format;
+  final List<Subtitle> subs;
+  final bool isLoading;
   final SubtitleSettings settings;
 
   const SubViewer({
     super.key,
     required this.controller,
-    required this.format,
-    required this.subtitleSource,
+    required this.subs,
     required this.settings,
-    this.headers = const {},
+    this.isLoading = false,
   });
 
   @override
@@ -32,92 +25,58 @@ class SubViewer extends StatefulWidget {
 }
 
 class _SubViewerState extends State<SubViewer> {
+  List<Subtitle> activeSubtitles = [];
+  int lastLineIndex = 0;
+
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_updateSubtitle);
-    loadSubs();
-    print("[SUBVIEWER]: subs initialized");
+    _updateSubtitle();
   }
 
-  List<Subtitle> subs = [];
-
-  List<Subtitle> activeSubtitles = [];
-
-  bool areSubsLoading = true;
-
-  String? _loadedSubsUrl;
-
-  void loadSubs() async {
-    try {
-      setState(() {
-        areSubsLoading = true;
-      });
-      subs.clear(); // clear the old subs (if any)
-      print("[SUBVIEWER]: Loading ${widget.format.name} subs");
-      switch (widget.format) {
-        case SubtitleFormat.ASS:
-          subs = await Subtitleparsers().parseAss(widget.subtitleSource, headers: widget.headers ?? {});
-        case SubtitleFormat.VTT:
-          subs = await Subtitleparsers().parseVtt(widget.subtitleSource, headers: widget.headers ?? {});
-        case SubtitleFormat.SRT:
-          subs = await Subtitleparsers().parseSrt(widget.subtitleSource, headers: widget.headers ?? {});
-        // default:
-        // throw Exception("Not implemented!");
-      }
-      print(widget.subtitleSource);
-      _loadedSubsUrl = widget.subtitleSource; // for changing subs when episode changes
-      setState(() {
-        areSubsLoading = false;
-      });
-    } catch (err) {
-      Logs.player.log(err.toString());
-      SchedulerBinding.instance.addPostFrameCallback((dur) {
-        floatingSnackBar("Couldnt load the subtitles!");
-      });
-      setState(() {
-        areSubsLoading = false;
-      });
+  @override
+  void didUpdateWidget(SubViewer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.subs != widget.subs) {
+      lastLineIndex = 0;
+      activeSubtitles = [];
+      _updateSubtitle();
     }
   }
-
-  int lastLineIndex = 0;
 
   void _updateSubtitle() {
-    final currentPosition = widget.controller.position;
+    final rawPosition = widget.controller.position;
 
-    if (currentPosition == null || subs.isEmpty) return;
-
-    if (_loadedSubsUrl != widget.subtitleSource && !areSubsLoading) {
-      print("Subtitle Source Changed, Loading new subs..");
-      return loadSubs();
+    if (rawPosition == null || widget.subs.isEmpty) {
+      if (activeSubtitles.isNotEmpty) {
+        setState(() {
+          activeSubtitles = [];
+        });
+      }
+      return;
     }
 
-    // If we seeked backward (current time is before the last known start), reset hint.
-    if (lastLineIndex >= subs.length ||
-        (lastLineIndex > 0 && subs[lastLineIndex].start.inMilliseconds > currentPosition)) {
-      lastLineIndex = 0; // reset to start for safety
+    final currentPosition = rawPosition + (widget.settings.offset * 1000).round();
+
+    if (lastLineIndex >= widget.subs.length ||
+        (lastLineIndex > 0 && widget.subs[lastLineIndex].start.inMilliseconds > currentPosition)) {
+      lastLineIndex = 0;
     }
 
-    // Move forward past any subtitles that are over
-    while (lastLineIndex < subs.length && subs[lastLineIndex].end.inMilliseconds < currentPosition) {
+    while (lastLineIndex < widget.subs.length && widget.subs[lastLineIndex].end.inMilliseconds < currentPosition) {
       lastLineIndex++;
     }
 
     List<Subtitle> newMatches = [];
 
-    // Start checking from our synced index.
-    for (int i = lastLineIndex; i < subs.length; i++) {
-      final sub = subs[i];
+    for (int i = lastLineIndex; i < widget.subs.length; i++) {
+      final sub = widget.subs[i];
 
-      // If we hit a subtitle that starts in the future, we can stop looking entirely.
-      // Because the list is usually sorted, no subsequent subtitle can be active either.
       if (sub.start.inMilliseconds > currentPosition) {
         break;
       }
 
-      // If we are here, the subtitle started before now.
-      // We just need to check if it hasn't ended yet.
       if (sub.end.inMilliseconds >= currentPosition) {
         newMatches.add(sub);
       }
@@ -132,43 +91,61 @@ class _SubViewerState extends State<SubViewer> {
     }
   }
 
-  // Helper to compare lists efficiently
   bool _areSubtitleListsEqual(List<Subtitle> a, List<Subtitle> b) {
     if (a.length != b.length) return false;
     if (a.isEmpty && b.isEmpty) return true;
 
-    // compare the start n end times of the first and last subtitles
     return a.first.start.inMilliseconds == b.first.start.inMilliseconds &&
         a.first.end.inMilliseconds == b.first.end.inMilliseconds &&
         a.last.start.inMilliseconds == b.last.start.inMilliseconds &&
         a.last.end.inMilliseconds == b.last.end.inMilliseconds;
   }
 
-  //i tried to make it beautiful! okay???
   TextStyle subTextStyle() {
     return TextStyle(
       fontSize: (Platform.isWindows || Platform.isLinux) ? widget.settings.fontSize * 1.5 : widget.settings.fontSize,
       fontFamily: widget.settings.fontFamily ?? "Rubik",
       color: widget.settings.textColor,
       fontWeight: widget.settings.bold ? FontWeight.w700 : FontWeight.w500,
-      // letterSpacing: -0.2,
-      // wordSpacing: 1,
-      fontFamilyFallback: ["Poppins"],
-      // backgroundColor: widget.settings.backgroundColor.withValues(alpha: widget.settings.backgroundTransparency),
+      fontFamilyFallback: const ["Poppins"],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // I dont think this is a great idea to do this here, but oh boi!
+    if (widget.isLoading) {
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          margin: EdgeInsets.only(bottom: widget.settings.bottomMargin + 20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              ),
+              SizedBox(width: 8),
+              Text("Memuat Subtitle...", style: TextStyle(color: Colors.white, fontSize: 14)),
+            ],
+          ),
+        ),
+      );
+    }
+
     final Map<SubtitleAlignment, List<Subtitle>> subsGrouped = {};
     for (final sub in activeSubtitles) {
       subsGrouped.putIfAbsent(sub.alignment, () => []).add(sub);
     }
 
-    // Sort each group by start time for consistency
     for (var list in subsGrouped.values) {
-        list.sort((a, b) => a.start.compareTo(b.start));
+      list.sort((a, b) => a.start.compareTo(b.start));
     }
 
     final size = MediaQuery.of(context).size;
@@ -193,14 +170,17 @@ class _SubViewerState extends State<SubViewer> {
                     mainAxisSize: MainAxisSize.min,
                     children: subs
                         .map(
-                          (sub) => SubtitleText(
-                            text: areSubsLoading ? "Loading Subs" : sub.dialogue,
-                            style: subTextStyle(),
-                            strokeColor: widget.settings.strokeColor,
-                            strokeWidth: widget.settings.strokeWidth,
-                            backgroundColor: widget.settings.backgroundColor,
-                            backgroundTransparency: widget.settings.backgroundTransparency,
-                            enableShadows: widget.settings.enableShadows,
+                          (sub) => Opacity(
+                            opacity: widget.settings.opacity,
+                            child: SubtitleText(
+                              text: sub.dialogue,
+                              style: subTextStyle(),
+                              strokeColor: widget.settings.strokeColor,
+                              strokeWidth: widget.settings.strokeWidth,
+                              backgroundColor: widget.settings.backgroundColor,
+                              backgroundTransparency: widget.settings.backgroundTransparency,
+                              enableShadows: widget.settings.enableShadows,
+                            ),
                           ),
                         )
                         .toList(),
