@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
@@ -24,6 +25,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
   bool _isLoading = true;
   bool _isError = false;
   bool _isOffline = false;
+  bool _isFetching = false;
 
 
   @override
@@ -65,8 +67,20 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
   }
 
   Future<void> _fetchWeeklySchedule() async {
+    if (_isFetching) return;
+    _isFetching = true;
+
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _isError = false;
+        _isOffline = false;
+      });
+    }
+
     final online = await _checkConnection();
     if (!online) {
+      _isFetching = false;
       if (mounted) {
         setState(() {
           _isOffline = true;
@@ -85,7 +99,7 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
       final query = '''
         query {
           Page(perPage: 100) {
-            airingSchedules(airingAt_greater: $weekStart, airingAt_lesser: $weekEnd, sort: TIME_ASC) {
+            airingSchedules(airingAt_greater: $weekStart, airingAt_lesser: $weekEnd, sort: TIME) {
               episode
               airingAt
               media {
@@ -104,6 +118,12 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
           }
         }
       ''';
+
+      if (kDebugMode) {
+        print("[DEBUG] Airing Schedule Request URL: https://graphql.anilist.co");
+        print("[DEBUG] Parameters: weekStart=$weekStart, weekEnd=$weekEnd");
+        print("[DEBUG] Query:\n$query");
+      }
 
       final rawResponse = await Anilist().fetchQuery(query, null);
       if (rawResponse == null || rawResponse['Page'] == null) {
@@ -138,6 +158,11 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
         });
       }
 
+      if (kDebugMode) {
+        print("[DEBUG] HTTP Status: 200 (Success)");
+        print("[DEBUG] Parsing result: ${schedules.length} items parsed.");
+      }
+
       if (mounted) {
         setState(() {
           for (int i = 0; i < 7; i++) {
@@ -151,6 +176,9 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
 
       _writeCache(tempGrouped);
     } catch (e) {
+      if (kDebugMode) {
+        print("[DEBUG] Error fetching schedule: ${e.toString()}");
+      }
       if (mounted) {
         setState(() {
           if (_groupedItems.every((list) => list.isEmpty)) {
@@ -159,6 +187,8 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
           _isLoading = false;
         });
       }
+    } finally {
+      _isFetching = false;
     }
   }
 
@@ -293,9 +323,20 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
     final list = _groupedItems[dayIndex];
     if (list.isEmpty) {
       return Center(
-        child: Text(
-          AppLocalizations.of(context).stateEmptyJadwal,
-          style: TextStyle(color: appTheme.textSubColor, fontSize: 14),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "📅",
+              style: TextStyle(fontSize: 48),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              AppLocalizations.of(context).stateEmptyJadwal,
+              style: TextStyle(color: appTheme.textSubColor, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
