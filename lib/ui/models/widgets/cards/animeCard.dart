@@ -160,87 +160,94 @@ class _AnimeCardState extends State<AnimeCard> {
                     ),
                   ),
                   Positioned(
+                    left: 0,
                     right: 0,
                     bottom: 10,
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(widget.isMobile
-                                ? 15
-                                : isFocused
-                                    ? 4
-                                    : 9)),
-                        color: appTheme.accentColor,
-                      ),
-                      padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.star,
-                            color: appTheme.onAccent,
-                            size: 13,
-                          ),
-                          Text(
-                            " ${widget.rating ?? '??'}",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: appTheme.onAccent,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (widget.subText != null)
-                    Positioned(
-                      left: 0,
-                      bottom: 10,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: const Radius.circular(15),
-                            bottomLeft: Radius.circular(widget.isMobile
-                                ? 15
-                                : isFocused
-                                    ? 4
-                                    : 9),
-                          ),
-                          color: Colors.black.withValues(alpha: 0.65),
-                        ),
-                        constraints: BoxConstraints(maxWidth: width * 0.7),
-                        padding: const EdgeInsets.only(left: 6, right: 6, top: 3, bottom: 3),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.subIcon != null) ...[
-                              Icon(
-                                widget.subIcon,
-                                size: 10,
-                                color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (widget.subText != null)
+                          Flexible(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topRight: const Radius.circular(15),
+                                  bottomLeft: Radius.circular(widget.isMobile
+                                      ? 15
+                                      : isFocused
+                                          ? 4
+                                          : 9),
+                                ),
+                                color: Colors.black.withValues(alpha: 0.65),
                               ),
-                              const SizedBox(width: 3),
-                            ],
-                            Flexible(
-                              child: Text(
-                                widget.subText!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
+                              padding: const EdgeInsets.only(left: 6, right: 6, top: 3, bottom: 3),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (widget.subIcon != null) ...[
+                                    Icon(
+                                      widget.subIcon,
+                                      size: 10,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 3),
+                                  ],
+                                  Flexible(
+                                    child: Text(
+                                      widget.subText!,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          const SizedBox(),
+                        
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(15),
+                                bottomRight: Radius.circular(widget.isMobile
+                                    ? 15
+                                    : isFocused
+                                        ? 4
+                                        : 9)),
+                            color: appTheme.accentColor,
+                          ),
+                          padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: appTheme.onAccent,
+                                size: 13,
+                              ),
+                              Text(
+                                " ${widget.rating ?? '??'}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: appTheme.onAccent,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
+                  ),
                 ],
               ),
               Text(
