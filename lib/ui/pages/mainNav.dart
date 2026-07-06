@@ -18,7 +18,8 @@ import 'package:kumaanime/ui/pages/library.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/pages/discover.dart';
 import 'package:kumaanime/ui/pages/home.dart';
-import 'package:kumaanime/ui/pages/search.dart';
+import 'package:kumaanime/ui/pages/terbaru.dart';
+import 'package:kumaanime/ui/pages/jadwal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -39,38 +40,30 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
 
     isTv().then((value) => provider.tv = value);
 
-    // open the box for the whole app life time!
     DownloadHistory.initBox();
 
     ResumeSession.load();
 
-    //check for app updates & show prompt
-    checkForUpdates().then((data) => {
-          if (data != null)
-            {
-              showUpdateSheet(
-                context,
-                data.description,
-                data.downloadLink,
-                data.preRelease,
-                data.latestVersion,
-                // forceTrigger: true
-              ),
-            }
-        });
+    checkForUpdates().then((data) {
+      if (data != null) {
+        showUpdateSheet(
+          context,
+          data.description,
+          data.downloadLink,
+          data.preRelease,
+          data.latestVersion,
+        );
+      }
+    });
 
-    // load the stuff
     provider.init();
   }
 
-  final _floatyBarController = FloatyBottomBarController(length: 4);
-  final _floatyOldController = FloatyBottomBarController(length: 3);
-  final _barController = KumaAnimeBottomBarController(length: 3);
+  final _floatyBarController = FloatyBottomBarController(length: 5);
+  final _floatyOldController = FloatyBottomBarController(length: 5);
+  final _barController = KumaAnimeBottomBarController(length: 5);
 
   bool popInvoked = false;
-  // late bool tv;
-  // bool isAndroid = Platform.isAndroid;
-
   late MainNavProvider mainNavProvider;
 
   void rebuildCards() {
@@ -110,9 +103,8 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
     setState(() {});
   }
 
-  //reset the popInvoke
   Future<void> popTimeoutWindow() async {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     popInvoked = false;
   }
 
@@ -146,7 +138,6 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
           return;
         }
 
-        //exit the app if back is pressed again within 3 sec window
         if (popInvoked) return await SystemNavigator.pop();
 
         floatingSnackBar(loc.mainNavExitPrompt);
@@ -157,16 +148,6 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
         body: MediaQuery.of(context).orientation == Orientation.landscape || Platform.isWindows || Platform.isLinux
             ? Row(
                 children: [
-                  // KumaAnimeNavRail(
-                  //   destinations: [
-                  //     KumaAnimeNavDestination(icon: Icons.home, label: "Home"),
-                  //     KumaAnimeNavDestination(icon: Icons.auto_awesome, label: "Discover"),
-                  //     KumaAnimeNavDestination(icon: Icons.search, label: "Search"),
-                  //   ],
-                  //   controller: _barController,
-                  //   initialIndex: 0,
-                  //   shouldExpand: true,
-                  // ),
                   NavigationRail(
                     onDestinationSelected: (value) {
                       _barController.currentIndex = value;
@@ -184,25 +165,47 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                         ),
                         label: Text(
                           AppLocalizations.of(context).navHome,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(
+                          Icons.update_rounded,
+                          color: _barController.currentIndex == 1 ? appTheme.onAccent : appTheme.textMainColor,
+                        ),
+                        label: const Text(
+                          "Terbaru",
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
                       NavigationRailDestination(
                         icon: Icon(
-                          Icons.auto_awesome,
-                          color: _barController.currentIndex == 1 ? appTheme.onAccent : appTheme.textMainColor,
+                          Icons.calendar_today_rounded,
+                          color: _barController.currentIndex == 2 ? appTheme.onAccent : appTheme.textMainColor,
                         ),
-                        label: Text(
-                          AppLocalizations.of(context).navDiscover,
+                        label: const Text(
+                          "Jadwal",
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.search_rounded,
-                            color: _barController.currentIndex == 2 ? appTheme.onAccent : appTheme.textMainColor),
+                        icon: Icon(
+                          Icons.video_library_rounded,
+                          color: _barController.currentIndex == 3 ? appTheme.onAccent : appTheme.textMainColor,
+                        ),
                         label: Text(
-                          AppLocalizations.of(context).navSearch,
-                          style: TextStyle(fontSize: 18),
+                          AppLocalizations.of(context).navLibrary,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(
+                          Icons.grid_view_rounded,
+                          color: _barController.currentIndex == 4 ? appTheme.onAccent : appTheme.textMainColor,
+                        ),
+                        label: Text(
+                          AppLocalizations.of(context).navMore,
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                     ],
@@ -211,15 +214,16 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                   Expanded(
                     child: BottomBarView(
                       controller: _barController,
-                      // physics: NeverScrollableScrollPhysics(),
                       children: [
-                        Home(
-                          mainNavProvider: mainNavProvider,
-                        ),
                         Discover(
                           mainNavProvider: mainNavProvider,
                         ),
-                        Search(),
+                        const TerbaruPage(),
+                        const JadwalPage(),
+                        const LibraryPage(),
+                        Home(
+                          mainNavProvider: mainNavProvider,
+                        ),
                       ],
                     ),
                   ),
@@ -237,16 +241,22 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
               FloatyBarView(
                 controller: _floatyOldController,
                 children: [
-                  Home(
-                    key: ValueKey("0"),
-                    mainNavProvider: mainNavProvider,
-                  ),
                   Discover(
-                    key: ValueKey("1"),
+                    key: const ValueKey("0"),
                     mainNavProvider: mainNavProvider,
                   ),
-                  Search(
+                  const TerbaruPage(
+                    key: ValueKey("1"),
+                  ),
+                  const JadwalPage(
                     key: ValueKey("2"),
+                  ),
+                  const LibraryPage(
+                    key: ValueKey("3"),
+                  ),
+                  Home(
+                    key: const ValueKey("4"),
+                    mainNavProvider: mainNavProvider,
                   ),
                 ],
               ),
@@ -257,8 +267,10 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                     appTheme.backgroundSubColor.withValues(alpha: currentUserSettings?.navbarTranslucency ?? 0.5),
                 items: [
                   FloatyBarItem(title: AppLocalizations.of(context).navHome, icon: Icons.home),
-                  FloatyBarItem(title: AppLocalizations.of(context).navDiscover, icon: Icons.auto_awesome),
-                  FloatyBarItem(title: AppLocalizations.of(context).navSearch, icon: Icons.search),
+                  const FloatyBarItem(title: "Terbaru", icon: Icons.update_rounded),
+                  const FloatyBarItem(title: "Jadwal", icon: Icons.calendar_today_rounded),
+                  FloatyBarItem(title: AppLocalizations.of(context).navLibrary, icon: Icons.video_library_rounded),
+                  FloatyBarItem(title: AppLocalizations.of(context).navMore, icon: Icons.grid_view_rounded),
                 ],
               ),
             ],
@@ -269,17 +281,20 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                 controller: _floatyBarController,
                 children: [
                   Discover(
-                    key: ValueKey("0"),
+                    key: const ValueKey("0"),
                     mainNavProvider: mainNavProvider,
                   ),
-                  Search(
+                  const TerbaruPage(
                     key: ValueKey("1"),
                   ),
-                  LibraryPage(
+                  const JadwalPage(
                     key: ValueKey("2"),
                   ),
-                  Home(
+                  const LibraryPage(
                     key: ValueKey("3"),
+                  ),
+                  Home(
+                    key: const ValueKey("4"),
                     mainNavProvider: mainNavProvider,
                   ),
                 ],
@@ -289,17 +304,30 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
                 blurSigma: blurSigmaValue,
                 items: [
                   LiquidGlassNavItem(
-                      icon: Icons.home_outlined, activeIcon: Icons.home_rounded, label: AppLocalizations.of(context).navHome),
+                    icon: Icons.home_outlined,
+                    activeIcon: Icons.home_rounded,
+                    label: AppLocalizations.of(context).navHome,
+                  ),
+                  const LiquidGlassNavItem(
+                    icon: Icons.update_outlined,
+                    activeIcon: Icons.update_rounded,
+                    label: "Terbaru",
+                  ),
+                  const LiquidGlassNavItem(
+                    icon: Icons.calendar_today_outlined,
+                    activeIcon: Icons.calendar_today_rounded,
+                    label: "Jadwal",
+                  ),
                   LiquidGlassNavItem(
-                      icon: Icons.search_rounded, activeIcon: Icons.search_rounded, label: AppLocalizations.of(context).navSearch),
+                    icon: Icons.video_library_outlined,
+                    activeIcon: Icons.video_library_rounded,
+                    label: AppLocalizations.of(context).navLibrary,
+                  ),
                   LiquidGlassNavItem(
-                      icon: Icons.video_library_outlined,
-                      activeIcon: Icons.video_library_rounded,
-                      label: AppLocalizations.of(context).navLibrary),
-                  LiquidGlassNavItem(
-                      icon: Icons.grid_view_outlined,
-                      activeIcon: Icons.grid_view_rounded,
-                      label: AppLocalizations.of(context).navMore),
+                    icon: Icons.grid_view_outlined,
+                    activeIcon: Icons.grid_view_rounded,
+                    label: AppLocalizations.of(context).navMore,
+                  ),
                 ],
               ),
               MiniResumePlayer(bottomOffset: MediaQuery.of(context).padding.bottom + 86),
