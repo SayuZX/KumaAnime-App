@@ -316,7 +316,9 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
     final airingTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     final diff = now.difference(airingTime);
 
-    if (diff.inDays > 0) {
+    if (diff.inDays == 1) {
+      return AppLocalizations.of(context).labelAiringTimeYesterday;
+    } else if (diff.inDays > 1) {
       return AppLocalizations.of(context).labelAiringTimeDaysAgo(diff.inDays);
     } else if (diff.inHours > 0) {
       return AppLocalizations.of(context).labelAiringTimeHoursAgo(diff.inHours);
@@ -504,6 +506,8 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
                           rating: item['rating'] as double?,
                           isAnime: widget.type != "new_manga",
                           isMobile: !isDesktop,
+                          subText: item['subText'] as String?,
+                          subIcon: item['subText'] != null ? Icons.access_time_rounded : null,
                         ),
                         if (item['badgeText'] != null)
                           Positioned(
@@ -522,29 +526,6 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ),
-                          ),
-                        if (item['subText'] != null)
-                          Positioned(
-                            bottom: 30,
-                            left: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                item['subText'] as String,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
