@@ -85,6 +85,7 @@ dependencies:
   firebase_storage: ^13.4.3
   image_picker: ^1.2.3
   flutter_image_compress: ^2.4.0
+  auth0_flutter: ^2.4.0
 
 dev_dependencies:
   flutter_test:

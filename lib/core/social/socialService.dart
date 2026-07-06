@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:hive/hive.dart';
 import 'package:kumaanime/core/app/logging.dart';
 import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
@@ -70,11 +69,13 @@ class SocialService {
 
   Future<void> init() async {
     try {
-      await Firebase.initializeApp();
-      final cred = await FirebaseAuth.instance.signInAnonymously();
-      _uid = cred.user?.uid;
+      final user = FirebaseAuth.instance.currentUser;
+      _uid = user?.uid;
       _ready = _uid != null;
-      if (_ready) await _loadProfile();
+      if (_ready) {
+        await _migrateIfNecessary();
+        await _loadProfile();
+      }
     } catch (err) {
       _ready = false;
       Logs.app.log("[SOCIAL] init failed: ${err.toString()}");
@@ -86,12 +87,28 @@ class SocialService {
     return Hive.isBoxOpen(name) ? Hive.box(name) : await Hive.openBox(name);
   }
 
+  Future<void> _migrateIfNecessary() async {
+    if (_uid == null) return;
+    try {
+      final oldRef = _db.collection('social_users').doc(_uid);
+      final newRef = _db.collection('users').doc(_uid);
+      final oldSnap = await oldRef.get();
+      final newSnap = await newRef.get();
+      
+      if (oldSnap.exists && !newSnap.exists) {
+        final data = oldSnap.data()!;
+        data['role'] = 'guest'; // default role
+        await newRef.set(data, SetOptions(merge: true));
+      }
+    } catch (_) {}
+  }
+
   Future<void> _loadProfile() async {
     try {
       final box = await _box();
       _nickname = (box.get(_nicknameKey) as String?) ?? "";
       _avatar = (box.get(_avatarKey) as String?) ?? "";
-      final ref = _db.collection('social_users').doc(_uid);
+      final ref = _db.collection('users').doc(_uid);
       final snap = await ref.get();
       final data = snap.data();
       if (data != null) {
@@ -119,7 +136,7 @@ class SocialService {
     if (_uid == null) return;
     _episodesWatched += 1;
     try {
-      await _db.collection('social_users').doc(_uid).set(
+      await _db.collection('users').doc(_uid).set(
         {'episodesWatched': FieldValue.increment(1)},
         SetOptions(merge: true),
       );
@@ -135,7 +152,7 @@ class SocialService {
     await box.put(_nicknameKey, _nickname);
     await box.put(_avatarKey, _avatar);
     if (_uid == null) return;
-    await _db.collection('social_users').doc(_uid).set({
+    await _db.collection('users').doc(_uid).set({
       'nickname': _nickname,
       'avatar': _avatar,
       'updatedAt': FieldValue.serverTimestamp(),
