@@ -565,5 +565,6 @@
   "@labelAiringTimeMinutesAgo": {"placeholders":{"count":{"type":"int"}}},
   "labelAiringTimeJustNow": "Baru saja",
   "labelAiringTimeDaysAgo": "{count} hari yang lalu",
-  "@labelAiringTimeDaysAgo": {"placeholders":{"count":{"type":"int"}}}
+  "@labelAiringTimeDaysAgo": {"placeholders":{"count":{"type":"int"}}},
+  "labelAiringTimeYesterday": "Kemarin"
 }
