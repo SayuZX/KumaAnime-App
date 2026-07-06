@@ -353,7 +353,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 180,
-        mainAxisExtent: isDesktop ? 280 : 240,
+        mainAxisExtent: isDesktop ? 260 : 220,
         mainAxisSpacing: 15,
       ),
       itemCount: 10,
@@ -491,7 +491,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 180,
-                    mainAxisExtent: isDesktop ? 280 : 240,
+                    mainAxisExtent: isDesktop ? 260 : 220,
                     mainAxisSpacing: 15,
                   ),
                   itemCount: _items.length,
