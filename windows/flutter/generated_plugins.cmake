@@ -4,14 +4,21 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  auth0_flutter
   awesome_notifications
+  cloud_firestore
   desktop_webview_window
   dynamic_color
+  file_selector_windows
+  firebase_auth
+  firebase_core
+  firebase_storage
   flutter_secure_storage_windows
   fvp
   permission_handler_windows
   screen_brightness_windows
   screen_retriever_windows
+  share_plus
   url_launcher_windows
   window_manager
   window_to_front
