@@ -359,6 +359,8 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
               item['title'] as String,
               item['cover'] as String,
               rating: item['rating'] as double?,
+              subText: AppLocalizations.of(context).labelAiringTime(item['time'] as String),
+              subIcon: Icons.access_time_filled,
               isAnime: true,
               isMobile: !isDesktop,
             ),
@@ -378,28 +380,6 @@ class _JadwalPageState extends State<JadwalPage> with SingleTickerProviderStateM
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 30,
-              left: 8,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  AppLocalizations.of(context).labelAiringTime(item['time'] as String),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 9,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
