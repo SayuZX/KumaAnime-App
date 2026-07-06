@@ -17,6 +17,8 @@ import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/core/anime/providers/englishSource.dart';
 import 'package:kumaanime/ui/pages/subIndo.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:kumaanime/ui/models/animeSubtitle.dart';
+import 'package:kumaanime/ui/models/widgets/featureTitleWithBeta.dart';
 
 class Discover extends StatefulWidget {
   final MainNavProvider mainNavProvider;
@@ -34,12 +36,12 @@ class _DiscoverState extends State<Discover> {
   @override
   void initState() {
     super.initState();
-    if (!widget.mainNavProvider.discoverDataLoaded) widget.mainNavProvider.loadDiscoverItems();
+    if (!widget.mainNavProvider.discoverDataLoaded)
+      widget.mainNavProvider.loadDiscoverItems();
     _pageController.addListener(onScroll);
   }
 
-  final recentlyUpdatedScrollController = ScrollController(),
-      thisSeasonScrollController = ScrollController(),
+  final thisSeasonScrollController = ScrollController(),
       recommendedScrollController = ScrollController();
 
   int currentPage = 0;
@@ -63,7 +65,8 @@ class _DiscoverState extends State<Discover> {
         currentPage = 0;
       if (mounted)
         setState(() {
-          _pageController.animateToPage(currentPage, duration: Duration(milliseconds: 400), curve: Curves.easeOut);
+          _pageController.animateToPage(currentPage,
+              duration: Duration(milliseconds: 400), curve: Curves.easeOut);
         });
     });
   }
@@ -75,44 +78,50 @@ class _DiscoverState extends State<Discover> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    if (!initialTimeOutCalled && widget.mainNavProvider.trendingList.length > 0) {
+    if (!initialTimeOutCalled &&
+        widget.mainNavProvider.trendingList.length > 0) {
       pageTimeout();
       initialTimeOutCalled = true;
     }
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SmartRefresher(
-        // reset the controller on build, preventing it from causing error: "Dont use one controller for multiple SmartRefresher"
-        controller: widget.mainNavProvider.discoverRefreshController = RefreshController(initialRefresh: false),
+        controller: widget.mainNavProvider.discoverRefreshController =
+            RefreshController(initialRefresh: false),
         onRefresh: () async {
-          await widget.mainNavProvider.refresh(refreshPage: 1, fromSettings: false);
+          await widget.mainNavProvider
+              .refresh(refreshPage: 1, fromSettings: false);
         },
         header: WaterDropMaterialHeader(
           backgroundColor: appTheme.backgroundSubColor,
           color: appTheme.accentColor,
         ),
         child: SingleChildScrollView(
-          physics: isHoveredOverScrollList ? NeverScrollableScrollPhysics() : null,
+          physics:
+              isHoveredOverScrollList ? NeverScrollableScrollPhysics() : null,
           child: Column(
             children: [
               Stack(
                 children: [
                   Container(
                     // margin: EdgeInsets.only(top: 30),
-                    height: (Platform.isWindows || Platform.isLinux) ? 450 : 370,
+                    height:
+                        (Platform.isWindows || Platform.isLinux) ? 450 : 370,
                     // width: double.infinity,
                     child: widget.mainNavProvider.trendingList.length > 0
                         ? _trendingAnimesPageView()
                         : Container(
                             child: Center(
-                              child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
+                              child: KumaAnimeLoading(
+                                  color: appTheme.accentColor, size: 40),
                             ),
                           ),
                   ),
                   _heroTextOverlay(),
                   Padding(
                     padding: pagePadding(context).copyWith(left: 0),
-                    child: buildHeader(loc.discoverTitle, context, afterNavigation: () => setState(() {})),
+                    child: buildHeader(loc.discoverTitle, context,
+                        afterNavigation: () => setState(() {})),
                   )
                 ],
               ),
@@ -126,17 +135,20 @@ class _DiscoverState extends State<Discover> {
                     _navChip(
                       icon: Icons.newspaper_rounded,
                       label: loc.discoverNews,
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => News())),
+                      onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => News())),
                     ),
                     _navChip(
                       icon: Icons.category_rounded,
                       label: loc.discoverGenres,
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => GenresPage())),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => GenresPage())),
                     ),
                     _navChip(
                       icon: Icons.subtitles_rounded,
                       label: AppLocalizations.of(context).subIndo,
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubIndoPage())),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SubIndoPage())),
                     ),
                     _navChip(
                       icon: Icons.translate_rounded,
@@ -146,7 +158,8 @@ class _DiscoverState extends State<Discover> {
                           builder: (context) => SubIndoPage(
                             source: EnglishSource(),
                             pageTitle: AppLocalizations.of(context).subEng,
-                            searchHint: AppLocalizations.of(context).subEngSearchHint,
+                            searchHint:
+                                AppLocalizations.of(context).subEngSearchHint,
                           ),
                         ),
                       ),
@@ -154,12 +167,12 @@ class _DiscoverState extends State<Discover> {
                   ],
                 ),
               ),
-              _itemTitle(loc.discoverRecentlyUpdated, recentlyUpdatedScrollController),
-              _scrollList(widget.mainNavProvider.recentlyUpdatedList, recentlyUpdatedScrollController),
               _itemTitle(loc.discoverThisSeason, thisSeasonScrollController),
-              _scrollList(widget.mainNavProvider.thisSeason, thisSeasonScrollController),
+              _scrollList(widget.mainNavProvider.thisSeason,
+                  thisSeasonScrollController),
               _itemTitle(loc.discoverRecommended, recommendedScrollController),
-              _scrollList(widget.mainNavProvider.recommendedList, recommendedScrollController),
+              _scrollList(widget.mainNavProvider.recommendedList,
+                  recommendedScrollController),
               footSpace(),
             ],
           ),
@@ -174,7 +187,10 @@ class _DiscoverState extends State<Discover> {
     );
   }
 
-  Widget _navChip({required IconData icon, required String label, required void Function() onTap}) {
+  Widget _navChip(
+      {required IconData icon,
+      required String label,
+      required void Function() onTap}) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Material(
@@ -237,7 +253,8 @@ class _DiscoverState extends State<Discover> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.star_rounded, color: const Color(0xFFF5C518), size: 18),
+                Icon(Icons.star_rounded,
+                    color: const Color(0xFFF5C518), size: 18),
                 const SizedBox(width: 3),
                 Text(
                   "${item.rating != null ? item.rating! / 10 : '??'}",
@@ -253,7 +270,8 @@ class _DiscoverState extends State<Discover> {
                     item.genres.take(3).join(' • '),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: appTheme.textSubColor, fontSize: 13),
+                    style:
+                        TextStyle(color: appTheme.textSubColor, fontSize: 13),
                   ),
                 ),
               ],
@@ -294,10 +312,13 @@ class _DiscoverState extends State<Discover> {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                    trendingList[moddedIndex].banner ?? trendingList[moddedIndex].cover,
-                    alignment: Alignment((index - page).clamp(-1, 1).toDouble() * 0.6, 0),
+                    trendingList[moddedIndex].banner ??
+                        trendingList[moddedIndex].cover,
+                    alignment: Alignment(
+                        (index - page).clamp(-1, 1).toDouble() * 0.6, 0),
                     fit: BoxFit.cover,
-                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
                       if (wasSynchronouslyLoaded) return child;
                       return AnimatedOpacity(
                         opacity: frame == null ? 0 : 1,
@@ -349,18 +370,36 @@ class _DiscoverState extends State<Discover> {
     );
   }
 
-  Container _itemTitle(String title, ScrollController controller) {
+  Container _itemTitle(
+    String title,
+    ScrollController controller, {
+    bool showBeta = false,
+    AnimeSubtitle? subtitle,
+  }) {
     return Container(
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.only(top: 25, left: 25, right: 25, bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: basicTextStyle("Rubik", 20),
+          Expanded(
+            child: showBeta
+                ? FeatureTitleWithBeta(
+                    title: title,
+                    subtitle: subtitle,
+                    titleFontSize: 20,
+                    subtitleFontSize: 13,
+                    showBetaBadge: true,
+                  )
+                : Text(
+                    title,
+                    style: basicTextStyle("Rubik", 20),
+                  ),
           ),
-          if (Platform.isWindows || Platform.isLinux) ScrollingList.scrollButtons(controller) else SizedBox.shrink()
+          if (Platform.isWindows || Platform.isLinux)
+            ScrollingList.scrollButtons(controller)
+          else
+            SizedBox.shrink()
         ],
       ),
     );
