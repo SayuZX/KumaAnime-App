@@ -419,6 +419,8 @@
   "@sidEpisodesCount": {"placeholders":{"count":{"type":"String"}}},
   "sidNo": "No",
   "genresTitle": "Genres",
+  "genresTabBrowse": "Browse",
+  "genresTabAdvanced": "Advanced Search",
   "genresResults": "Results",
   "genresFilters": "Filters",
   "genresTagsTitle": "Tags",
@@ -464,7 +466,7 @@
   "imBannerSaved": "Succesfully saved to your downloads folder!",
   "imBannerSaveError": "Couldnt save the image!",
   "imSave": "save",
-  "animeCardMangaNotSupported": "Manga or Novels aren't supported",
+  "animeCardMangaNotSupported": "Coming Soon",
   "animeCardAddToWatching": "Add to Watching",
   "animeCardAddedToWatching": "Added to watching!",
   "animeCardAddToPlanned": "Add to Planned",
@@ -622,5 +624,29 @@
   "labelAiringTimeJustNow": "Just now",
   "labelAiringTimeDaysAgo": "{count} days ago",
   "@labelAiringTimeDaysAgo": {"placeholders":{"count":{"type":"int"}}},
-  "labelAiringTimeYesterday": "Yesterday"
+  "labelAiringTimeYesterday": "Yesterday",
+  "betaAnnouncementTitle": "Beta Version Announcement",
+  "betaAnnouncementBody": "This application is in the Beta stage and active development. You may encounter bugs or instability. Your feedback and bug reports are highly appreciated to help improve future releases.",
+  "betaAnnouncementContinue": "Continue",
+  "betaAnnouncementDontShow": "Don't Show Again",
+  "betaAnnouncementLearnMore": "Learn More",
+  "genresSearchPlaceholder": "Search genres...",
+  "genresNoResults": "No genres found",
+  "genresSortAlphabeticalAsc": "Alphabetical (A-Z)",
+  "genresSortAlphabeticalDesc": "Alphabetical (Z-A)",
+  "genresErrorLoading": "Failed to load genres. Please check your connection and try again.",
+  "genresRetry": "Retry",
+  "genreAnimeListTitle": "{genre} Anime",
+  "@genreAnimeListTitle": {
+    "placeholders": {
+      "genre": {
+        "type": "String"
+      }
+    }
+  },
+  "genreAnimeNoResults": "No anime found in this genre",
+  "sortTrending": "Trending",
+  "sortPopularity": "Popularity",
+  "sortScore": "Average Score",
+  "sortNewest": "Newest Release"
 }
