@@ -1,20 +1,71 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 import 'package:kumaanime/core/anime/downloader/downloaders/baseDownloader.dart';
 import 'package:kumaanime/core/anime/downloader/types.dart';
-import 'package:http/http.dart';
 
 class VideoDownloader extends BaseDownloader {
   VideoDownloader(DownloadTaskIsolate task) : super(task);
 
-  late IOSink sink;
+  IOSink? sink;
+  Client? _client;
+
+  Future<StreamedResponse> _sendRequestWithRedirects(
+    Client client,
+    String method,
+    Uri uri,
+    Map<String, String> headers,
+    int resumeFrom,
+  ) async {
+    var currentUri = uri;
+    var redirectCount = 0;
+
+    while (redirectCount < 5) {
+      final request = Request(method, currentUri);
+      request.headers.addAll(headers);
+      request.followRedirects = false; // Handle manually for logging
+
+      if (resumeFrom > 0) {
+        request.headers['Range'] = 'bytes=$resumeFrom-';
+      }
+
+      if (kDebugMode) {
+        print("[Downloader Debug] ID: ${task.id} | Request: $method $currentUri");
+        print("[Downloader Debug] Headers: ${request.headers}");
+      }
+
+      final response = await client.send(request);
+
+      if (kDebugMode) {
+        print("[Downloader Debug] ID: ${task.id} | Status Code: ${response.statusCode}");
+        print("[Downloader Debug] Headers: ${response.headers}");
+      }
+
+      if (response.statusCode >= 300 && response.statusCode < 400) {
+        final location = response.headers['location'];
+        if (location != null && location.isNotEmpty) {
+          final targetUri = currentUri.resolve(location);
+          if (kDebugMode) {
+            print("[Downloader Debug] ID: ${task.id} | Redirected from $currentUri to $targetUri");
+          }
+          currentUri = targetUri;
+          redirectCount++;
+          continue;
+        }
+      }
+
+      return response;
+    }
+
+    throw Exception("Too many redirects");
+  }
 
   @override
   Future<void> download() async {
     await setUpPorts(task);
 
-    // Guess/Extract extension from link, otherwise give null and download as an mp4
     String? extensionGuess = helper.extractExtension(task.url);
     extensionGuess = ['mp4', 'mkv', 'avi', 'webm', 'flv'].contains(extensionGuess) ? extensionGuess : null;
 
@@ -24,125 +75,169 @@ class VideoDownloader extends BaseDownloader {
       downloadPath: task.downloadPath,
     );
 
-    //we considering the file as mp4
-    final req = Request("GET", Uri.parse(task.url));
-    // add the headers
-    req.headers.addAll(task.customHeaders);
-    if (task.resumeFrom != 0) {
-      final doesServerSupportRangeHeader = await helper.checkRangeSupport(Uri.parse(task.url));
-      if (doesServerSupportRangeHeader) {
-        req.headers.addAll({'Range': 'bytes=${task.resumeFrom}-'});
-      } else {
-        print("Server doesnt support ranges. Retrying download...");
-        // start the download again
-        task.sendPort?.send(DownloadMessage(status: 'retry', id: task.id));
-        return;
+    var currentUrl = task.url;
+    var currentHeaders = Map<String, String>.from(task.customHeaders);
+    final fallbackQueue = List<String>.from(task.fallbackUrls);
+    final fallbackHeadersQueue = List<Map<String, String>>.from(task.fallbackHeaders);
+
+    _client = Client();
+    bool downloadSuccess = false;
+    String lastError = "";
+
+    while (!downloadSuccess && status != DownloadStatus.cancelled) {
+      final file = File(filepath);
+      int resumePosition = 0;
+      if (file.existsSync()) {
+        resumePosition = file.lengthSync();
       }
-    }
 
-    final file = File(filepath);
+      sink = file.openWrite(mode: resumePosition == 0 ? FileMode.write : FileMode.append);
 
-    sink = file.openWrite(mode: task.resumeFrom == 0 ? FileMode.write : FileMode.append);
+      try {
+        final res = await _sendRequestWithRedirects(
+          _client!,
+          "GET",
+          Uri.parse(currentUrl),
+          currentHeaders,
+          resumePosition,
+        );
 
-    // just to catch any OS errors like file access
-    try {
-      final res = await req.send();
-      if (!(res.statusCode >= 200 && res.statusCode < 300)) {
-        throw Exception("Received response with status code ${res.statusCode}");
-      }
-      final totalSize = res.contentLength ?? -1;
-      int downloadedBytes = task.resumeFrom;
-      int lastProgress = 0;
-      int lastPrintedProgress = 0; // to reduce console logs.
+        if (res.statusCode == 416) {
+          // Range Not Satisfiable: means the file is already fully downloaded or invalid range
+          if (kDebugMode) {
+            print("[Downloader Debug] Range 416 received. Assuming download complete.");
+          }
+          await sink!.close();
+          downloadSuccess = true;
+          setCompletedStatus(filepath);
+          break;
+        }
 
-      StreamSubscription<List<int>>? subscription;
+        if (!(res.statusCode >= 200 && res.statusCode < 300)) {
+          throw Exception("Server returned HTTP ${res.statusCode}");
+        }
 
-      final completer = Completer<void>();
+        // If we requested range but server ignored it (sent 200 instead of 206),
+        // we must restart writing from 0 to avoid prepending/corrupting.
+        if (resumePosition > 0 && res.statusCode != 206) {
+          if (kDebugMode) {
+            print("[Downloader Debug] Server returned 200 instead of 206. Overwriting file from scratch.");
+          }
+          await sink!.close();
+          sink = file.openWrite(mode: FileMode.write);
+          resumePosition = 0;
+        }
 
-      subscription = res.stream.listen(
-          (chunk) async {
-            // First, check if download is cancelled. if yes, flush the stuff
+        final int totalSize = (res.contentLength ?? -1) + (res.statusCode == 206 ? resumePosition : 0);
+        int downloadedBytes = resumePosition;
+
+        int speedBytes = 0;
+        DateTime speedStart = DateTime.now();
+        int lastProgress = 0;
+
+        final completer = Completer<void>();
+        StreamSubscription<List<int>>? subscription;
+
+        subscription = res.stream.listen(
+          (chunk) {
             if (status == DownloadStatus.cancelled) {
-              await subscription?.cancel();
-              await sink.close();
-              file.deleteSync();
-
+              subscription?.cancel();
+              sink?.close();
+              if (file.existsSync()) file.deleteSync();
               completer.complete();
-
               setCancelledStatus();
               return;
             }
-            // Write the data since its already fetched!
-            sink.add(chunk);
+
+            sink?.add(chunk);
             downloadedBytes += chunk.length;
+            speedBytes += chunk.length;
 
-            final progress = (downloadedBytes / totalSize * 100).toInt();
+            final now = DateTime.now();
+            final diff = now.difference(speedStart).inMilliseconds;
+            if (diff >= 1000) {
+              final speed = speedBytes / (diff / 1000.0); // bytes/sec
+              final eta = (totalSize > 0 && speed > 0) ? ((totalSize - downloadedBytes) / speed).toInt() : -1;
+              final progress = (totalSize > 0) ? (downloadedBytes * 100 ~/ totalSize) : 0;
 
-            // on pause command
+              updateProgress(progress, filepath, speed: speed, eta: eta, totalSize: totalSize);
+
+              speedBytes = 0;
+              speedStart = now;
+              lastProgress = progress;
+            }
+
             if (status == DownloadStatus.paused) {
               subscription?.pause();
-
+              final progress = (totalSize > 0) ? (downloadedBytes * 100 ~/ totalSize) : 0;
               setPausedStatus(progress, downloadedBytes, filepath);
 
               super.completer = Completer();
-              try {
-                timer = Timer(Duration(minutes: 1), () => super.completer?.completeError(Exception("Timeout!")));
-                await super.completer!.future;
+              timer = Timer(const Duration(minutes: 1), () => super.completer?.completeError(Exception("Pause timeout")));
+              super.completer!.future.then((_) {
                 subscription?.resume();
                 super.completer = null;
                 timer?.cancel();
                 timer = null;
-              } catch (err) {
-                print("Isolate Timeout! Error: ${err.toString()}");
-                print("Self destructing isolate...");
+              }).catchError((err) {
+                subscription?.cancel();
                 super.completer = null;
                 timer?.cancel();
                 timer = null;
-                subscription?.cancel();
                 task.sendPort?.send(DownloadMessage(status: 'isolate_timeout', id: task.id));
-              }
-            }
-
-            // Only send progress every 2% to reduce isolate-to-main thread overhead
-            if (progress > lastProgress && progress - lastProgress >= 2) {
-              // just to reduce the logging from 100 to 10
-              if (progress >= lastPrintedProgress) {
-                print("[DOWNLOADER]<${task.id}> Progress: ${progress}%");
-                lastPrintedProgress += 10;
-              }
-              updateProgress(progress, filepath);
-              lastProgress = progress;
+              });
             }
           },
           onDone: () async {
-            await sink.close();
-            print("[DOWNLOADER] succesfully written the file to disk");
+            await sink?.close();
             completer.complete();
-            return setCompletedStatus(filepath, silent: false);
           },
           onError: (err) async {
-            print(err);
-            print("From media url: ${task.url}");
             completer.completeError(err);
-            await sink.close();
-            await file.delete();
-            return setFailedStatus(err.toString());
-          });
+          },
+        );
 
-      return completer.future;
-    } catch (err) {
-      // same stuff as on error
-      print(err);
-      print("From media url: ${task.url}");
-      await sink.close();
-      await file.delete();
-      setFailedStatus(err.toString());
+        await completer.future;
+        downloadSuccess = true;
+        setCompletedStatus(filepath);
+
+      } catch (err) {
+        lastError = err.toString();
+        if (kDebugMode) {
+          print("[Downloader Debug] Download attempt failed: $err");
+        }
+
+        await sink?.close();
+
+        // Fallback to next mirror URL
+        if (fallbackQueue.isNotEmpty && status != DownloadStatus.cancelled) {
+          currentUrl = fallbackQueue.removeAt(0);
+          currentHeaders = fallbackHeadersQueue.isNotEmpty ? Map<String, String>.from(fallbackHeadersQueue.removeAt(0)) : {};
+          task.sendPort?.send(DownloadMessage(
+            status: 'fallback_switch',
+            id: task.id,
+            extras: [currentUrl, currentHeaders],
+          ));
+          if (kDebugMode) {
+            print("[Downloader Debug] Switching to fallback server: $currentUrl");
+          }
+          await Future.delayed(const Duration(seconds: 2));
+        } else {
+          // If no fallback URLs left or user cancelled, stop
+          if (status != DownloadStatus.cancelled) {
+            setFailedStatus(lastError);
+          }
+          break;
+        }
+      }
     }
+
+    _client?.close();
   }
 
   @override
   Future<void> onCancel() async {
-    await sink.close();
-    return;
+    _client?.close();
+    await sink?.close();
   }
 }
