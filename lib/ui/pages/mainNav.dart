@@ -23,6 +23,8 @@ import 'package:kumaanime/ui/pages/jadwal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:kumaanime/core/app/version.dart';
+import 'package:kumaanime/ui/models/widgets/dialogs/beta_announcement_dialog.dart';
 
 class MainNavigator extends StatefulWidget {
   const MainNavigator({super.key});
@@ -54,6 +56,13 @@ class MainNavigatorState extends State<MainNavigator> with TickerProviderStateMi
           data.latestVersion,
         );
       }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BetaAnnouncementDialog.showBetaAnnouncementDialogIfNeeded(
+        context,
+        AppVersion.instance.version,
+      );
     });
 
     provider.init();
