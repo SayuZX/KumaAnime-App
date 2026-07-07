@@ -385,6 +385,8 @@
   "sidEpisodesCount": "{count} eps",
   "sidNo": "Tidak",
   "genresTitle": "Genre",
+  "genresTabBrowse": "Telusuri",
+  "genresTabAdvanced": "Pencarian Lanjut",
   "genresResults": "Hasil",
   "genresFilters": "Filter",
   "genresTagsTitle": "Tag",
@@ -428,7 +430,7 @@
   "imBannerSaved": "Berhasil disimpan ke folder unduhan!",
   "imBannerSaveError": "Gagal menyimpan gambar!",
   "imSave": "simpan",
-  "animeCardMangaNotSupported": "Manga atau Novel tidak didukung",
+  "animeCardMangaNotSupported": "Segera Tersedia.",
   "animeCardAddToWatching": "Tambahkan ke Ditonton",
   "animeCardAddedToWatching": "Ditambahkan ke ditonton!",
   "animeCardAddToPlanned": "Tambahkan ke Direncanakan",
@@ -572,5 +574,29 @@
   "labelAiringTimeJustNow": "Baru saja",
   "labelAiringTimeDaysAgo": "{count} hari yang lalu",
   "@labelAiringTimeDaysAgo": {"placeholders":{"count":{"type":"int"}}},
-  "labelAiringTimeYesterday": "Kemarin"
+  "labelAiringTimeYesterday": "Kemarin",
+  "betaAnnouncementTitle": "Pengumuman Versi Beta",
+  "betaAnnouncementBody": "Aplikasi ini berada dalam tahap Beta dan pengembangan aktif. Anda mungkin menemukan bug atau ketidakstabilan. Masukan dan laporan bug Anda sangat membantu rilis berikutnya.",
+  "betaAnnouncementContinue": "Lanjutkan",
+  "betaAnnouncementDontShow": "Jangan Tampilkan Lagi",
+  "betaAnnouncementLearnMore": "Pelajari Selengkapnya",
+  "genresSearchPlaceholder": "Cari genre...",
+  "genresNoResults": "Genre tidak ditemukan",
+  "genresSortAlphabeticalAsc": "Alfabetis (A-Z)",
+  "genresSortAlphabeticalDesc": "Alfabetis (Z-A)",
+  "genresErrorLoading": "Gagal memuat genre. Silakan periksa koneksi Anda dan coba lagi.",
+  "genresRetry": "Coba Lagi",
+  "genreAnimeListTitle": "Anime {genre}",
+  "@genreAnimeListTitle": {
+    "placeholders": {
+      "genre": {
+        "type": "String"
+      }
+    }
+  },
+  "genreAnimeNoResults": "Tidak ada anime yang ditemukan dalam genre ini",
+  "sortTrending": "Tren",
+  "sortPopularity": "Popularitas",
+  "sortScore": "Nilai Rata-rata",
+  "sortNewest": "Rilis Terbaru"
 }
