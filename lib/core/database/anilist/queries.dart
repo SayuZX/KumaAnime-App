@@ -404,4 +404,13 @@ class AnilistQueries {
     }
     return banners;
   }
+
+  Future<List<String>> fetchGenres() async {
+    const query = """{ GenreCollection }""";
+    final res = await Anilist().fetchQuery(query, null);
+    if (res != null && res['GenreCollection'] != null) {
+      return List<String>.from(res['GenreCollection']);
+    }
+    return [];
+  }
 }
