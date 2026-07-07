@@ -11,35 +11,53 @@ class DownloadHistory {
 
   static ValueListenable<Box> get listenable => Hive.box(_boxName).listenable();
 
-  // lets keep this box open forever lol
-  // static Future<void> closeBox() => Hive.box(_boxName).close();
-
-  static List<DownloadHistoryItem> getDownloadHistory({DownloadStatus status = DownloadStatus.completed}) {
+  static List<DownloadHistoryItem> getDownloadHistory({DownloadStatus? status = DownloadStatus.completed}) {
     final box = Hive.box(_boxName);
     final filtered = <DownloadHistoryItem>[];
-    box.values.forEach((e) {
-      if (e['status'] == status.name) filtered.add(DownloadHistoryItem.fromMap(Map.castFrom(e)));
-    });
+    for (final key in box.keys) {
+      try {
+        final val = box.get(key);
+        if (val != null) {
+          final item = DownloadHistoryItem.fromMap(Map.castFrom(val));
+          if (status == null || item.status == status) {
+            filtered.add(item);
+          }
+        }
+      } catch (_) {}
+    }
     return filtered;
   }
 
   static Future<void> saveItem(DownloadHistoryItem item) async {
     final box = Hive.box(_boxName);
-    int id = item.id;
-    while (box.containsKey(id)) {
-      id = DownloaderHelper.generateId();
-    }
-    if (box.values.length > 100) {
-      final sorted = box.keys.toList().cast<int>()
-        ..sort((a, b) {
-          final int at = box.get(a)['timestamp'];
-          final int bt = box.get(b)['timestamp'];
+    
+    // Write directly using the item's unique id to overwrite/update existing records
+    await box.put(item.id, item.toMap());
+
+    // Prune only completed/cancelled history records if the total box size exceeds 200
+    if (box.length > 200) {
+      final keys = box.keys.toList().cast<int>();
+      final completedKeys = <int>[];
+      for (final k in keys) {
+        final val = box.get(k);
+        if (val != null) {
+          final statusStr = val['status'];
+          if (statusStr == DownloadStatus.completed.name || statusStr == DownloadStatus.cancelled.name) {
+            completedKeys.add(k);
+          }
+        }
+      }
+
+      if (completedKeys.length > 100) {
+        completedKeys.sort((a, b) {
+          final int at = box.get(a)?['timestamp'] ?? 0;
+          final int bt = box.get(b)?['timestamp'] ?? 0;
           return at.compareTo(bt);
         });
-      final deletable = sorted.sublist(100);
-      await box.deleteAll(deletable);
+        final deletable = completedKeys.sublist(100);
+        await box.deleteAll(deletable);
+      }
     }
-    await box.put(item.id, item.toMap());
   }
 
   static Future<void> removeItem(int id) async {
