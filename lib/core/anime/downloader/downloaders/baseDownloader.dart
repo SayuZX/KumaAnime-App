@@ -22,11 +22,6 @@ abstract class BaseDownloader {
   @nonVirtual
   DownloadStatus get status => _status;
 
-  // @nonVirtual
-  // set status(DownloadStatus newStatus) {
-  //   this._status = newStatus;
-  // }
-
   // The download helper instance ofcourse
   DownloaderHelper helper = DownloaderHelper();
 
@@ -80,9 +75,17 @@ abstract class BaseDownloader {
   }
 
   @nonVirtual
-  void updateProgress(int progress, String finalPath) {
+  void updateProgress(int progress, String finalPath, {double speed = 0.0, int eta = -1, int totalSize = -1}) {
     task.sendPort?.send(
-        DownloadMessage(status: 'progress', id: task.id, progress: progress, extras: [task.fileName, finalPath]));
+        DownloadMessage(
+          status: 'progress',
+          id: task.id,
+          progress: progress,
+          extras: [task.fileName, finalPath],
+          speed: speed,
+          eta: eta,
+          totalSize: totalSize,
+        ));
   }
 
   /// Set up the isolate ports for communicating with main thread.
@@ -128,8 +131,6 @@ abstract class BaseDownloader {
               return;
             }
         }
-        // leave print msg here to avoid code duplication, cus now, this listener only
-        // deals with altering the download states!
         print("Set download status of ${task.id} to ${_status.name}.");
       }
     });
