@@ -5,29 +5,28 @@ import 'package:flutter/foundation.dart';
 // some of them here are just for names lol
 enum DownloadStatus { downloading, queued, paused, completed, cancelled, failed }
 
-DownloadStatus getDownloadStatus(String status) => switch(status) {
-    "downloading" => DownloadStatus.downloading,
-    "queued" => DownloadStatus.queued,
-    "paused" => DownloadStatus.paused,
-    "completed" => DownloadStatus.completed,
-    "cancelled" => DownloadStatus.cancelled,
-    "failed" => DownloadStatus.failed,
-
-    _ => throw Exception("Unknown DownloadStats value")
-  };
+DownloadStatus getDownloadStatus(String status) => switch (status) {
+      "downloading" => DownloadStatus.downloading,
+      "queued" => DownloadStatus.queued,
+      "paused" => DownloadStatus.paused,
+      "completed" => DownloadStatus.completed,
+      "cancelled" => DownloadStatus.cancelled,
+      "failed" => DownloadStatus.failed,
+      _ => throw Exception("Unknown DownloadStatus value")
+    };
 
 class DownloadItem {
   // The download ID
   final int id;
 
   // The URL to the media to download (can be stream or video file)
-  final String url;
+  String url;
 
   // File name to be saved as
   final String fileName;
 
   // Custom header for fetching (if any)
-  final Map<String, String> customHeaders;
+  Map<String, String> customHeaders;
 
   // Subtitle url
   final String? subtitleUrl;
@@ -56,6 +55,28 @@ class DownloadItem {
 
   final bool mock;
 
+  // Structured properties for the Download Manager
+  final String? animeName;
+  final String? episodeTitle;
+  final String? resolution;
+  final String? serverName;
+  final List<String> fallbackUrls;
+  final List<Map<String, String>> fallbackHeaders;
+
+  // Real-time speed & ETA & Size
+  final ValueNotifier<double> speedNotifier = ValueNotifier(0.0); // bytes/second
+  final ValueNotifier<int> etaNotifier = ValueNotifier(-1); // seconds
+  final ValueNotifier<int> totalSizeNotifier = ValueNotifier(-1); // total bytes
+
+  double get speed => speedNotifier.value;
+  set speed(double val) => speedNotifier.value = val;
+
+  int get eta => etaNotifier.value;
+  set eta(int val) => etaNotifier.value = val;
+
+  int get totalSize => totalSizeNotifier.value;
+  set totalSize(int val) => totalSizeNotifier.value = val;
+
   DownloadItem({
     required this.id,
     required this.url,
@@ -66,9 +87,17 @@ class DownloadItem {
     this.subtitleUrl,
     this.lastDownloadedPart,
     this.mock = false,
+    this.animeName,
+    this.episodeTitle,
+    this.resolution,
+    this.serverName,
+    this.fallbackUrls = const [],
+    this.fallbackHeaders = const [],
+    int totalSize = -1,
   }) {
     progressNotifier.value = progress;
     statusNotifier.value = status;
+    totalSizeNotifier.value = totalSize;
   }
 
   DownloadItem copyWith({
@@ -78,6 +107,13 @@ class DownloadItem {
     String? fileName,
     Map<String, String>? customHeaders,
     String? subtitleUrl,
+    String? animeName,
+    String? episodeTitle,
+    String? resolution,
+    String? serverName,
+    List<String>? fallbackUrls,
+    List<Map<String, String>>? fallbackHeaders,
+    int? totalSize,
   }) {
     return DownloadItem(
       id: id ?? this.id,
@@ -86,12 +122,19 @@ class DownloadItem {
       fileName: fileName ?? this.fileName,
       customHeaders: customHeaders ?? this.customHeaders,
       subtitleUrl: subtitleUrl ?? this.subtitleUrl,
+      animeName: animeName ?? this.animeName,
+      episodeTitle: episodeTitle ?? this.episodeTitle,
+      resolution: resolution ?? this.resolution,
+      serverName: serverName ?? this.serverName,
+      fallbackUrls: fallbackUrls ?? this.fallbackUrls,
+      fallbackHeaders: fallbackHeaders ?? this.fallbackHeaders,
+      totalSize: totalSize ?? this.totalSize,
     );
   }
 
   @override
   String toString() {
-    return 'DownloadItem(id: $id, status: $status, url: $url, fileName: $fileName, customHeaders: $customHeaders, subtitleUrl: $subtitleUrl)';
+    return 'DownloadItem(id: $id, status: $status, url: $url, fileName: $fileName, customHeaders: $customHeaders, subtitleUrl: $subtitleUrl, animeName: $animeName, episodeTitle: $episodeTitle, resolution: $resolution, serverName: $serverName)';
   }
 }
 
@@ -107,6 +150,8 @@ class DownloadTaskIsolate {
   final SendPort? sendPort;
   final int resumeFrom;
   String downloadPath;
+  final List<String> fallbackUrls;
+  final List<Map<String, String>> fallbackHeaders;
 
   DownloadTaskIsolate({
     required this.url,
@@ -119,11 +164,13 @@ class DownloadTaskIsolate {
     required this.id,
     required this.downloadPath,
     this.resumeFrom = 0, // next segment index if stream, exact progress if mp4
+    this.fallbackUrls = const [],
+    this.fallbackHeaders = const [],
   });
 
   @override
   String toString() {
-    return 'DownloadTaskIsolate(url: $url, fileName: $fileName, id: $id, customHeaders: $customHeaders, retryAttempts: $retryAttempts, parallelBatches: $parallelBatches, subsUrl: $subsUrl, sendPort: $sendPort, resumeFrom: $resumeFrom, downloadPath: $downloadPath)';
+    return 'DownloadTaskIsolate(url: $url, fileName: $fileName, id: $id, customHeaders: $customHeaders, retryAttempts: $retryAttempts, parallelBatches: $parallelBatches, subsUrl: $subsUrl, sendPort: $sendPort, resumeFrom: $resumeFrom, downloadPath: $downloadPath, fallbackUrls: $fallbackUrls)';
   }
 }
 
@@ -134,6 +181,9 @@ class DownloadMessage {
   final String? message;
   final List<Object> extras; // ik, not a good way to do it! might refactor later, lazy rn
   final bool silent;
+  final double speed;
+  final int eta;
+  final int totalSize;
 
   DownloadMessage({
     required this.status,
@@ -142,6 +192,9 @@ class DownloadMessage {
     this.progress = 0,
     this.extras = const [],
     this.silent = false,
+    this.speed = 0.0,
+    this.eta = -1,
+    this.totalSize = -1,
   });
 }
 
@@ -156,6 +209,15 @@ class DownloadHistoryItem {
   final int size; // for confirmation of file (incase of resume after app death)
   final int? lastDownloadedPart; // segment or the data byte
 
+  // Structured properties for the Download Manager
+  final String? animeName;
+  final String? episodeTitle;
+  final String? resolution;
+  final String? serverName;
+  final int? totalSize;
+  final List<String> fallbackUrls;
+  final List<Map<String, String>> fallbackHeaders;
+
   DownloadHistoryItem({
     required this.id,
     required this.status,
@@ -166,6 +228,13 @@ class DownloadHistoryItem {
     required this.fileName,
     required this.size,
     required this.lastDownloadedPart,
+    this.animeName,
+    this.episodeTitle,
+    this.resolution,
+    this.serverName,
+    this.totalSize,
+    this.fallbackUrls = const [],
+    this.fallbackHeaders = const [],
   });
 
   DownloadHistoryItem copyWith({
@@ -178,6 +247,13 @@ class DownloadHistoryItem {
     String? fileName,
     int? size,
     int? lastDownloadedPart,
+    String? animeName,
+    String? episodeTitle,
+    String? resolution,
+    String? serverName,
+    int? totalSize,
+    List<String>? fallbackUrls,
+    List<Map<String, String>>? fallbackHeaders,
   }) {
     return DownloadHistoryItem(
       id: id ?? this.id,
@@ -189,6 +265,13 @@ class DownloadHistoryItem {
       fileName: fileName ?? this.fileName,
       size: size ?? this.size,
       lastDownloadedPart: lastDownloadedPart ?? this.lastDownloadedPart,
+      animeName: animeName ?? this.animeName,
+      episodeTitle: episodeTitle ?? this.episodeTitle,
+      resolution: resolution ?? this.resolution,
+      serverName: serverName ?? this.serverName,
+      totalSize: totalSize ?? this.totalSize,
+      fallbackUrls: fallbackUrls ?? this.fallbackUrls,
+      fallbackHeaders: fallbackHeaders ?? this.fallbackHeaders,
     );
   }
 
@@ -203,6 +286,13 @@ class DownloadHistoryItem {
       'fileName': fileName,
       'size': size,
       'lastDownloadedPart': lastDownloadedPart,
+      'animeName': animeName,
+      'episodeTitle': episodeTitle,
+      'resolution': resolution,
+      'serverName': serverName,
+      'totalSize': totalSize,
+      'fallbackUrls': fallbackUrls,
+      'fallbackHeaders': fallbackHeaders,
     };
   }
 
@@ -217,13 +307,22 @@ class DownloadHistoryItem {
       fileName: map['fileName'] as String,
       size: map['size'] as int,
       lastDownloadedPart: map['lastDownloadedPart'] as int?,
+      animeName: map['animeName'] as String?,
+      episodeTitle: map['episodeTitle'] as String?,
+      resolution: map['resolution'] as String?,
+      serverName: map['serverName'] as String?,
+      totalSize: map['totalSize'] as int?,
+      fallbackUrls: map['fallbackUrls'] != null ? List<String>.from(map['fallbackUrls']) : const [],
+      fallbackHeaders: map['fallbackHeaders'] != null
+          ? (map['fallbackHeaders'] as List<dynamic>).map((e) => Map<String, String>.from(e)).toList()
+          : const [],
     );
   }
 
   @override
   String toString() {
     return 'DownloadHistoryItem(id: $id, status: $status, timestamp: $timestamp, filePath: $filePath, url: $url, headers: $headers,'
-    'fileName: $fileName), size: $size, lastDownloadedPart: $lastDownloadedPart';
+        'fileName: $fileName, size: $size, lastDownloadedPart: $lastDownloadedPart, animeName: $animeName, episodeTitle: $episodeTitle, resolution: $resolution, serverName: $serverName)';
   }
 }
 
