@@ -9,7 +9,7 @@ plugins {
 
 def stempelVersi = new SimpleDateFormat("yyyyMMddHHmm").format(new Date())
 
-def versiDasar = "4.10"
+def versiDasar = "4.10.0-beta1"
 
 def kodeVersi = (System.currentTimeMillis() / 60000L).toInteger()
 
