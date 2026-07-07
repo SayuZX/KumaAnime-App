@@ -18,7 +18,6 @@ import 'package:kumaanime/core/auth/providers/auth_provider.dart';
 import 'package:kumaanime/core/auth/repositories/auth_repository_impl.dart';
 import 'package:kumaanime/core/auth/repositories/user_repository.dart';
 import 'package:kumaanime/core/auth/services/auth0_service.dart';
-import 'package:kumaanime/core/auth/services/account_linking_service.dart';
 
 import 'package:kumaanime/core/anime/providers/animeonsen.dart';
 import 'package:kumaanime/core/app/logging.dart';
@@ -61,26 +60,35 @@ void main(List<String> args) async {
 
     WidgetsFlutterBinding.ensureInitialized();
 
-    await SecurityInit.initialize();
+    // Initialize security layer first
+    try {
+      await SecurityInit.initialize();
+      Logs.app.log('[STARTUP] Security layer initialized');
+    } catch (e) {
+      Logs.app.log('[STARTUP] Security initialization failed: $e');
+      if (!kDebugMode) {
+        // In release mode, exit if security init fails
+        throw Exception('Security initialization failed');
+      }
+    }
 
     // Initialise app version instance
-    AppVersion.init();
+    await AppVersion.init();
 
-    await Hive.initFlutter(!Platform.isAndroid ? "kumaanime" : null);
+    await Hive.initFlutter(!Platform.isAndroid ? 'kumaanime' : null);
 
     await loadAndAssignSettings();
 
     AuthProvider? authProvider;
     if (Platform.isAndroid) {
       await Firebase.initializeApp();
-      
+
       final userRepository = UserRepository();
       final auth0Service = Auth0Service();
-      final linkingService = AccountLinkingService(userRepository);
-      final authRepository = AuthRepositoryImpl(auth0Service, userRepository, linkingService);
+      final authRepository = AuthRepositoryImpl(auth0Service, userRepository);
       authProvider = AuthProvider(authRepository);
       await authProvider.initialize();
-      
+
       await SocialService.instance.init();
     }
 
@@ -140,7 +148,8 @@ void main(List<String> args) async {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => AppProvider()),
-          if (authProvider != null) ChangeNotifierProvider.value(value: authProvider),
+          if (authProvider != null)
+            ChangeNotifierProvider.value(value: authProvider),
         ],
         child: const KumaSecureWidget(child: KumaAnime()),
       ),
@@ -194,8 +203,9 @@ Future<void> loadAndAssignSettings() async {
 
     if (darkMode) {
       appTheme = darkThemeFor(theme.theme.accentColor, theme.theme.onAccent);
-      if (currentUserSettings!.amoledBackground ?? false)
+      if (currentUserSettings!.amoledBackground ?? false) {
         appTheme.backgroundColor = Colors.black;
+      }
     } else {
       final accent = Color.alphaBlend(
           Colors.black.withValues(alpha: 0.16), theme.lightVariant.accentColor);
@@ -238,6 +248,11 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
           NotificationController.onDismissActionReceivedMethod,
     );
 
+    // Monitor security status in production
+    if (Platform.isAndroid && !kDebugMode) {
+      _initSecurityMonitoring();
+    }
+
     WidgetsBinding.instance.addObserver(this);
     _applyEdgeToEdge();
 
@@ -245,6 +260,21 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
     // FlutterDiscordRPC.instance.connect(autoRetry: true, retryDelay: Duration(seconds: 10));
 
     super.initState();
+  }
+
+  void _initSecurityMonitoring() {
+    try {
+      SecurityInit.verified.addListener(() {
+        if (!SecurityInit.isVerified) {
+          Logs.app.log('[SECURITY] Security verification failed');
+          // Optionally show warning to user
+          floatingSnackBar(
+              'Security check failed. Some features may be restricted.');
+        }
+      });
+    } catch (e) {
+      Logs.app.log('[SECURITY] Failed to initialize security monitoring: $e');
+    }
   }
 
   void _applyEdgeToEdge() {
@@ -267,6 +297,15 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
+
+    // Cleanup security manager
+    try {
+      if (Platform.isAndroid) {
+        // SecurityManager cleanup if needed
+      }
+    } catch (e) {
+      Logs.app.log('[DISPOSE] Security cleanup failed: $e');
+    }
 
     // if (currentUserSettings?.enableDiscordPresence ?? false) {
     //   FlutterDiscordRPC.instance.clearActivity();
@@ -294,7 +333,7 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
                         ),
                       ),
                     ) ??
-                    print("Nah");
+                    Logs.app.log('[DEEPLINK] Navigation failed for id: $id');
                 break;
               }
             }
@@ -310,133 +349,131 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightScheme, darkScheme) {
-          late KumaAnimeTheme scheme;
+        late KumaAnimeTheme scheme;
 
-          //just checks for dark mode and sets the appTheme variable with suitable theme
-          if (currentUserSettings?.darkMode ?? true) {
-            scheme = KumaAnimeTheme(
-              accentColor: darkScheme?.primary ?? appTheme.accentColor,
-              backgroundColor: (currentUserSettings?.amoledBackground ?? false)
-                  ? Colors.black
-                  : darkScheme?.surface ?? appTheme.backgroundColor,
-              backgroundSubColor:
-                  darkScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
-              textMainColor: darkScheme?.onSurface ?? appTheme.textMainColor,
-              textSubColor:
-                  darkScheme?.onSurfaceVariant ?? appTheme.textSubColor,
-              modalSheetBackgroundColor:
-                  darkScheme?.surface ?? appTheme.modalSheetBackgroundColor,
-              onAccent: darkScheme?.onPrimary ?? appTheme.onAccent,
-            );
-          } else {
-            scheme = KumaAnimeTheme(
-              accentColor: lightScheme?.primary ?? appTheme.accentColor,
-              backgroundColor: lightScheme?.surface ?? appTheme.accentColor,
-              backgroundSubColor: lightScheme?.secondaryContainer ??
-                  appTheme.backgroundSubColor,
-              textMainColor: lightScheme?.onSurface ?? appTheme.textMainColor,
-              textSubColor:
-                  lightScheme?.onSurfaceVariant ?? appTheme.textSubColor,
-              modalSheetBackgroundColor:
-                  lightScheme?.surface ?? appTheme.modalSheetBackgroundColor,
-              onAccent: lightScheme?.onPrimary ?? appTheme.onAccent,
-            );
-          }
+        //just checks for dark mode and sets the appTheme variable with suitable theme
+        if (currentUserSettings?.darkMode ?? true) {
+          scheme = KumaAnimeTheme(
+            accentColor: darkScheme?.primary ?? appTheme.accentColor,
+            backgroundColor: (currentUserSettings?.amoledBackground ?? false)
+                ? Colors.black
+                : darkScheme?.surface ?? appTheme.backgroundColor,
+            backgroundSubColor:
+                darkScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
+            textMainColor: darkScheme?.onSurface ?? appTheme.textMainColor,
+            textSubColor: darkScheme?.onSurfaceVariant ?? appTheme.textSubColor,
+            modalSheetBackgroundColor:
+                darkScheme?.surface ?? appTheme.modalSheetBackgroundColor,
+            onAccent: darkScheme?.onPrimary ?? appTheme.onAccent,
+          );
+        } else {
+          scheme = KumaAnimeTheme(
+            accentColor: lightScheme?.primary ?? appTheme.accentColor,
+            backgroundColor: lightScheme?.surface ?? appTheme.accentColor,
+            backgroundSubColor:
+                lightScheme?.secondaryContainer ?? appTheme.backgroundSubColor,
+            textMainColor: lightScheme?.onSurface ?? appTheme.textMainColor,
+            textSubColor:
+                lightScheme?.onSurfaceVariant ?? appTheme.textSubColor,
+            modalSheetBackgroundColor:
+                lightScheme?.surface ?? appTheme.modalSheetBackgroundColor,
+            onAccent: lightScheme?.onPrimary ?? appTheme.onAccent,
+          );
+        }
 
-          if (currentUserSettings?.materialTheme ?? false) {
-            appTheme = scheme;
-            // print("[THEME] Applying Material You Theme");
-          } else {
-            // lmao we can make it follow material theme XD
-            // final t = ThemeData.from(
-            //   colorScheme: ColorScheme.fromSeed(
-            //       seedColor: appTheme.accentColor,
-            //       brightness: (currentUserSettings?.darkMode ?? true) ? Brightness.dark : Brightness.light),
-            // ).colorScheme;
-            // appTheme = KumaAnimeTheme(
-            //   accentColor: t.primary,
-            //   backgroundColor: t.surface,
-            //   backgroundSubColor: t.secondaryContainer,
-            //   textMainColor: t.onSurface,
-            //   textSubColor: t.outline,
-            //   modalSheetBackgroundColor: t.surface,
-            //   onAccent: t.onPrimary,
-            // );
-          }
+        if (currentUserSettings?.materialTheme ?? false) {
+          appTheme = scheme;
+          // print("[THEME] Applying Material You Theme");
+        } else {
+          // lmao we can make it follow material theme XD
+          // final t = ThemeData.from(
+          //   colorScheme: ColorScheme.fromSeed(
+          //       seedColor: appTheme.accentColor,
+          //       brightness: (currentUserSettings?.darkMode ?? true) ? Brightness.dark : Brightness.light),
+          // ).colorScheme;
+          // appTheme = KumaAnimeTheme(
+          //   accentColor: t.primary,
+          //   backgroundColor: t.surface,
+          //   backgroundSubColor: t.secondaryContainer,
+          //   textMainColor: t.onSurface,
+          //   textSubColor: t.outline,
+          //   modalSheetBackgroundColor: t.surface,
+          //   onAccent: t.onPrimary,
+          // );
+        }
 
-          final themeProvider = Provider.of<AppProvider>(context);
+        final themeProvider = Provider.of<AppProvider>(context);
 
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness:
-                  themeProvider.isDark ? Brightness.light : Brightness.dark,
-              statusBarBrightness:
-                  themeProvider.isDark ? Brightness.dark : Brightness.light,
-              systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarContrastEnforced: false,
-              systemNavigationBarIconBrightness:
-                  themeProvider.isDark ? Brightness.light : Brightness.dark,
-            ),
-            child: MaterialApp(
-              title: 'Kuma Anime',
-              navigatorKey: KumaAnime.navigatorKey,
-              scaffoldMessengerKey: KumaAnime.snackbarKey,
-              locale: Locale(currentUserSettings?.locale ?? 'en'),
-              supportedLocales: AppLocalizations.supportedLocales,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              theme: ThemeData(
-                  useMaterial3: true,
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness:
+                themeProvider.isDark ? Brightness.light : Brightness.dark,
+            statusBarBrightness:
+                themeProvider.isDark ? Brightness.dark : Brightness.light,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
+            systemNavigationBarIconBrightness:
+                themeProvider.isDark ? Brightness.light : Brightness.dark,
+          ),
+          child: MaterialApp(
+            title: 'Kuma Anime',
+            navigatorKey: KumaAnime.navigatorKey,
+            scaffoldMessengerKey: KumaAnime.snackbarKey,
+            locale: Locale(currentUserSettings?.locale ?? 'en'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            theme: ThemeData(
+                useMaterial3: true,
+                brightness:
+                    themeProvider.isDark ? Brightness.dark : Brightness.light,
+                fontFamily: currentUserSettings?.fontFamily ?? "NotoSans",
+                textTheme: Theme.of(context).textTheme.apply(
+                    bodyColor: appTheme.textMainColor,
+                    fontFamily: currentUserSettings?.fontFamily ?? "NotoSans"),
+                scaffoldBackgroundColor: appTheme.backgroundColor,
+                bottomSheetTheme: BottomSheetThemeData(
+                    backgroundColor: appTheme.modalSheetBackgroundColor),
+                colorScheme: ColorScheme.fromSeed(
                   brightness:
                       themeProvider.isDark ? Brightness.dark : Brightness.light,
-                  fontFamily: currentUserSettings?.fontFamily ?? "NotoSans",
-                  textTheme: Theme.of(context).textTheme.apply(
-                      bodyColor: appTheme.textMainColor,
-                      fontFamily:
-                          currentUserSettings?.fontFamily ?? "NotoSans"),
-                  scaffoldBackgroundColor: appTheme.backgroundColor,
-                  bottomSheetTheme: BottomSheetThemeData(
-                      backgroundColor: appTheme.modalSheetBackgroundColor),
-                  colorScheme: ColorScheme.fromSeed(
-                    brightness: themeProvider.isDark
-                        ? Brightness.dark
-                        : Brightness.light,
-                    seedColor: (currentUserSettings?.materialTheme ?? false)
-                        ? scheme.accentColor
-                        : appTheme.accentColor,
-                  ),
-                  pageTransitionsTheme: (currentUserSettings?.reduceMotion ?? false)
-                      ? const PageTransitionsTheme(builders: {
-                          TargetPlatform.android: _NoTransitionsBuilder(),
-                          TargetPlatform.iOS: _NoTransitionsBuilder(),
-                          TargetPlatform.windows: _NoTransitionsBuilder(),
-                          TargetPlatform.linux: _NoTransitionsBuilder(),
-                          TargetPlatform.macOS: _NoTransitionsBuilder(),
-                        })
-                      : null,
-                  iconTheme: IconThemeData(color: appTheme.textMainColor)),
-              builder: (context, child) {
-                final scale =
-                    (currentUserSettings?.textScale ?? 1.0).clamp(0.8, 1.4);
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(textScaler: TextScaler.linear(scale)),
-                  child: RepaintBoundary(
-                    key: ThemeTransition.boundaryKey,
-                    child: child!,
-                  ),
-                );
-              },
-              home: ChangeNotifierProvider(
-                create: (context) => MainNavProvider(),
-                child: Platform.isWindows || Platform.isLinux
-                    ? AppWrapper(firstPage: MainNavigator())
-                    : MainNavigator(),
-              ),
-              debugShowCheckedModeBanner: false,
+                  seedColor: (currentUserSettings?.materialTheme ?? false)
+                      ? scheme.accentColor
+                      : appTheme.accentColor,
+                ),
+                pageTransitionsTheme:
+                    (currentUserSettings?.reduceMotion ?? false)
+                        ? const PageTransitionsTheme(builders: {
+                            TargetPlatform.android: _NoTransitionsBuilder(),
+                            TargetPlatform.iOS: _NoTransitionsBuilder(),
+                            TargetPlatform.windows: _NoTransitionsBuilder(),
+                            TargetPlatform.linux: _NoTransitionsBuilder(),
+                            TargetPlatform.macOS: _NoTransitionsBuilder(),
+                          })
+                        : null,
+                iconTheme: IconThemeData(color: appTheme.textMainColor)),
+            builder: (context, child) {
+              final scale =
+                  (currentUserSettings?.textScale ?? 1.0).clamp(0.8, 1.4);
+              return MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
+                child: RepaintBoundary(
+                  key: ThemeTransition.boundaryKey,
+                  child: child!,
+                ),
+              );
+            },
+            home: ChangeNotifierProvider(
+              create: (context) => MainNavProvider(),
+              child: Platform.isWindows || Platform.isLinux
+                  ? AppWrapper(firstPage: MainNavigator())
+                  : MainNavigator(),
             ),
-          );
-        },
+            debugShowCheckedModeBanner: false,
+          ),
+        );
+      },
     );
   }
 }
