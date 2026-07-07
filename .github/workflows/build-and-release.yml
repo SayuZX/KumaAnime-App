@@ -504,7 +504,7 @@ jobs:
           name: v${{ needs.extract-version.outputs.version }}
           body_path: CHANGELOG.md
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(needs.extract-version.outputs.version, '-') }}
           files: release-files/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
