@@ -2,7 +2,7 @@ name: kumaanime
 description: "A app made to stream and download anime!"
 publish_to: "none" #Dont remove this!
 
-version: 4.10.0+1
+version: 4.10.0-beta1+1
 
 environment:
   sdk: ">=3.2.0 <4.0.0"
@@ -86,6 +86,7 @@ dependencies:
   image_picker: ^1.2.3
   flutter_image_compress: ^2.4.0
   auth0_flutter: ^2.4.0
+  flutter_gen: ^5.14.1
 
 dev_dependencies:
   flutter_test:
