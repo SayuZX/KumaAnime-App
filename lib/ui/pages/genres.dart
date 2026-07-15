@@ -247,143 +247,89 @@ class _GenresPageState extends State<GenresPage> with SingleTickerProviderStateM
   }
 
   // --- Header & Search Bar View ---
+  // --- Header & Search Bar View ---
   Widget _buildSearchBar(AppLocalizations loc) {
-    if (_showAdvancedResults) {
-      final totalFilters = selectedGenres.length + selectedTags.length;
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  color: appTheme.backgroundSubColor.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: appTheme.accentColor.withOpacity(0.3)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.filter_alt_rounded, color: appTheme.accentColor, size: 18),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        "$totalFilters Filters Applied",
-                        style: TextStyle(color: appTheme.textMainColor, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Modify filters button
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: appTheme.backgroundSubColor.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: Icon(Icons.edit_note_rounded, color: appTheme.textMainColor),
-                tooltip: loc.genresFilters,
-                onPressed: () => _showFilterSheet(loc),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Clear filters button (back to genres grid)
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: appTheme.backgroundSubColor.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: Icon(Icons.close_rounded, color: appTheme.accentColor),
-                tooltip: "Clear Filters",
-                onPressed: () {
-                  setState(() {
-                    selectedGenres.clear();
-                    selectedTags.clear();
-                    _showAdvancedResults = false;
-                    searchResultsAsWidgets.clear();
-                    _firstSearchDone = false;
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    final hasGenreFilter = selectedGenres.isNotEmpty || selectedTags.isNotEmpty;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
-          Expanded(
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                color: appTheme.backgroundSubColor.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: TextField(
-                controller: _searchController,
-                style: TextStyle(color: appTheme.textMainColor),
-                decoration: InputDecoration(
-                  hintText: loc.genresSearchPlaceholder,
-                  hintStyle: TextStyle(color: appTheme.textSubColor),
-                  prefixIcon: Icon(Icons.search, color: appTheme.textSubColor),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                ),
-              ),
-            ),
+          // Sort toggle chip
+          _fluentFilterChip(
+            label: _isAscending ? loc.genresSortAlphabeticalAsc : loc.genresSortAlphabeticalDesc,
+            selected: !_isAscending,
+            icon: Icons.sort_by_alpha_rounded,
+            onSelected: (val) {
+              _toggleSort();
+            },
           ),
           const SizedBox(width: 12),
-          // Sort button
-          Container(
-            height: 48,
-            width: 48,
-            decoration: BoxDecoration(
-              color: appTheme.backgroundSubColor.withOpacity(0.5),
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(
-                _isAscending ? Icons.sort_by_alpha : Icons.sort_by_alpha_outlined,
-                color: appTheme.textMainColor,
-              ),
-              tooltip: _isAscending ? loc.genresSortAlphabeticalAsc : loc.genresSortAlphabeticalDesc,
-              onPressed: _toggleSort,
-            ),
+          // Advanced filter toggle chip
+          _fluentFilterChip(
+            label: hasGenreFilter
+                ? 'Filter (${selectedGenres.length + selectedTags.length})'
+                : 'Advanced Filter',
+            selected: _showAdvancedResults || hasGenreFilter,
+            icon: Icons.tune_rounded,
+            onSelected: (val) {
+              _showFilterSheet(loc);
+            },
           ),
-          const SizedBox(width: 12),
-          // Advanced Filter button
-          Container(
-            height: 48,
-            width: 48,
-            decoration: BoxDecoration(
-              color: appTheme.backgroundSubColor.withOpacity(0.5),
-              shape: BoxShape.circle,
+          if (hasGenreFilter) ...[
+            const SizedBox(width: 12),
+            // Clear filter chip
+            _fluentFilterChip(
+              label: 'Clear',
+              selected: false,
+              icon: Icons.close_rounded,
+              onSelected: (val) {
+                setState(() {
+                  selectedGenres.clear();
+                  selectedTags.clear();
+                  _showAdvancedResults = false;
+                  searchResultsAsWidgets.clear();
+                  _firstSearchDone = false;
+                });
+              },
             ),
-            child: IconButton(
-              icon: Icon(
-                Icons.filter_alt_rounded,
-                color: selectedGenres.isNotEmpty || selectedTags.isNotEmpty ? appTheme.accentColor : appTheme.textMainColor,
-              ),
-              tooltip: loc.genresFiltersButton,
-              onPressed: () => _showFilterSheet(loc),
-            ),
-          ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _fluentFilterChip({
+    required String label,
+    required bool selected,
+    required IconData icon,
+    required ValueChanged<bool> onSelected,
+  }) {
+    return FilterChip(
+      showCheckmark: false,
+      avatar: Icon(
+        icon,
+        size: 16,
+        color: selected ? appTheme.onAccent : appTheme.textSubColor,
+      ),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: selected ? appTheme.onAccent : appTheme.textMainColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+        ),
+      ),
+      selected: selected,
+      selectedColor: appTheme.accentColor,
+      backgroundColor: appTheme.backgroundSubColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: selected ? appTheme.accentColor : Colors.white.withValues(alpha: 0.08),
+        ),
+      ),
+      onSelected: onSelected,
     );
   }
 
