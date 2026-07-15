@@ -6,9 +6,11 @@ import 'package:hive/hive.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/app/values.dart';
 import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:kumaanime/core/database/anilist/anilist.dart';
 import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/widgets/comingSoonOverlay.dart';
 import 'package:kumaanime/ui/models/widgets/header.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
@@ -41,7 +43,7 @@ class _TerbaruPageState extends State<TerbaruPage> with SingleTickerProviderStat
       body: SafeArea(
         child: Column(
           children: [
-            buildHeader(AppLocalizations.of(context).tabTerbaru, context),
+            buildHeader(AppLocalizations.of(context).navUpdates, context),
             TabBar(
               controller: _tabController,
               indicatorColor: appTheme.accentColor,
@@ -455,21 +457,30 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
 
   @override
   Widget build(BuildContext context) {
+    final isManga = widget.type == "new_manga";
+    final mangaComingSoon = isManga && AppValues.mangaComingSoon;
+
     if (_isLoading && _items.isEmpty) {
-      return _buildSkeletonList();
+      return mangaComingSoon
+          ? ComingSoonOverlay.manga(context: context, child: _buildSkeletonList())
+          : _buildSkeletonList();
     }
 
     if (_isOffline && _items.isEmpty) {
-      return _buildOfflineState();
+      return mangaComingSoon
+          ? ComingSoonOverlay.manga(context: context, child: _buildOfflineState())
+          : _buildOfflineState();
     }
 
     if (_isError && _items.isEmpty) {
-      return _buildErrorState();
+      return mangaComingSoon
+          ? ComingSoonOverlay.manga(context: context, child: _buildErrorState())
+          : _buildErrorState();
     }
 
     final isDesktop = Platform.isWindows || Platform.isLinux;
 
-    return Stack(
+    final content = Stack(
       children: [
         SmartRefresher(
           controller: _refreshController,
@@ -504,7 +515,7 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
                           item['title'] as String,
                           item['cover'] as String,
                           rating: item['rating'] as double?,
-                          isAnime: widget.type != "new_manga",
+                          isAnime: !mangaComingSoon,
                           isMobile: !isDesktop,
                           subText: item['subText'] as String?,
                           subIcon: item['subText'] != null ? Icons.access_time_rounded : null,
@@ -551,5 +562,11 @@ class _TerbaruTabContentState extends State<TerbaruTabContent> {
           ),
       ],
     );
+
+    if (mangaComingSoon) {
+      return ComingSoonOverlay.manga(context: context, child: content);
+    }
+
+    return content;
   }
 }
