@@ -51,49 +51,71 @@ class _StorageSettingState extends State<StorageSetting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               settingPagesTitleHeader(context, loc.stgStorageCache),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: appTheme.backgroundSubColor,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              buildFluentSettingsSectionHeader(loc.stgStorageCache),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
                   children: [
-                    Text(loc.stgInMemoryImageCache,
-                        style: TextStyle(color: appTheme.textMainColor, fontSize: 15)),
-                    Text(_cacheSize,
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.storage_rounded,
+                      title: loc.stgInMemoryImageCache,
+                      description: "Current RAM usage of loaded images",
+                      trailing: Text(
+                        _cacheSize,
                         style: TextStyle(
-                            color: appTheme.accentColor, fontWeight: FontWeight.bold, fontSize: 16)),
+                          color: appTheme.accentColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.delete_outline_rounded,
+                      title: loc.stgClearImageCache,
+                      description: loc.stgClearImageCacheDesc,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
+                      onTap: _clearImageCache,
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.cleaning_services_rounded,
+                      title: loc.stgClearAllLocalData,
+                      description: loc.stgClearAllLocalDataDesc,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
+                      onTap: _confirmClearAll,
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.sd_storage_rounded,
+                      title: "${loc.stgMaxCacheSize}: ${(s?.maxCacheSizeMb ?? 512).round()} MB",
+                      trailing: SizedBox(
+                        width: 140,
+                        child: _slider(
+                          value: (s?.maxCacheSizeMb ?? 512).toDouble(),
+                          min: 128,
+                          max: 2048,
+                          onChanged: (v) => _write(SettingsModal(maxCacheSizeMb: v.round())),
+                        ),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.autorenew_rounded,
+                      title: loc.stgAutoClearCacheOnExit,
+                      description: "Clear temporary images automatically on app exit",
+                      trailing: Switch(
+                        value: s?.autoClearCacheOnExit ?? false,
+                        onChanged: (val) => _write(SettingsModal(autoClearCacheOnExit: val)),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              ClickableItem(
-                onTap: _clearImageCache,
-                label: loc.stgClearImageCache,
-                description: loc.stgClearImageCacheDesc,
-                suffixIcon: Icon(Icons.delete_outline_rounded, color: appTheme.textMainColor),
-              ),
-              ClickableItem(
-                onTap: _confirmClearAll,
-                label: loc.stgClearAllLocalData,
-                description: loc.stgClearAllLocalDataDesc,
-                suffixIcon: Icon(Icons.cleaning_services_rounded, color: appTheme.textMainColor),
-              ),
-              _sectionLabel(loc.stgMaxCacheSize),
-              _slider(
-                value: (s?.maxCacheSizeMb ?? 512).toDouble(),
-                min: 128,
-                max: 2048,
-                onChanged: (v) => _write(SettingsModal(maxCacheSizeMb: v.round())),
-              ),
-              ToggleItem(
-                label: loc.stgAutoClearCacheOnExit,
-                value: s?.autoClearCacheOnExit ?? false,
-                onTapFunction: () => _write(SettingsModal(autoClearCacheOnExit: !(s?.autoClearCacheOnExit ?? false))),
-              ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 24),
               resetCategoryButton(context, loc.stgResetStorage, () async {
                 await Settings().resetKeys(_keys);
                 if (mounted) setState(() {});
@@ -104,14 +126,6 @@ class _StorageSettingState extends State<StorageSetting> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _sectionLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 18, bottom: 4),
-      child: Text(text,
-          style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
