@@ -15,7 +15,8 @@ import 'package:kumaanime/core/commons/genresAndTags.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class GenresPage extends StatefulWidget {
-  const GenresPage({super.key});
+  final bool isTab;
+  const GenresPage({super.key, this.isTab = false});
 
   @override
   State<GenresPage> createState() => _GenresPageState();
@@ -232,7 +233,7 @@ class _GenresPageState extends State<GenresPage> with SingleTickerProviderStateM
         padding: pagePadding(context),
         child: Column(
           children: [
-            topRow(context, loc.genresTitle),
+            if (!widget.isTab) topRow(context, loc.genresTitle),
             _buildSearchBar(loc),
             Expanded(
               child: _showAdvancedResults
