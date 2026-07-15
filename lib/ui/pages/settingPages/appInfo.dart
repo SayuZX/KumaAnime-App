@@ -97,52 +97,23 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
   }
 
   Widget _sectionHeader(IconData icon, String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 10, top: 4),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: appTheme.accentColor.withValues(alpha: 0.16),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: appTheme.accentColor, size: 18),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: TextStyle(
-                color: appTheme.textMainColor,
-                fontSize: 17,
-                fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
+    return buildFluentSettingsSectionHeader(title);
   }
 
   Widget _card(
       {required Widget child,
       EdgeInsets padding = const EdgeInsets.all(20),
-      double radius = 28}) {
+      double radius = 16}) {
     return Container(
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        color: _cardColor,
+        color: appTheme.backgroundSubColor,
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(
             color:
-                (_isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                (_isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
             width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: _isDark ? 0.2 : 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: child,
     );
@@ -305,68 +276,38 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
       ),
     ];
 
-    return _card(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      child: Column(
-        children: items
-            .map((item) =>
-                _navRow(item.$1, item.$2, () => _openPolicy(item.$2, item.$3)))
-            .toList(),
-      ),
+    return buildFluentSettingsCard(
+      children: items
+          .map((item) =>
+              _navRow(item.$1, item.$2, () => _openPolicy(item.$2, item.$3)))
+          .toList(),
     );
   }
 
   Widget _moreCard(AppLocalizations loc) {
-    return _card(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      child: Column(
-        children: [
-          _navRow(
-              Icons.source_rounded, loc.aiLicenses, () => _showLicenses(loc)),
-          _navRow(Icons.extension_rounded, loc.aiThirdParty,
-              () => _showLicenses(loc)),
-          _navRow(Icons.numbers_rounded, loc.aiVersionInfo,
-              () => _versionDialog(loc)),
-          _navRow(Icons.history_rounded, loc.aiChangelog,
-              () => _open("$_repoUrl/releases")),
-          _navRow(Icons.mail_rounded, loc.aiContactDev,
-              () => _open("mailto:pixelraihan77@gmail.com")),
-        ],
-      ),
+    return buildFluentSettingsCard(
+      children: [
+        _navRow(
+            Icons.source_rounded, loc.aiLicenses, () => _showLicenses(loc)),
+        _navRow(Icons.extension_rounded, loc.aiThirdParty,
+            () => _showLicenses(loc)),
+        _navRow(Icons.numbers_rounded, loc.aiVersionInfo,
+            () => _versionDialog(loc)),
+        _navRow(Icons.history_rounded, loc.aiChangelog,
+            () => _open("$_repoUrl/releases")),
+        _navRow(Icons.mail_rounded, loc.aiContactDev,
+            () => _open("mailto:pixelraihan77@gmail.com")),
+      ],
     );
   }
 
   Widget _navRow(IconData icon, String label, VoidCallback onTap) {
-    return InkWell(
+    return buildFluentSettingsTile(
+      context: context,
+      icon: icon,
+      title: label,
+      trailing: Icon(Icons.chevron_right_rounded, color: appTheme.textSubColor, size: 22),
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: appTheme.accentColor.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: appTheme.accentColor, size: 19),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(label,
-                  style: TextStyle(
-                      color: appTheme.textMainColor,
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w500)),
-            ),
-            Icon(Icons.chevron_right_rounded,
-                color: appTheme.textSubColor, size: 20),
-          ],
-        ),
-      ),
     );
   }
 
