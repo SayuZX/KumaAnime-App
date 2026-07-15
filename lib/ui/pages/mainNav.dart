@@ -47,10 +47,17 @@ class MainNavigatorState extends State<MainNavigator>
   // Controllers – satu set untuk bottom-bar, satu untuk sidebar desktop
   final _floatyBarController = FloatyBottomBarController(length: 5);
   final _floatyOldController = FloatyBottomBarController(length: 5);
-  final _desktopController = FloatyBottomBarController(length: 8);
+  final _desktopController = FloatyBottomBarController(length: 9);
+  final searchController = TextEditingController();
 
   bool popInvoked = false;
   late MainNavProvider mainNavProvider;
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   // ─── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -214,6 +221,7 @@ class MainNavigatorState extends State<MainNavigator>
       const LibraryPage(key: ValueKey('d5')),
       const HistoryPage(key: ValueKey('d6')),
       const SettingsPage(key: ValueKey('d7'), isTab: true),
+      Search(key: const ValueKey('d8'), isTab: true, externalController: searchController),
     ];
 
     final navItems = [
@@ -321,11 +329,11 @@ class MainNavigatorState extends State<MainNavigator>
               ),
             ),
             child: TextField(
-              readOnly: true,
+              controller: searchController,
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const Search()),
-                );
+                if (_desktopController.currentIndex != 8) {
+                  _desktopController.currentIndex = 8;
+                }
               },
               decoration: InputDecoration(
                 prefixIcon: Icon(
@@ -348,22 +356,12 @@ class MainNavigatorState extends State<MainNavigator>
           // ── Right side icons ─────────────────────────────────────────────
           IconButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const Search()),
-              );
+              if (_desktopController.currentIndex != 8) {
+                _desktopController.currentIndex = 8;
+              }
             },
             icon: Icon(
               Icons.search_rounded,
-              color: appTheme.textMainColor,
-              size: 20,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              _desktopController.currentIndex = 7;
-            },
-            icon: Icon(
-              Icons.settings_rounded,
               color: appTheme.textMainColor,
               size: 20,
             ),
