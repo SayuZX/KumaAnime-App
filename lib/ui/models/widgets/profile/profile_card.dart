@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:kumaanime/core/app/runtimeDatas.dart';
 import '../../../../core/auth/providers/auth_provider.dart';
 import '../badges/badge_chip.dart';
 
@@ -42,7 +43,7 @@ class ProfileCard extends StatelessWidget {
 
         return Card(
           elevation: 0,
-          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          color: appTheme.backgroundColor.withValues(alpha: 0.7),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
