@@ -42,85 +42,87 @@ class _StorageSettingState extends State<StorageSetting> {
     final s = currentUserSettings;
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: pagePadding(context, bottom: true),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              settingPagesTitleHeader(context, loc.stgStorageCache),
+      body: buildFluentSettingsBody(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: pagePadding(context, bottom: true),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                settingPagesTitleHeader(context, loc.stgStorageCache),
 
-              buildFluentSettingsSectionHeader(loc.stgStorageCache),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildFluentSettingsCard(
-                  children: [
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.storage_rounded,
-                      title: loc.stgInMemoryImageCache,
-                      description: "Current RAM usage of loaded images",
-                      trailing: Text(
-                        _cacheSize,
-                        style: TextStyle(
-                          color: appTheme.accentColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                buildFluentSettingsSectionHeader(loc.stgStorageCache),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: buildFluentSettingsCard(
+                    children: [
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.storage_rounded,
+                        title: loc.stgInMemoryImageCache,
+                        description: "Current RAM usage of loaded images",
+                        trailing: Text(
+                          _cacheSize,
+                          style: TextStyle(
+                            color: appTheme.accentColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.delete_outline_rounded,
-                      title: loc.stgClearImageCache,
-                      description: loc.stgClearImageCacheDesc,
-                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
-                      onTap: _clearImageCache,
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.cleaning_services_rounded,
-                      title: loc.stgClearAllLocalData,
-                      description: loc.stgClearAllLocalDataDesc,
-                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
-                      onTap: _confirmClearAll,
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.sd_storage_rounded,
-                      title: "${loc.stgMaxCacheSize}: ${(s?.maxCacheSizeMb ?? 512).round()} MB",
-                      trailing: SizedBox(
-                        width: 140,
-                        child: _slider(
-                          value: (s?.maxCacheSizeMb ?? 512).toDouble(),
-                          min: 128,
-                          max: 2048,
-                          onChanged: (v) => _write(SettingsModal(maxCacheSizeMb: v.round())),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.delete_outline_rounded,
+                        title: loc.stgClearImageCache,
+                        description: loc.stgClearImageCacheDesc,
+                        trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
+                        onTap: _clearImageCache,
+                      ),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.cleaning_services_rounded,
+                        title: loc.stgClearAllLocalData,
+                        description: loc.stgClearAllLocalDataDesc,
+                        trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
+                        onTap: _confirmClearAll,
+                      ),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.sd_storage_rounded,
+                        title: "${loc.stgMaxCacheSize}: ${(s?.maxCacheSizeMb ?? 512).round()} MB",
+                        trailing: SizedBox(
+                          width: 140,
+                          child: _slider(
+                            value: (s?.maxCacheSizeMb ?? 512).toDouble(),
+                            min: 128,
+                            max: 2048,
+                            onChanged: (v) => _write(SettingsModal(maxCacheSizeMb: v.round())),
+                          ),
                         ),
                       ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.autorenew_rounded,
-                      title: loc.stgAutoClearCacheOnExit,
-                      description: "Clear temporary images automatically on app exit",
-                      trailing: Switch(
-                        value: s?.autoClearCacheOnExit ?? false,
-                        onChanged: (val) => _write(SettingsModal(autoClearCacheOnExit: val)),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.autorenew_rounded,
+                        title: loc.stgAutoClearCacheOnExit,
+                        description: "Clear temporary images automatically on app exit",
+                        trailing: Switch(
+                          value: s?.autoClearCacheOnExit ?? false,
+                          onChanged: (val) => _write(SettingsModal(autoClearCacheOnExit: val)),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
-              resetCategoryButton(context, loc.stgResetStorage, () async {
-                await Settings().resetKeys(_keys);
-                if (mounted) setState(() {});
-                floatingSnackBar(loc.stgStorageReset);
-              }),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 24),
+                resetCategoryButton(context, loc.stgResetStorage, () async {
+                  await Settings().resetKeys(_keys);
+                  if (mounted) setState(() {});
+                  floatingSnackBar(loc.stgStorageReset);
+                }),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

@@ -61,154 +61,156 @@ class _GeneralSettingState extends State<GeneralSetting> {
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: loaded
-          ? SingleChildScrollView(
-              child: Padding(
-                padding: pagePadding(context, bottom: true),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    settingPagesTitleHeader(context, loc.generalTitle),
+          ? buildFluentSettingsBody(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: pagePadding(context, bottom: true),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      settingPagesTitleHeader(context, loc.generalTitle),
 
-                    buildFluentSettingsSectionHeader("Downloads & Providers"),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: buildFluentSettingsCard(
-                        children: [
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.folder_open_rounded,
-                            title: loc.downloadPath,
-                            description: currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/KumaAnime',
-                            trailing: Icon(Icons.navigate_next_rounded, color: appTheme.textSubColor),
-                            onTap: () async {
-                              String? dir;
-                              if (Platform.isWindows) {
-                                dir = await FilePickerWindows().getDirectoryPath();
-                              } else if (Platform.isLinux) {
-                                dir = await FilePickerLinux().getDirectoryPath();
-                              } else {
-                                dir = await FilePickerIO().getDirectoryPath();
-                              }
-                              if (dir == null) return;
-                              await Settings().writeSettings(SettingsModal(downloadPath: dir));
-                              setState(() {});
-                              floatingSnackBar(loc.genAllowAllFilesHint);
-                            },
-                          ),
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.speed_rounded,
-                            title: loc.fasterDownloading,
-                            description: loc.fasterDownloadingDesc,
-                            trailing: Switch(
-                              value: fasterDownloads,
-                              onChanged: (val) {
-                                setState(() {
-                                  fasterDownloads = val;
-                                });
-                                writeSettings(SettingsModal(fasterDownloads: val));
+                      buildFluentSettingsSectionHeader("Downloads & Providers"),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: buildFluentSettingsCard(
+                          children: [
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.folder_open_rounded,
+                              title: loc.downloadPath,
+                              description: currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/KumaAnime',
+                              trailing: Icon(Icons.navigate_next_rounded, color: appTheme.textSubColor),
+                              onTap: () async {
+                                String? dir;
+                                if (Platform.isWindows) {
+                                  dir = await FilePickerWindows().getDirectoryPath();
+                                } else if (Platform.isLinux) {
+                                  dir = await FilePickerLinux().getDirectoryPath();
+                                } else {
+                                  dir = await FilePickerIO().getDirectoryPath();
+                                }
+                                if (dir == null) return;
+                                await Settings().writeSettings(SettingsModal(downloadPath: dir));
+                                setState(() {});
+                                floatingSnackBar(loc.genAllowAllFilesHint);
                               },
                             ),
-                          ),
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.queue_play_next_rounded,
-                            title: loc.queuedDownloads,
-                            description: loc.queuedDownloadsDesc,
-                            trailing: Switch(
-                              value: useQueuedDownloads,
-                              onChanged: (val) {
-                                setState(() {
-                                  useQueuedDownloads = val;
-                                });
-                                writeSettings(SettingsModal(useQueuedDownloads: val));
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.speed_rounded,
+                              title: loc.fasterDownloading,
+                              description: loc.fasterDownloadingDesc,
+                              trailing: Switch(
+                                value: fasterDownloads,
+                                onChanged: (val) {
+                                  setState(() {
+                                    fasterDownloads = val;
+                                  });
+                                  writeSettings(SettingsModal(fasterDownloads: val));
+                                },
+                              ),
+                            ),
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.queue_play_next_rounded,
+                              title: loc.queuedDownloads,
+                              description: loc.queuedDownloadsDesc,
+                              trailing: Switch(
+                                value: useQueuedDownloads,
+                                onChanged: (val) {
+                                  setState(() {
+                                    useQueuedDownloads = val;
+                                  });
+                                  writeSettings(SettingsModal(useQueuedDownloads: val));
+                                },
+                              ),
+                            ),
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.api_rounded,
+                              title: loc.defaultProvider,
+                              description: (currentUserSettings?.preferredProvider ?? sources.first.identifier).replaceAll('_', ' '),
+                              trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  showDragHandle: true,
+                                  isScrollControlled: true,
+                                  builder: (context) => _providerSheet(context),
+                                );
                               },
                             ),
-                          ),
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.api_rounded,
-                            title: loc.defaultProvider,
-                            description: (currentUserSettings?.preferredProvider ?? sources.first.identifier).replaceAll('_', ' '),
-                            trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                showDragHandle: true,
-                                isScrollControlled: true,
-                                builder: (context) => _providerSheet(context),
-                              );
-                            },
-                          ),
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.extension_rounded,
-                            title: loc.manageProviders,
-                            description: loc.manageProvidersDesc,
-                            trailing: Icon(Icons.navigate_next_rounded, color: appTheme.textSubColor),
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => PluginPage()));
-                            },
-                          ),
-                        ],
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.extension_rounded,
+                              title: loc.manageProviders,
+                              description: loc.manageProvidersDesc,
+                              trailing: Icon(Icons.navigate_next_rounded, color: appTheme.textSubColor),
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => PluginPage()));
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    buildFluentSettingsSectionHeader("System & Diagnostics"),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: buildFluentSettingsCard(
-                        children: [
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.bug_report_rounded,
-                            title: loc.showErrors,
-                            description: "Display diagnostic errors in playback interface",
-                            trailing: Switch(
-                              value: showErrorsButtonState,
-                              onChanged: (val) {
-                                setState(() {
-                                  showErrorsButtonState = val;
-                                });
-                                writeSettings(SettingsModal(showErrors: val));
-                              },
+                      buildFluentSettingsSectionHeader("System & Diagnostics"),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: buildFluentSettingsCard(
+                          children: [
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.bug_report_rounded,
+                              title: loc.showErrors,
+                              description: "Display diagnostic errors in playback interface",
+                              trailing: Switch(
+                                value: showErrorsButtonState,
+                                onChanged: (val) {
+                                  setState(() {
+                                    showErrorsButtonState = val;
+                                  });
+                                  writeSettings(SettingsModal(showErrors: val));
+                                },
+                              ),
                             ),
-                          ),
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.update_rounded,
-                            title: loc.receiveBetaUpdates,
-                            description: loc.receiveBetaUpdatesDesc,
-                            trailing: Switch(
-                              value: receivePreReleases,
-                              onChanged: (val) {
-                                setState(() {
-                                  receivePreReleases = val;
-                                });
-                                writeSettings(SettingsModal(receivePreReleases: val));
-                              },
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.update_rounded,
+                              title: loc.receiveBetaUpdates,
+                              description: loc.receiveBetaUpdatesDesc,
+                              trailing: Switch(
+                                value: receivePreReleases,
+                                onChanged: (val) {
+                                  setState(() {
+                                    receivePreReleases = val;
+                                  });
+                                  writeSettings(SettingsModal(receivePreReleases: val));
+                                },
+                              ),
                             ),
-                          ),
-                          buildFluentSettingsTile(
-                            context: context,
-                            icon: Icons.receipt_long_rounded,
-                            title: loc.enableLogging,
-                            description: loc.enableLoggingDesc,
-                            trailing: Switch(
-                              value: enableLogging,
-                              onChanged: (val) {
-                                setState(() {
-                                  enableLogging = val;
-                                });
-                                writeSettings(SettingsModal(enableLogging: val));
-                              },
+                            buildFluentSettingsTile(
+                              context: context,
+                              icon: Icons.receipt_long_rounded,
+                              title: loc.enableLogging,
+                              description: loc.enableLoggingDesc,
+                              trailing: Switch(
+                                value: enableLogging,
+                                onChanged: (val) {
+                                  setState(() {
+                                    enableLogging = val;
+                                  });
+                                  writeSettings(SettingsModal(enableLogging: val));
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 30),
-                  ],
+                      const SizedBox(height: 30),
+                    ],
+                  ),
                 ),
               ),
             )

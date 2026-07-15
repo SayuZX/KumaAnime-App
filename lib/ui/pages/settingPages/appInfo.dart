@@ -57,37 +57,39 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
     final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              pagePadding(context, bottom: true).copyWith(left: 16, right: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              settingPagesTitleHeader(context, loc.aiAppInfo),
-              const SizedBox(height: 12),
-              _heroCard(loc),
-              const SizedBox(height: 20),
-              _sectionHeader(Icons.person_rounded, loc.aiSectionDeveloper),
-              _developerCard(),
-              const SizedBox(height: 20),
-              _sectionHeader(Icons.policy_rounded, loc.aiSectionPolicies),
-              _policiesCard(loc),
-              const SizedBox(height: 20),
-              _sectionHeader(Icons.widgets_rounded, loc.aiSectionMore),
-              _moreCard(loc),
-              const SizedBox(height: 20),
-              _sectionHeader(Icons.public_rounded, loc.aiSectionSocial),
-              _socialCard(loc),
-              const SizedBox(height: 28),
-              Center(
-                child: Text(
-                  loc.aiMadeWith,
-                  style: TextStyle(color: appTheme.textSubColor, fontSize: 12),
+      body: buildFluentSettingsBody(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:
+                pagePadding(context, bottom: true).copyWith(left: 16, right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                settingPagesTitleHeader(context, loc.aiAppInfo),
+                const SizedBox(height: 12),
+                _heroCard(loc),
+                const SizedBox(height: 20),
+                _sectionHeader(Icons.person_rounded, loc.aiSectionDeveloper),
+                _developerCard(),
+                const SizedBox(height: 20),
+                _sectionHeader(Icons.policy_rounded, loc.aiSectionPolicies),
+                _policiesCard(loc),
+                const SizedBox(height: 20),
+                _sectionHeader(Icons.widgets_rounded, loc.aiSectionMore),
+                _moreCard(loc),
+                const SizedBox(height: 20),
+                _sectionHeader(Icons.public_rounded, loc.aiSectionSocial),
+                _socialCard(loc),
+                const SizedBox(height: 28),
+                Center(
+                  child: Text(
+                    loc.aiMadeWith,
+                    style: TextStyle(color: appTheme.textSubColor, fontSize: 12),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-            ],
+                const SizedBox(height: 12),
+              ],
+            ),
           ),
         ),
       ),

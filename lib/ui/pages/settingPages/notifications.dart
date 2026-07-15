@@ -28,68 +28,70 @@ class _NotificationSettingState extends State<NotificationSetting> {
     final s = currentUserSettings;
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: pagePadding(context, bottom: true),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              settingPagesTitleHeader(context, loc.ntfNotifications),
+      body: buildFluentSettingsBody(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: pagePadding(context, bottom: true),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                settingPagesTitleHeader(context, loc.ntfNotifications),
 
-              buildFluentSettingsSectionHeader(loc.ntfNotifications),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildFluentSettingsCard(
-                  children: [
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.notification_add_rounded,
-                      title: loc.ntfNewEpisodeAlerts,
-                      description: loc.ntfNewEpisodeAlertsDesc,
-                      trailing: Switch(
-                        value: s?.notifyNewEpisode ?? false,
-                        onChanged: (val) => _write(SettingsModal(notifyNewEpisode: val)),
+                buildFluentSettingsSectionHeader(loc.ntfNotifications),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: buildFluentSettingsCard(
+                    children: [
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.notification_add_rounded,
+                        title: loc.ntfNewEpisodeAlerts,
+                        description: loc.ntfNewEpisodeAlertsDesc,
+                        trailing: Switch(
+                          value: s?.notifyNewEpisode ?? false,
+                          onChanged: (val) => _write(SettingsModal(notifyNewEpisode: val)),
+                        ),
                       ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.feed_rounded,
-                      title: loc.ntfAnimeNews,
-                      description: loc.ntfAnimeNewsDesc,
-                      trailing: Switch(
-                        value: s?.notifyNews ?? false,
-                        onChanged: (val) => _write(SettingsModal(notifyNews: val)),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.feed_rounded,
+                        title: loc.ntfAnimeNews,
+                        description: loc.ntfAnimeNewsDesc,
+                        trailing: Switch(
+                          value: s?.notifyNews ?? false,
+                          onChanged: (val) => _write(SettingsModal(notifyNews: val)),
+                        ),
                       ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.download_done_rounded,
-                      title: loc.ntfDownloadComplete,
-                      trailing: Switch(
-                        value: s?.notifyDownloadComplete ?? true,
-                        onChanged: (val) => _write(SettingsModal(notifyDownloadComplete: val)),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.download_done_rounded,
+                        title: loc.ntfDownloadComplete,
+                        trailing: Switch(
+                          value: s?.notifyDownloadComplete ?? true,
+                          onChanged: (val) => _write(SettingsModal(notifyDownloadComplete: val)),
+                        ),
                       ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.update_rounded,
-                      title: loc.ntfBackgroundUpdateCheck,
-                      description: (s?.updateCheckFrequency ?? 'off').toUpperCase(),
-                      trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
-                      onTap: () => _showFrequencySheet(s?.updateCheckFrequency ?? 'off'),
-                    ),
-                  ],
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.update_rounded,
+                        title: loc.ntfBackgroundUpdateCheck,
+                        description: (s?.updateCheckFrequency ?? 'off').toUpperCase(),
+                        trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
+                        onTap: () => _showFrequencySheet(s?.updateCheckFrequency ?? 'off'),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
-              resetCategoryButton(context, loc.ntfResetNotifications, () async {
-                await Settings().resetKeys(_keys);
-                if (mounted) setState(() {});
-                floatingSnackBar(loc.ntfNotificationsReset);
-              }),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 24),
+                resetCategoryButton(context, loc.ntfResetNotifications, () async {
+                  await Settings().resetKeys(_keys);
+                  if (mounted) setState(() {});
+                  floatingSnackBar(loc.ntfNotificationsReset);
+                }),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
