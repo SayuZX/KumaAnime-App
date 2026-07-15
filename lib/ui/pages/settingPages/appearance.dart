@@ -88,25 +88,40 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
               settingPagesTitleHeader(context, loc.settingsAppearance),
               _sectionLabel(loc.uiThemeMode),
               _themeModeRow(appProvider),
-              ToggleItem(
-                label: loc.uiMaterialTheme,
-                description: loc.uiMaterialThemeDesc,
-                value: s?.materialTheme ?? false,
-                onTapFunction: () async {
-                  if (!_isAboveAndroid12) return floatingSnackBar(loc.uiAndroid12Required);
-                  final enabled = !(s?.materialTheme ?? false);
-                  await _write(SettingsModal(materialTheme: enabled));
-                  if (enabled) return appProvider.justRefresh();
-                  appProvider.applyThemeMode(appProvider.isDark);
-                },
-              ),
-              ToggleItem(
-                label: loc.uiPreferNativeTitles,
-                value: s?.nativeTitle ?? false,
-                onTapFunction: () async {
-                  await _write(SettingsModal(nativeTitle: !(s?.nativeTitle ?? false)));
-                  appProvider.justRefresh();
-                },
+              _sectionLabel("Visual Customization"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
+                  children: [
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.palette_outlined,
+                      title: loc.uiMaterialTheme,
+                      description: loc.uiMaterialThemeDesc,
+                      trailing: Switch(
+                        value: s?.materialTheme ?? false,
+                        onChanged: (val) async {
+                          if (!_isAboveAndroid12) return floatingSnackBar(loc.uiAndroid12Required);
+                          await _write(SettingsModal(materialTheme: val));
+                          if (val) return appProvider.justRefresh();
+                          appProvider.applyThemeMode(appProvider.isDark);
+                        },
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.title_rounded,
+                      title: loc.uiPreferNativeTitles,
+                      trailing: Switch(
+                        value: s?.nativeTitle ?? false,
+                        onChanged: (val) async {
+                          await _write(SettingsModal(nativeTitle: val));
+                          appProvider.justRefresh();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               _sectionLabel(loc.uiThemes),
               _themePicker(appProvider),
@@ -128,16 +143,6 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
               _layoutChips(loc, s?.listLayout ?? 'grid'),
               _sectionLabel(loc.apCardSize),
               _cardSizeChips(loc, s?.cardScale ?? 1.0),
-              const SizedBox(height: 8),
-              ToggleItem(
-                label: loc.apLiquidNavbar,
-                description: loc.apLiquidNavbarDesc,
-                value: !(s?.useOldNavbar ?? false),
-                onTapFunction: () async {
-                  await _write(SettingsModal(useOldNavbar: !(s?.useOldNavbar ?? false)));
-                  appProvider.justRefresh();
-                },
-              ),
               _sectionLabel(loc.uiNavbarTransparency),
               _scaleSlider(
                 value: s?.navbarTranslucency ?? 0.6,
@@ -148,25 +153,62 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
                   appProvider.justRefresh();
                 },
               ),
-              ToggleItem(
-                label: loc.apAmoledBlack,
-                description: loc.apAmoledBlackDesc,
-                value: s?.amoledBackground ?? false,
-                onTapFunction: () {
-                  _write(SettingsModal(amoledBackground: !(s?.amoledBackground ?? false)));
-                  appProvider.applyThemeMode(appProvider.isDark);
-                },
-              ),
-              ToggleItem(
-                label: loc.apBlurHero,
-                value: s?.heroBlur ?? true,
-                onTapFunction: () => _write(SettingsModal(heroBlur: !(s?.heroBlur ?? true))),
-              ),
-              ToggleItem(
-                label: loc.apReduceMotion,
-                description: loc.apReduceMotionDesc,
-                value: s?.reduceMotion ?? false,
-                onTapFunction: () => _write(SettingsModal(reduceMotion: !(s?.reduceMotion ?? false))),
+              _sectionLabel("Additional Enhancements"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
+                  children: [
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.navigation_rounded,
+                      title: loc.apLiquidNavbar,
+                      description: loc.apLiquidNavbarDesc,
+                      trailing: Switch(
+                        value: !(s?.useOldNavbar ?? false),
+                        onChanged: (val) async {
+                          await _write(SettingsModal(useOldNavbar: !val));
+                          appProvider.justRefresh();
+                        },
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.brightness_2_rounded,
+                      title: loc.apAmoledBlack,
+                      description: loc.apAmoledBlackDesc,
+                      trailing: Switch(
+                        value: s?.amoledBackground ?? false,
+                        onChanged: (val) async {
+                          await _write(SettingsModal(amoledBackground: val));
+                          appProvider.applyThemeMode(appProvider.isDark);
+                        },
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.blur_on_rounded,
+                      title: loc.apBlurHero,
+                      trailing: Switch(
+                        value: s?.heroBlur ?? true,
+                        onChanged: (val) async {
+                          await _write(SettingsModal(heroBlur: val));
+                        },
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.motion_photos_off_rounded,
+                      title: loc.apReduceMotion,
+                      description: loc.apReduceMotionDesc,
+                      trailing: Switch(
+                        value: s?.reduceMotion ?? false,
+                        onChanged: (val) async {
+                          await _write(SettingsModal(reduceMotion: val));
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 20),
               _resetButton(loc, appProvider),
@@ -266,13 +308,14 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
 
   Widget _sectionLabel(String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 8),
+      padding: const EdgeInsets.only(left: 26, right: 20, top: 24, bottom: 8),
       child: Text(
-        text,
+        text.toUpperCase(),
         style: TextStyle(
-          color: appTheme.textMainColor,
-          fontSize: 18,
+          color: appTheme.textSubColor.withValues(alpha: 0.6),
+          fontSize: 11,
           fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -311,33 +354,26 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
   }
 
   Widget _fontList(AppProvider appProvider, String selected) {
-    return Column(
-      children: _fonts.map((font) {
-        final isSelected = font == selected;
-        return InkWell(
-          onTap: () {
-            _write(SettingsModal(fontFamily: font));
-            appProvider.justRefresh();
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isSelected ? appTheme.accentColor.withValues(alpha: 0.15) : appTheme.backgroundSubColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isSelected ? appTheme.accentColor : Colors.transparent),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(font, style: TextStyle(color: appTheme.textMainColor, fontFamily: font, fontSize: 16)),
-                Text("Aa Kuma Anime",
-                    style: TextStyle(color: appTheme.textSubColor, fontFamily: font, fontSize: 15)),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: buildFluentSettingsCard(
+        children: _fonts.map((font) {
+          final isSelected = font == selected;
+          return buildFluentSettingsTile(
+            context: context,
+            icon: Icons.font_download_outlined,
+            title: font,
+            description: "Aa Kuma Anime",
+            trailing: isSelected
+                ? Icon(Icons.check_rounded, color: appTheme.accentColor, size: 20)
+                : null,
+            onTap: () {
+              _write(SettingsModal(fontFamily: font));
+              appProvider.justRefresh();
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
