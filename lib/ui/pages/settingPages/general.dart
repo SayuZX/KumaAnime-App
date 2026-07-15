@@ -70,121 +70,146 @@ class _GeneralSettingState extends State<GeneralSetting> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     settingPagesTitleHeader(context, loc.generalTitle),
-                    ToggleItem(
-                      label: loc.showErrors,
-                      value: showErrorsButtonState,
-                      onTapFunction: () {
-                        setState(() {
-                          showErrorsButtonState = !showErrorsButtonState;
-                        });
-                        writeSettings(SettingsModal(showErrors: showErrorsButtonState));
-                      },
-                    ),
-                    ToggleItem(
-                      label: loc.receiveBetaUpdates,
-                      value: receivePreReleases,
-                      onTapFunction: () {
-                        setState(() {
-                          receivePreReleases = !receivePreReleases;
-                        });
-                        writeSettings(SettingsModal(receivePreReleases: receivePreReleases));
-                      },
-                      description: loc.receiveBetaUpdatesDesc,
-                    ),
-                    ToggleItem(
-                        label: loc.fasterDownloading,
-                        value: fasterDownloads,
-                        onTapFunction: () {
-                          setState(() {
-                            fasterDownloads = !fasterDownloads;
-                          });
-                          writeSettings(SettingsModal(fasterDownloads: fasterDownloads));
-                        },
-                        description: loc.fasterDownloadingDesc),
-                    ToggleItem(
-                        label: loc.queuedDownloads,
-                        value: useQueuedDownloads,
-                        description: loc.queuedDownloadsDesc,
-                        onTapFunction: () {
-                          setState(() {
-                            useQueuedDownloads = !useQueuedDownloads;
-                            writeSettings(SettingsModal(useQueuedDownloads: useQueuedDownloads));
-                          });
-                        }),
-                    InkWell(
-                      onTap: () async {
-                        String? dir;
-                        if (Platform.isWindows) {
-                          dir = await FilePickerWindows().getDirectoryPath();
-                        } else if(Platform.isLinux) {
-                          dir = await FilePickerLinux().getDirectoryPath();
-                        } else {
-                          dir = await FilePickerIO().getDirectoryPath();
-                        }
-                        if (dir == null) return;
-                        print("Path set to: $dir");
-                        await Settings().writeSettings(SettingsModal(downloadPath: dir));
-                        setState(() {});
-                        floatingSnackBar(loc.genAllowAllFilesHint);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  loc.downloadPath,
-                                  style: textStyle(),
-                                ),
-                                Text(
-                                  currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/KumaAnime',
-                                  style: textStyle().copyWith(color: appTheme.textSubColor, fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+
+                    buildFluentSettingsSectionHeader("Downloads & Providers"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: buildFluentSettingsCard(
+                        children: [
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.folder_open_rounded,
+                            title: loc.downloadPath,
+                            description: currentUserSettings?.downloadPath ?? '/storage/emulated/0/Download/KumaAnime',
+                            trailing: Icon(Icons.navigate_next_rounded, color: appTheme.textSubColor),
+                            onTap: () async {
+                              String? dir;
+                              if (Platform.isWindows) {
+                                dir = await FilePickerWindows().getDirectoryPath();
+                              } else if (Platform.isLinux) {
+                                dir = await FilePickerLinux().getDirectoryPath();
+                              } else {
+                                dir = await FilePickerIO().getDirectoryPath();
+                              }
+                              if (dir == null) return;
+                              await Settings().writeSettings(SettingsModal(downloadPath: dir));
+                              setState(() {});
+                              floatingSnackBar(loc.genAllowAllFilesHint);
+                            },
+                          ),
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.speed_rounded,
+                            title: loc.fasterDownloading,
+                            description: loc.fasterDownloadingDesc,
+                            trailing: Switch(
+                              value: fasterDownloads,
+                              onChanged: (val) {
+                                setState(() {
+                                  fasterDownloads = val;
+                                });
+                                writeSettings(SettingsModal(fasterDownloads: val));
+                              },
                             ),
-                            Icon(Icons.navigate_next_rounded)
-                          ],
-                        ),
+                          ),
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.queue_play_next_rounded,
+                            title: loc.queuedDownloads,
+                            description: loc.queuedDownloadsDesc,
+                            trailing: Switch(
+                              value: useQueuedDownloads,
+                              onChanged: (val) {
+                                setState(() {
+                                  useQueuedDownloads = val;
+                                });
+                                writeSettings(SettingsModal(useQueuedDownloads: val));
+                              },
+                            ),
+                          ),
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.api_rounded,
+                            title: loc.defaultProvider,
+                            description: (currentUserSettings?.preferredProvider ?? sources.first.identifier).replaceAll('_', ' '),
+                            trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                showDragHandle: true,
+                                isScrollControlled: true,
+                                builder: (context) => _providerSheet(context),
+                              );
+                            },
+                          ),
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.extension_rounded,
+                            title: loc.manageProviders,
+                            description: loc.manageProvidersDesc,
+                            trailing: Icon(Icons.navigate_next_rounded, color: appTheme.textSubColor),
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => PluginPage()));
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    ClickableItem(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          showDragHandle: true,
-                          isScrollControlled: true,
-                          builder: (context) => _providerSheet(context),
-                        );
-                      },
-                      label: loc.defaultProvider,
-                      description:
-                          (currentUserSettings?.preferredProvider ?? sources.first.identifier).replaceAll('_', ' '),
-                      suffixIcon: Icon(Icons.arrow_drop_down),
+
+                    buildFluentSettingsSectionHeader("System & Diagnostics"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: buildFluentSettingsCard(
+                        children: [
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.bug_report_rounded,
+                            title: loc.showErrors,
+                            description: "Display diagnostic errors in playback interface",
+                            trailing: Switch(
+                              value: showErrorsButtonState,
+                              onChanged: (val) {
+                                setState(() {
+                                  showErrorsButtonState = val;
+                                });
+                                writeSettings(SettingsModal(showErrors: val));
+                              },
+                            ),
+                          ),
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.update_rounded,
+                            title: loc.receiveBetaUpdates,
+                            description: loc.receiveBetaUpdatesDesc,
+                            trailing: Switch(
+                              value: receivePreReleases,
+                              onChanged: (val) {
+                                setState(() {
+                                  receivePreReleases = val;
+                                });
+                                writeSettings(SettingsModal(receivePreReleases: val));
+                              },
+                            ),
+                          ),
+                          buildFluentSettingsTile(
+                            context: context,
+                            icon: Icons.receipt_long_rounded,
+                            title: loc.enableLogging,
+                            description: loc.enableLoggingDesc,
+                            trailing: Switch(
+                              value: enableLogging,
+                              onChanged: (val) {
+                                setState(() {
+                                  enableLogging = val;
+                                });
+                                writeSettings(SettingsModal(enableLogging: val));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    ClickableItem(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => PluginPage()));
-                      },
-                      label: loc.manageProviders,
-                      description: loc.manageProvidersDesc,
-                      suffixIcon: Icon(Icons.navigate_next_rounded),
-                    ),
-                    ToggleItem(
-                      onTapFunction: () {
-                        setState(() {
-                          enableLogging = !enableLogging;
-                        });
-                        writeSettings(SettingsModal(enableLogging: enableLogging));
-                      },
-                      label: loc.enableLogging,
-                      description: loc.enableLoggingDesc,
-                      value: enableLogging,
-                    ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
