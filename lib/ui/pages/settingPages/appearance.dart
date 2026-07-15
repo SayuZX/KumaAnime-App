@@ -78,141 +78,143 @@ class _AppearanceSettingState extends State<AppearanceSetting> {
     final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: pagePadding(context, bottom: true),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              settingPagesTitleHeader(context, loc.settingsAppearance),
-              _sectionLabel(loc.uiThemeMode),
-              _themeModeRow(appProvider),
-              _sectionLabel("Visual Customization"),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildFluentSettingsCard(
-                  children: [
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.palette_outlined,
-                      title: loc.uiMaterialTheme,
-                      description: loc.uiMaterialThemeDesc,
-                      trailing: Switch(
-                        value: s?.materialTheme ?? false,
-                        onChanged: (val) async {
-                          if (!_isAboveAndroid12) return floatingSnackBar(loc.uiAndroid12Required);
-                          await _write(SettingsModal(materialTheme: val));
-                          if (val) return appProvider.justRefresh();
-                          appProvider.applyThemeMode(appProvider.isDark);
-                        },
+      body: buildFluentSettingsBody(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: pagePadding(context, bottom: true),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                settingPagesTitleHeader(context, loc.settingsAppearance),
+                _sectionLabel(loc.uiThemeMode),
+                _themeModeRow(appProvider),
+                _sectionLabel("Visual Customization"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: buildFluentSettingsCard(
+                    children: [
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.palette_outlined,
+                        title: loc.uiMaterialTheme,
+                        description: loc.uiMaterialThemeDesc,
+                        trailing: Switch(
+                          value: s?.materialTheme ?? false,
+                          onChanged: (val) async {
+                            if (!_isAboveAndroid12) return floatingSnackBar(loc.uiAndroid12Required);
+                            await _write(SettingsModal(materialTheme: val));
+                            if (val) return appProvider.justRefresh();
+                            appProvider.applyThemeMode(appProvider.isDark);
+                          },
+                        ),
                       ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.title_rounded,
-                      title: loc.uiPreferNativeTitles,
-                      trailing: Switch(
-                        value: s?.nativeTitle ?? false,
-                        onChanged: (val) async {
-                          await _write(SettingsModal(nativeTitle: val));
-                          appProvider.justRefresh();
-                        },
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.title_rounded,
+                        title: loc.uiPreferNativeTitles,
+                        trailing: Switch(
+                          value: s?.nativeTitle ?? false,
+                          onChanged: (val) async {
+                            await _write(SettingsModal(nativeTitle: val));
+                            appProvider.justRefresh();
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              _sectionLabel(loc.uiThemes),
-              _themePicker(appProvider),
-              _sectionLabel(loc.apAccentColor),
-              _accentGrid(appProvider, s?.accentColorValue),
-              _sectionLabel(loc.apFont),
-              _fontList(appProvider, s?.fontFamily ?? 'NotoSans'),
-              _sectionLabel(loc.apTextSize),
-              _scaleSlider(
-                value: s?.textScale ?? 1.0,
-                min: 0.8,
-                max: 1.4,
-                onChanged: (v) async {
-                  await _write(SettingsModal(textScale: v));
-                  appProvider.justRefresh();
-                },
-              ),
-              _sectionLabel(loc.apAnimeListLayout),
-              _layoutChips(loc, s?.listLayout ?? 'grid'),
-              _sectionLabel(loc.apCardSize),
-              _cardSizeChips(loc, s?.cardScale ?? 1.0),
-              _sectionLabel(loc.uiNavbarTransparency),
-              _scaleSlider(
-                value: s?.navbarTranslucency ?? 0.6,
-                min: 0.0,
-                max: 1.0,
-                onChanged: (v) async {
-                  await _write(SettingsModal(navbarTranslucency: v));
-                  appProvider.justRefresh();
-                },
-              ),
-              _sectionLabel("Additional Enhancements"),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildFluentSettingsCard(
-                  children: [
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.navigation_rounded,
-                      title: loc.apLiquidNavbar,
-                      description: loc.apLiquidNavbarDesc,
-                      trailing: Switch(
-                        value: !(s?.useOldNavbar ?? false),
-                        onChanged: (val) async {
-                          await _write(SettingsModal(useOldNavbar: !val));
-                          appProvider.justRefresh();
-                        },
-                      ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.brightness_2_rounded,
-                      title: loc.apAmoledBlack,
-                      description: loc.apAmoledBlackDesc,
-                      trailing: Switch(
-                        value: s?.amoledBackground ?? false,
-                        onChanged: (val) async {
-                          await _write(SettingsModal(amoledBackground: val));
-                          appProvider.applyThemeMode(appProvider.isDark);
-                        },
-                      ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.blur_on_rounded,
-                      title: loc.apBlurHero,
-                      trailing: Switch(
-                        value: s?.heroBlur ?? true,
-                        onChanged: (val) async {
-                          await _write(SettingsModal(heroBlur: val));
-                        },
-                      ),
-                    ),
-                    buildFluentSettingsTile(
-                      context: context,
-                      icon: Icons.motion_photos_off_rounded,
-                      title: loc.apReduceMotion,
-                      description: loc.apReduceMotionDesc,
-                      trailing: Switch(
-                        value: s?.reduceMotion ?? false,
-                        onChanged: (val) async {
-                          await _write(SettingsModal(reduceMotion: val));
-                        },
-                      ),
-                    ),
-                  ],
+                _sectionLabel(loc.uiThemes),
+                _themePicker(appProvider),
+                _sectionLabel(loc.apAccentColor),
+                _accentGrid(appProvider, s?.accentColorValue),
+                _sectionLabel(loc.apFont),
+                _fontList(appProvider, s?.fontFamily ?? 'NotoSans'),
+                _sectionLabel(loc.apTextSize),
+                _scaleSlider(
+                  value: s?.textScale ?? 1.0,
+                  min: 0.8,
+                  max: 1.4,
+                  onChanged: (v) async {
+                    await _write(SettingsModal(textScale: v));
+                    appProvider.justRefresh();
+                  },
                 ),
-              ),
-              const SizedBox(height: 20),
-              _resetButton(loc, appProvider),
-              const SizedBox(height: 20),
-            ],
+                _sectionLabel(loc.apAnimeListLayout),
+                _layoutChips(loc, s?.listLayout ?? 'grid'),
+                _sectionLabel(loc.apCardSize),
+                _cardSizeChips(loc, s?.cardScale ?? 1.0),
+                _sectionLabel(loc.uiNavbarTransparency),
+                _scaleSlider(
+                  value: s?.navbarTranslucency ?? 0.6,
+                  min: 0.0,
+                  max: 1.0,
+                  onChanged: (v) async {
+                    await _write(SettingsModal(navbarTranslucency: v));
+                    appProvider.justRefresh();
+                  },
+                ),
+                _sectionLabel("Additional Enhancements"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: buildFluentSettingsCard(
+                    children: [
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.navigation_rounded,
+                        title: loc.apLiquidNavbar,
+                        description: loc.apLiquidNavbarDesc,
+                        trailing: Switch(
+                          value: !(s?.useOldNavbar ?? false),
+                          onChanged: (val) async {
+                            await _write(SettingsModal(useOldNavbar: !val));
+                            appProvider.justRefresh();
+                          },
+                        ),
+                      ),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.brightness_2_rounded,
+                        title: loc.apAmoledBlack,
+                        description: loc.apAmoledBlackDesc,
+                        trailing: Switch(
+                          value: s?.amoledBackground ?? false,
+                          onChanged: (val) async {
+                            await _write(SettingsModal(amoledBackground: val));
+                            appProvider.applyThemeMode(appProvider.isDark);
+                          },
+                        ),
+                      ),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.blur_on_rounded,
+                        title: loc.apBlurHero,
+                        trailing: Switch(
+                          value: s?.heroBlur ?? true,
+                          onChanged: (val) async {
+                            await _write(SettingsModal(heroBlur: val));
+                          },
+                        ),
+                      ),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.motion_photos_off_rounded,
+                        title: loc.apReduceMotion,
+                        description: loc.apReduceMotionDesc,
+                        trailing: Switch(
+                          value: s?.reduceMotion ?? false,
+                          onChanged: (val) async {
+                            await _write(SettingsModal(reduceMotion: val));
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _resetButton(loc, appProvider),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
