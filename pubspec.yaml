@@ -87,6 +87,7 @@ dependencies:
   flutter_image_compress: ^2.4.0
   auth0_flutter: ^2.4.0
   flutter_gen: ^5.14.1
+  hugeicons: ^0.0.7
 
 dev_dependencies:
   flutter_test:
@@ -96,8 +97,13 @@ dev_dependencies:
 
 inno_bundle:
   id: "59cae0c0-fb9d-11ef-b95e-5f3937b12ea5"
-  publisher: "FrostNova"
+  publisher: "Raihan Nugroho"
   name: "Kuma Anime"
+  description: "Kuma Anime desktop installer"
+  url: "https://github.com/frostnova721/KumaAnime-App"
+  support_url: "https://github.com/frostnova721/KumaAnime-App/issues"
+  updates_url: "https://github.com/frostnova721/KumaAnime-App/releases"
+  license_file: "PRIVACY_POLICY.rtf"
   languages:
     - english
 
