@@ -2,8 +2,6 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/types.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
-import 'package:kumaanime/ui/models/widgets/clickableItem.dart';
-import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
