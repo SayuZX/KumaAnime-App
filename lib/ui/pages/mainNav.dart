@@ -246,28 +246,28 @@ class MainNavigatorState extends State<MainNavigator>
         label: loc.subIndoGenres,
       ),
       FluentNavItem(
-        icon: Icons.subtitles_outlined,
-        activeIcon: Icons.subtitles_rounded,
+        icon: HugeIcons.strokeRoundedSubtitle,
+        activeIcon: HugeIcons.strokeRoundedSubtitle,
         label: 'Sub Indo',
       ),
       FluentNavItem(
-        icon: Icons.translate_outlined,
-        activeIcon: Icons.translate_rounded,
+        icon: HugeIcons.strokeRoundedTranslate,
+        activeIcon: HugeIcons.strokeRoundedTranslate,
         label: 'English',
       ),
       FluentNavItem(
-        icon: Icons.bookmark_outline_rounded,
-        activeIcon: Icons.bookmark_rounded,
+        icon: HugeIcons.strokeRoundedBookmark01,
+        activeIcon: HugeIcons.strokeRoundedBookmark01,
         label: 'Bookmarks',
       ),
       FluentNavItem(
-        icon: Icons.history_rounded,
-        activeIcon: Icons.history_rounded,
+        icon: HugeIcons.strokeRoundedClock02,
+        activeIcon: HugeIcons.strokeRoundedClock02,
         label: 'History',
       ),
       FluentNavItem(
-        icon: Icons.settings_outlined,
-        activeIcon: Icons.settings_rounded,
+        icon: HugeIcons.strokeRoundedSettings01,
+        activeIcon: HugeIcons.strokeRoundedSettings01,
         label: loc.settingsTitle,
       ),
     ];

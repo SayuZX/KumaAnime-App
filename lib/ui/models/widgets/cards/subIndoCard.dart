@@ -4,6 +4,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SubIndoCard extends StatefulWidget {
   final SubIndoAnime anime;
@@ -32,7 +33,7 @@ class _SubIndoCardState extends State<SubIndoCard> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
     final subText = widget.anime.episodes != null && widget.anime.episodes!.isNotEmpty
         ? "${widget.anime.episodes} ${loc.subIndoEpisodes}"
         : (widget.anime.status ?? widget.anime.releaseDay);
@@ -166,8 +167,8 @@ class _SubIndoCardState extends State<SubIndoCard> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
-                                  Icons.movie_outlined,
+                                Icon(
+                                  HugeIcons.strokeRoundedFilm01,
                                   size: 10,
                                   color: Colors.white,
                                 ),
@@ -206,7 +207,7 @@ class _SubIndoCardState extends State<SubIndoCard> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.star,
+                                HugeIcons.strokeRoundedStar,
                                 color: appTheme.onAccent,
                                 size: 13,
                               ),

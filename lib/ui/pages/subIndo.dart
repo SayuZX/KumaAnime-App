@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:hive/hive.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import 'package:kumaanime/core/commons/enums/hiveEnums.dart';
 import 'package:kumaanime/core/anime/providers/animeLangSource.dart';
@@ -15,7 +16,7 @@ import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/widgets/cards/subIndoCard.dart';
 import 'package:kumaanime/ui/pages/subIndoDetail.dart';
-import 'package:kumaanime/ui/models/widgets/backButton.dart';
+import 'package:kumaanime/ui/pages/settingPages/common.dart';
 
 enum _SubIndoMode { ongoing, completed, genre }
 
@@ -38,10 +39,9 @@ class SubIndoPage extends StatefulWidget {
   State<SubIndoPage> createState() => _SubIndoPageState();
 }
 
-class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStateMixin {
+class _SubIndoPageState extends State<SubIndoPage> {
   late final AnimeLangSource _provider = widget.source ?? OtakuDesu();
   final RefreshController _refreshController = RefreshController();
-  late TabController _tabController;
 
   _SubIndoMode _mode = _SubIndoMode.ongoing;
   SubIndoGenre? _selectedGenre;
@@ -60,19 +60,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_handleTabSelection);
     _loadInitialData();
-  }
-
-  void _handleTabSelection() {
-    if (!_tabController.indexIsChanging) {
-      setState(() {
-        _mode = _tabController.index == 0 ? _SubIndoMode.ongoing : _SubIndoMode.completed;
-        _selectedGenre = null; // Reset genre when switching tabs
-      });
-      _load(reset: true);
-    }
   }
 
   @override
@@ -80,8 +68,6 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     _heroTimer?.cancel();
     _heroController.dispose();
     _refreshController.dispose();
-    _tabController.removeListener(_handleTabSelection);
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -301,16 +287,10 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                         runSpacing: 8,
                         children: genres.map((genre) {
                           final isSelected = _selectedGenre?.genreId == genre.genreId && _mode == _SubIndoMode.genre;
-                          return FilterChip(
+                          return _fluentFilterChip(
+                            label: genre.title,
                             selected: isSelected,
-                            label: Text(genre.title),
-                            labelStyle: TextStyle(
-                              color: isSelected ? appTheme.onAccent : appTheme.textMainColor,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                            selectedColor: appTheme.accentColor,
-                            backgroundColor: appTheme.backgroundSubColor,
-                            checkmarkColor: appTheme.onAccent,
+                            icon: HugeIcons.strokeRoundedGrid,
                             onSelected: (selected) {
                               Navigator.pop(context);
                               if (selected) {
@@ -404,7 +384,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline_rounded, size: 50, color: appTheme.textSubColor),
+          Icon(HugeIcons.strokeRoundedAlertCircle, size: 50, color: appTheme.textSubColor),
           const SizedBox(height: 12),
           Text(
             loc.subIndoLoadError,
@@ -455,201 +435,156 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSliverAppBar(AppLocalizations loc) {
+  Widget _buildFluentPivotBar(AppLocalizations loc) {
     final hasGenreFilter = _selectedGenre != null;
-    return SliverAppBar(
-      pinned: false,
-      floating: true,
-      snap: true,
-      elevation: 0,
-      backgroundColor: appTheme.backgroundColor,
-      surfaceTintColor: Colors.transparent,
-      automaticallyImplyLeading: false,
-      titleSpacing: 8,
-      leading: widget.isTab
-          ? null
-          : Padding(
-              padding: const EdgeInsets.only(left: 12),
-              child: Center(
-                child: Material(
-                  color: appTheme.backgroundSubColor,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.hardEdge,
-                  child: KumaBackButton(size: 22),
-                ),
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _fluentFilterChip(
+              label: loc.subIndoOngoing,
+              selected: _mode == _SubIndoMode.ongoing,
+              icon: HugeIcons.strokeRoundedPlay,
+              onSelected: (_) {
+                setState(() {
+                  _mode = _SubIndoMode.ongoing;
+                  _selectedGenre = null;
+                });
+                _load(reset: true);
+              },
             ),
-      leadingWidth: widget.isTab ? 0 : 48,
-      title: widget.isTab
-          ? null
-          : Text(
-              widget.pageTitle ?? loc.subIndo,
-              style: TextStyle(
-                color: appTheme.textMainColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
+            const SizedBox(width: 8),
+            _fluentFilterChip(
+              label: loc.subIndoCompleted,
+              selected: _mode == _SubIndoMode.completed,
+              icon: HugeIcons.strokeRoundedCheckmarkCircle01,
+              onSelected: (_) {
+                setState(() {
+                  _mode = _SubIndoMode.completed;
+                  _selectedGenre = null;
+                });
+                _load(reset: true);
+              },
             ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: Stack(
-            children: [
-              IconButton.filledTonal(
-                onPressed: _showGenresBottomSheet,
-                icon: _loadingGenres
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Icon(Icons.tune_rounded, color: appTheme.accentColor),
-                style: IconButton.styleFrom(
-                  backgroundColor: appTheme.backgroundSubColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              if (hasGenreFilter)
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: appTheme.accentColor,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+            const SizedBox(width: 8),
+            _fluentFilterChip(
+              label: hasGenreFilter ? _selectedGenre!.title : loc.subIndoGenres,
+              selected: _mode == _SubIndoMode.genre || hasGenreFilter,
+              icon: _loadingGenres ? null : HugeIcons.strokeRoundedSlidersHorizontal,
+              avatar: _loadingGenres
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : null,
+              onSelected: (_) {
+                _showGenresBottomSheet();
+              },
+              trailing: hasGenreFilter
+                  ? GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedGenre = null;
+                          _mode = _SubIndoMode.ongoing;
+                        });
+                        _load(reset: true);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 14,
+                          color: _mode == _SubIndoMode.genre || hasGenreFilter
+                              ? appTheme.onAccent
+                              : appTheme.textSubColor,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+          ],
         ),
-      ],
-      bottom: TabBar(
-        controller: _tabController,
-        indicatorColor: appTheme.accentColor,
-        labelColor: appTheme.accentColor,
-        unselectedLabelColor: appTheme.textSubColor,
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-        tabs: [
-          Tab(text: loc.subIndoOngoing),
-          Tab(text: loc.subIndoCompleted),
-        ],
       ),
     );
   }
 
   Widget _buildMainContent(AppLocalizations loc, bool desktop, bool showHero) {
-    final hasGenreFilter = _selectedGenre != null;
+    Widget content;
 
     if (_loading && _items.isEmpty) {
-      return CustomScrollView(
+      content = CustomScrollView(
         slivers: [
-          _buildSliverAppBar(loc),
           _buildSkeletonList(),
         ],
       );
-    }
-
-    if (_isOffline && _items.isEmpty) {
-      return CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(loc),
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: _buildOfflineState(loc),
-          ),
-        ],
-      );
-    }
-
-    if (_error && _items.isEmpty) {
-      return CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(loc),
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: _buildErrorState(loc),
-          ),
-        ],
-      );
-    }
-
-    return SmartRefresher(
-      controller: _refreshController,
-      enablePullUp: _hasNextPage,
-      onRefresh: () => _load(reset: true),
-      onLoading: () => _load(reset: false),
-      header: WaterDropMaterialHeader(
-        backgroundColor: appTheme.backgroundSubColor,
-        color: appTheme.accentColor,
-      ),
-      child: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(loc),
-          if (hasGenreFilter)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0),
-                child: Row(
-                  children: [
-                    InputChip(
-                      label: Text(_selectedGenre!.title),
-                      labelStyle: TextStyle(color: appTheme.onAccent, fontWeight: FontWeight.bold),
-                      backgroundColor: appTheme.accentColor,
-                      onDeleted: () {
-                        setState(() {
-                          _selectedGenre = null;
-                          _mode = _tabController.index == 0 ? _SubIndoMode.ongoing : _SubIndoMode.completed;
-                        });
-                        _load(reset: true);
-                      },
-                      deleteIconColor: appTheme.onAccent,
-                    ),
-                  ],
+    } else if (_isOffline && _items.isEmpty) {
+      content = _buildOfflineState(loc);
+    } else if (_error && _items.isEmpty) {
+      content = _buildErrorState(loc);
+    } else {
+      content = SmartRefresher(
+        controller: _refreshController,
+        enablePullUp: _hasNextPage,
+        onRefresh: () => _load(reset: true),
+        onLoading: () => _load(reset: false),
+        header: WaterDropMaterialHeader(
+          backgroundColor: appTheme.backgroundSubColor,
+          color: appTheme.accentColor,
+        ),
+        child: CustomScrollView(
+          slivers: [
+            if (_items.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: Text(
+                    loc.subIndoEmpty,
+                    style: TextStyle(color: appTheme.textSubColor, fontSize: 14),
+                  ),
+                ),
+              )
+            else ...[
+              if (showHero) SliverToBoxAdapter(child: _heroCarousel()),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                sliver: SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: (desktop ? 165.0 : 125.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+                    mainAxisExtent: (desktop ? 300.0 : 240.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: _items.length,
+                  itemBuilder: (context, index) {
+                    final anime = _items[index];
+                    return SubIndoCard(
+                      anime: anime,
+                      isSubIndo: widget.source == null || widget.source is OtakuDesu,
+                      onTap: () => _openDetail(anime),
+                    );
+                  },
                 ),
               ),
-            ),
-          if (_items.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: Text(
-                  loc.subIndoEmpty,
-                  style: TextStyle(color: appTheme.textSubColor, fontSize: 14),
-                ),
-              ),
-            )
-          else ...[
-            if (showHero) SliverToBoxAdapter(child: _heroCarousel()),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              sliver: SliverGrid.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: (desktop ? 165.0 : 125.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
-                  mainAxisExtent: (desktop ? 300.0 : 240.0) * (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15),
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  final anime = _items[index];
-                  return SubIndoCard(
-                    anime: anime,
-                    isSubIndo: widget.source == null || widget.source is OtakuDesu,
-                    onTap: () => _openDetail(anime),
-                  );
-                },
-              ),
-            ),
+            ],
           ],
-        ],
-      ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!widget.isTab)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: topRow(context, widget.pageTitle ?? (widget.source == null || widget.source is OtakuDesu ? loc.subIndo : loc.subEng)),
+          ),
+        _buildFluentPivotBar(loc),
+        Expanded(child: content),
+      ],
     );
   }
 
@@ -747,7 +682,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star_rounded, color: Color(0xFFF5C518), size: 14),
+                        const Icon(HugeIcons.strokeRoundedStar, color: Color(0xFFF5C518), size: 14),
                         const SizedBox(width: 3),
                         Text(
                           anime.score!,
@@ -771,7 +706,7 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.local_fire_department_rounded, color: appTheme.accentColor, size: 16),
+                        Icon(HugeIcons.strokeRoundedFire, color: appTheme.accentColor, size: 16),
                         const SizedBox(width: 5),
                         Text(
                           loc.subIndoPopular,
@@ -813,6 +748,50 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
           ),
         ),
       ),
+    );
+  }
+
+  Widget _fluentFilterChip({
+    required String label,
+    required bool selected,
+    IconData? icon,
+    Widget? avatar,
+    required ValueChanged<bool> onSelected,
+    Widget? trailing,
+  }) {
+    return FilterChip(
+      showCheckmark: false,
+      avatar: avatar ?? (icon != null
+          ? Icon(
+              icon,
+              size: 16,
+              color: selected ? appTheme.onAccent : appTheme.textSubColor,
+            )
+          : null),
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: selected ? appTheme.onAccent : appTheme.textMainColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+          if (trailing != null) trailing,
+        ],
+      ),
+      selected: selected,
+      selectedColor: appTheme.accentColor,
+      backgroundColor: appTheme.backgroundSubColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: selected ? appTheme.accentColor : Colors.white.withValues(alpha: 0.08),
+        ),
+      ),
+      onSelected: onSelected,
     );
   }
 }
