@@ -47,6 +47,8 @@ class _ContentSettingState extends State<ContentSetting> {
     final loc = AppLocalizations.of(context);
     final s = currentUserSettings;
     final blocked = s?.blockedGenres ?? [];
+    final isDark = currentUserSettings?.darkMode ?? true;
+
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -56,19 +58,35 @@ class _ContentSettingState extends State<ContentSetting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               settingPagesTitleHeader(context, loc.ctContentAndLanguage),
-              ClickableItem(
-                onTap: () => _showLanguageSheet(s?.locale ?? 'en'),
-                label: loc.ctLanguage,
-                description: _languageNames[s?.locale] ?? _languageNames['en']!,
-                suffixIcon: Icon(Icons.language_rounded, color: appTheme.textMainColor),
+
+              buildFluentSettingsSectionHeader(loc.ctContentAndLanguage),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
+                  children: [
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.language_rounded,
+                      title: loc.ctLanguage,
+                      description: _languageNames[s?.locale] ?? _languageNames['en']!,
+                      trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
+                      onTap: () => _showLanguageSheet(s?.locale ?? 'en'),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.no_adult_content_rounded,
+                      title: loc.ctShowAdultContent,
+                      description: loc.ctRequiresAgeVerification,
+                      trailing: Switch(
+                        value: s?.showAdultContent ?? false,
+                        onChanged: (val) => _toggleAdult(s?.showAdultContent ?? false),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              ToggleItem(
-                label: loc.ctShowAdultContent,
-                description: loc.ctRequiresAgeVerification,
-                value: s?.showAdultContent ?? false,
-                onTapFunction: () => _toggleAdult(s?.showAdultContent ?? false),
-              ),
-              _sectionLabel(loc.ctBlockedGenres),
+
+              buildFluentSettingsSectionHeader(loc.ctBlockedGenres),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Wrap(
@@ -87,6 +105,9 @@ class _ContentSettingState extends State<ContentSetting> {
                         decoration: BoxDecoration(
                           color: isBlocked ? appTheme.accentColor : appTheme.backgroundSubColor,
                           borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -121,14 +142,6 @@ class _ContentSettingState extends State<ContentSetting> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _sectionLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 18, bottom: 8),
-      child: Text(text,
-          style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
