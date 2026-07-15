@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
         navigateTo: const AccountSetting(),
       ),
       SettingItem(
-        icon: HugeIcons.strokeRoundedColorPalette,
+        icon: Icons.palette_outlined,
         label: loc.settingsAppearance,
         description: loc.settingsAppearanceDesc,
         navigateTo: const AppearanceSetting(),
@@ -56,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     final mediaGroup = [
       SettingItem(
-        icon: HugeIcons.strokeRoundedVideoOctagon,
+        icon: Icons.play_circle_outline_rounded,
         label: loc.settingsPlayback,
         description: loc.settingsPlaybackDesc,
         navigateTo: const PlaybackSetting(),
@@ -89,7 +89,7 @@ class _SettingsPageState extends State<SettingsPage> {
         navigateTo: const GeneralSetting(),
       ),
       SettingItem(
-        icon: HugeIcons.strokeRoundedInformation,
+        icon: Icons.info_outline_rounded,
         label: loc.settingsAppInfo,
         description: loc.settingsAppInfoDesc,
         navigateTo: const AppInfoSetting(),
