@@ -48,6 +48,16 @@ if ($issContent -notmatch "DefaultGroupName=") {
   Write-Host "      Injected DefaultGroupName=Kuma Anime" -ForegroundColor Yellow
 }
 
+# Inject custom wizard sidebar image (WizardImageFile) and small image (WizardSmallImageFile)
+$projectRoot = (Get-Item .).FullName
+$installerAssets = "$projectRoot\assets\installer"
+if ((Test-Path "$installerAssets\wizard_image.bmp") -and ($issContent -notmatch "WizardImageFile=")) {
+  $wizardImageLine = "WizardImageFile=$installerAssets\wizard_image.bmp,$installerAssets\wizard_image_125.bmp,$installerAssets\wizard_image_150.bmp,$installerAssets\wizard_image_200.bmp"
+  $wizardSmallLine = "WizardSmallImageFile=$installerAssets\wizard_small.bmp,$installerAssets\wizard_small_125.bmp,$installerAssets\wizard_small_150.bmp,$installerAssets\wizard_small_200.bmp"
+  $issContent = $issContent -replace "\[Setup\]", "[Setup]`r`n$wizardImageLine`r`n$wizardSmallLine"
+  Write-Host "      Injected custom WizardImageFile & WizardSmallImageFile" -ForegroundColor Yellow
+}
+
 # Inject GitHub update checking [Code] section into the .iss script
 if ($issContent -notmatch "\[Code\]") {
   $updateCheckCode = @"
