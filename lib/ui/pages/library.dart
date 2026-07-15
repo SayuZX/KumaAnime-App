@@ -15,7 +15,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class LibraryPage extends StatefulWidget {
-  const LibraryPage({super.key});
+  final bool isTab;
+  const LibraryPage({super.key, this.isTab = false});
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -74,14 +75,16 @@ class _LibraryPageState extends State<LibraryPage> {
                   bottom: bottomPad,
                 ),
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      loc.navLibrary,
-                      style: TextStyle(color: appTheme.textMainColor, fontSize: 34, fontWeight: FontWeight.bold),
+                  if (!widget.isTab) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        loc.navLibrary,
+                        style: TextStyle(color: appTheme.textMainColor, fontSize: 34, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
+                  ],
                   _resumeSection(loc),
                   if (_watching.isNotEmpty) ...[
                     _sectionHeader(Icons.play_circle_outline_rounded, loc.libContinueWatching),
