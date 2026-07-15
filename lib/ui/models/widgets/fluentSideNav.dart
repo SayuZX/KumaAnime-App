@@ -308,8 +308,8 @@ class _FluentSideNavState extends State<FluentSideNav>
                     ),
 
                     // Icon
-                    HugeIcon(
-                      icon: isSelected ? item.activeIcon : item.icon,
+                    Icon(
+                      isSelected ? item.activeIcon : item.icon,
                       color: iconColor,
                       size: 20,
                     ),
