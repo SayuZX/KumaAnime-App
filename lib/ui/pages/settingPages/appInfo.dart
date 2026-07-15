@@ -49,8 +49,6 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
 
   bool get _isDark => currentUserSettings?.darkMode ?? true;
 
-  Color get _cardColor => _isDark ? const Color(0xFF1E1F22) : Colors.white;
-
   Color get _chipColor =>
       _isDark ? const Color(0xFF2A2B2F) : const Color(0xFFF1F1F4);
 
