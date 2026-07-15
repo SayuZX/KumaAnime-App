@@ -48,14 +48,12 @@ class MainNavigatorState extends State<MainNavigator>
   final _floatyBarController = FloatyBottomBarController(length: 5);
   final _floatyOldController = FloatyBottomBarController(length: 5);
   final _desktopController = FloatyBottomBarController(length: 9);
-  final searchController = TextEditingController();
 
   bool popInvoked = false;
   late MainNavProvider mainNavProvider;
 
   @override
   void dispose() {
-    searchController.dispose();
     super.dispose();
   }
 
@@ -221,7 +219,7 @@ class MainNavigatorState extends State<MainNavigator>
       const LibraryPage(key: ValueKey('d5')),
       const HistoryPage(key: ValueKey('d6')),
       const SettingsPage(key: ValueKey('d7'), isTab: true),
-      Search(key: const ValueKey('d8'), isTab: true, externalController: searchController),
+      const Search(key: ValueKey('d8'), isTab: true),
     ];
 
     final navItems = [
@@ -296,10 +294,37 @@ class MainNavigatorState extends State<MainNavigator>
     );
   }
 
+  String _getPageTitle(int index, AppLocalizations loc) {
+    switch (index) {
+      case 0:
+        return 'Home';
+      case 1:
+        return loc.navUpdates;
+      case 2:
+        return loc.subIndoGenres;
+      case 3:
+        return 'Sub Indo';
+      case 4:
+        return 'English';
+      case 5:
+        return 'Bookmarks';
+      case 6:
+        return 'History';
+      case 7:
+        return loc.settingsTitle;
+      case 8:
+        return 'Search';
+      default:
+        return '';
+    }
+  }
+
   Widget _desktopTopBar(BuildContext context, AppLocalizations loc) {
     final avatarImage = storedUserData?.avatar != null
         ? NetworkImage(storedUserData!.avatar!)
         : const AssetImage('lib/assets/images/chisato_AI.jpg') as ImageProvider;
+
+    final pageTitle = _getPageTitle(_desktopController.currentIndex, loc);
 
     return Container(
       height: 70,
@@ -316,39 +341,14 @@ class MainNavigatorState extends State<MainNavigator>
       ),
       child: Row(
         children: [
-          // ── Search bar in the center-left ────────────────────────────────
-          Container(
-            width: 320,
-            height: 38,
-            decoration: BoxDecoration(
-              color: appTheme.backgroundSubColor,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: (currentUserSettings?.darkMode ?? true ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.08),
-              ),
-            ),
-            child: TextField(
-              controller: searchController,
-              onTap: () {
-                if (_desktopController.currentIndex != 8) {
-                  _desktopController.currentIndex = 8;
-                }
-              },
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search_rounded,
-                  color: appTheme.textSubColor,
-                  size: 18,
-                ),
-                hintText: loc.subEngSearchHint,
-                hintStyle: TextStyle(
-                  color: appTheme.textSubColor.withValues(alpha: 0.7),
-                  fontSize: 13,
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              ),
+          // Dynamic page title
+          Text(
+            pageTitle,
+            style: TextStyle(
+              color: appTheme.textMainColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.3,
             ),
           ),
           const Spacer(),
@@ -363,10 +363,10 @@ class MainNavigatorState extends State<MainNavigator>
             icon: Icon(
               Icons.search_rounded,
               color: appTheme.textMainColor,
-              size: 20,
+              size: 22,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
 
           // User Profile Avatar
           InkWell(
