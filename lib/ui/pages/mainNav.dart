@@ -23,8 +23,6 @@ import 'package:kumaanime/ui/models/widgets/floatyBar/floatyBottomBar.dart';
 import 'package:kumaanime/ui/models/widgets/liquidGlassNavBar.dart';
 import 'package:kumaanime/ui/models/widgets/miniResumePlayer.dart';
 import 'package:kumaanime/ui/pages/discover.dart';
-import 'package:kumaanime/ui/pages/home.dart';
-import 'package:kumaanime/ui/pages/jadwal.dart';
 import 'package:kumaanime/ui/pages/library.dart';
 import 'package:kumaanime/ui/pages/terbaru.dart';
 import 'package:kumaanime/ui/pages/settings.dart';
@@ -48,13 +46,20 @@ class MainNavigatorState extends State<MainNavigator>
   final _floatyBarController = FloatyBottomBarController(length: 5);
   final _floatyOldController = FloatyBottomBarController(length: 5);
   final _desktopController = FloatyBottomBarController(length: 9);
+  final searchController = TextEditingController();
 
   bool popInvoked = false;
   late MainNavProvider mainNavProvider;
 
   @override
   void dispose() {
+    _desktopController.currentIndexNotifier.removeListener(_onTabChanged);
+    searchController.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (mounted) setState(() {});
   }
 
   // ─── Lifecycle ─────────────────────────────────────────────────────────────
@@ -62,6 +67,7 @@ class MainNavigatorState extends State<MainNavigator>
   @override
   void initState() {
     super.initState();
+    _desktopController.currentIndexNotifier.addListener(_onTabChanged);
 
     final provider = context.read<MainNavProvider>();
     isTv().then((value) => provider.tv = value);
@@ -207,19 +213,20 @@ class MainNavigatorState extends State<MainNavigator>
         onViewAllPressed: () => _desktopController.currentIndex = 5,
         onSettingsPressed: () => _desktopController.currentIndex = 7,
       ),
-      const TerbaruPage(key: ValueKey('d1')),
-      const GenresPage(key: ValueKey('d2')),
-      const SubIndoPage(key: ValueKey('d3')),
+      const TerbaruPage(key: ValueKey('d1'), isTab: true),
+      const GenresPage(key: ValueKey('d2'), isTab: true),
+      const SubIndoPage(key: ValueKey('d3'), isTab: true),
       SubIndoPage(
         key: const ValueKey('d4'),
         source: EnglishSource(),
         pageTitle: loc.subEng,
         searchHint: loc.subEngSearchHint,
+        isTab: true,
       ),
-      const LibraryPage(key: ValueKey('d5')),
-      const HistoryPage(key: ValueKey('d6')),
+      const LibraryPage(key: ValueKey('d5'), isTab: true),
+      const HistoryPage(key: ValueKey('d6'), isTab: true),
       const SettingsPage(key: ValueKey('d7'), isTab: true),
-      const Search(key: ValueKey('d8'), isTab: true),
+      Search(key: const ValueKey('d8'), isTab: true, externalController: searchController),
     ];
 
     final navItems = [
@@ -319,11 +326,64 @@ class MainNavigatorState extends State<MainNavigator>
     }
   }
 
+  Widget _desktopSearchBar(BuildContext context, AppLocalizations loc) {
+    return Container(
+      width: 400,
+      height: 40,
+      decoration: BoxDecoration(
+        color: appTheme.backgroundSubColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: (currentUserSettings?.darkMode ?? true ? Colors.white : Colors.black)
+              .withValues(alpha: 0.08),
+        ),
+      ),
+      child: Center(
+        child: TextField(
+          controller: searchController,
+          autofocus: true,
+          style: TextStyle(
+            color: appTheme.textMainColor,
+            fontSize: 14,
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: appTheme.accentColor,
+              size: 20,
+            ),
+            suffixIcon: searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear_rounded, color: Colors.white54, size: 18),
+                    onPressed: () {
+                      searchController.clear();
+                      setState(() {});
+                    },
+                  )
+                : null,
+            hintText: loc.subEngSearchHint,
+            hintStyle: TextStyle(
+              color: appTheme.textSubColor.withValues(alpha: 0.6),
+              fontSize: 13,
+            ),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          ),
+          onChanged: (val) {
+            setState(() {});
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _desktopTopBar(BuildContext context, AppLocalizations loc) {
     final avatarImage = storedUserData?.avatar != null
         ? NetworkImage(storedUserData!.avatar!)
         : const AssetImage('lib/assets/images/chisato_AI.jpg') as ImageProvider;
 
+    final isSearching = _desktopController.currentIndex == 8;
     final pageTitle = _getPageTitle(_desktopController.currentIndex, loc);
 
     return Container(
@@ -341,31 +401,43 @@ class MainNavigatorState extends State<MainNavigator>
       ),
       child: Row(
         children: [
-          // Dynamic page title
-          Text(
-            pageTitle,
-            style: TextStyle(
-              color: appTheme.textMainColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.3,
+          if (isSearching) ...[
+            _desktopSearchBar(context, loc),
+            const Spacer(),
+            IconButton(
+              onPressed: () {
+                searchController.clear();
+                FocusManager.instance.primaryFocus?.unfocus();
+                _desktopController.currentIndex = 0;
+              },
+              icon: Icon(
+                Icons.close_rounded,
+                color: appTheme.textMainColor,
+                size: 22,
+              ),
             ),
-          ),
-          const Spacer(),
-
-          // ── Right side icons ─────────────────────────────────────────────
-          IconButton(
-            onPressed: () {
-              if (_desktopController.currentIndex != 8) {
+          ] else ...[
+            Text(
+              pageTitle,
+              style: TextStyle(
+                color: appTheme.textMainColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () {
                 _desktopController.currentIndex = 8;
-              }
-            },
-            icon: Icon(
-              Icons.search_rounded,
-              color: appTheme.textMainColor,
-              size: 22,
+              },
+              icon: Icon(
+                Icons.search_rounded,
+                color: appTheme.textMainColor,
+                size: 22,
+              ),
             ),
-          ),
+          ],
           const SizedBox(width: 12),
 
           // User Profile Avatar
