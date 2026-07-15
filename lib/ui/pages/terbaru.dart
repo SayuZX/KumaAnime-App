@@ -15,7 +15,8 @@ import 'package:kumaanime/ui/models/widgets/header.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 
 class TerbaruPage extends StatefulWidget {
-  const TerbaruPage({super.key});
+  final bool isTab;
+  const TerbaruPage({super.key, this.isTab = false});
 
   @override
   State<TerbaruPage> createState() => _TerbaruPageState();
@@ -43,7 +44,8 @@ class _TerbaruPageState extends State<TerbaruPage> with SingleTickerProviderStat
       body: SafeArea(
         child: Column(
           children: [
-            buildHeader(AppLocalizations.of(context).navUpdates, context),
+            if (!widget.isTab)
+              buildHeader(AppLocalizations.of(context).navUpdates, context),
             TabBar(
               controller: _tabController,
               indicatorColor: appTheme.accentColor,
