@@ -24,7 +24,15 @@ class SubIndoPage extends StatefulWidget {
   final String? pageTitle;
   final String? searchHint;
 
-  const SubIndoPage({super.key, this.source, this.pageTitle, this.searchHint});
+  final bool isTab;
+
+  const SubIndoPage({
+    super.key,
+    this.source,
+    this.pageTitle,
+    this.searchHint,
+    this.isTab = false,
+  });
 
   @override
   State<SubIndoPage> createState() => _SubIndoPageState();
@@ -458,26 +466,30 @@ class _SubIndoPageState extends State<SubIndoPage> with SingleTickerProviderStat
       surfaceTintColor: Colors.transparent,
       automaticallyImplyLeading: false,
       titleSpacing: 8,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: Center(
-          child: Material(
-            color: appTheme.backgroundSubColor,
-            shape: const CircleBorder(),
-            clipBehavior: Clip.hardEdge,
-            child: KumaBackButton(size: 22),
-          ),
-        ),
-      ),
-      leadingWidth: 48,
-      title: Text(
-        widget.pageTitle ?? loc.subIndo,
-        style: TextStyle(
-          color: appTheme.textMainColor,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
-      ),
+      leading: widget.isTab
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Center(
+                child: Material(
+                  color: appTheme.backgroundSubColor,
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.hardEdge,
+                  child: KumaBackButton(size: 22),
+                ),
+              ),
+            ),
+      leadingWidth: widget.isTab ? 0 : 48,
+      title: widget.isTab
+          ? null
+          : Text(
+              widget.pageTitle ?? loc.subIndo,
+              style: TextStyle(
+                color: appTheme.textMainColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16),
