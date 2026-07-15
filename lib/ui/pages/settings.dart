@@ -12,7 +12,8 @@ import 'package:kumaanime/ui/pages/settingPages/storage.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  final bool isTab;
+  const SettingsPage({super.key, this.isTab = false});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -80,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
     ];
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
-      appBar: settingPagesAppBar(context),
+      appBar: widget.isTab ? null : settingPagesAppBar(context),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(left: MediaQuery.of(context).padding.left),
