@@ -1,5 +1,4 @@
 import 'package:kumaanime/core/app/runtimeDatas.dart';
-import 'package:kumaanime/ui/pages/settings.dart';
 import 'package:kumaanime/ui/pages/search.dart';
 import 'package:flutter/material.dart';
 
@@ -17,36 +16,20 @@ Container buildHeader(String title, BuildContext context, {void Function()? afte
             fontSize: 30,
           ),
         ),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Search())).then((val) {
-                  if (afterNavigation != null) afterNavigation();
-                });
-              },
-              icon: Icon(
-                Icons.search_rounded,
-                color: appTheme.textMainColor,
-                size: 32,
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SettingsPage())).then((val) {
-                  if (afterNavigation != null) afterNavigation();
-                });
-              },
-              icon: Icon(
-                Icons.settings_rounded,
-                color: appTheme.textMainColor,
-                size: 32,
-              ),
-            ),
-          ],
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Search())).then((val) {
+              if (afterNavigation != null) afterNavigation();
+            });
+          },
+          icon: Icon(
+            Icons.search_rounded,
+            color: appTheme.textMainColor,
+            size: 32,
+          ),
         ),
       ],
     ),
   );
 }
+
