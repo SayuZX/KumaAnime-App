@@ -18,5 +18,6 @@ class FloatyBottomBarController {
     required this.length,
     this.nonViewIndices = const [],
     this.animDuration = 200,
-  }) : currentIndexNotifier = ValueNotifier<int>(0);
+    int initialIndex = 0,
+  }) : currentIndexNotifier = ValueNotifier<int>(initialIndex);
 }
