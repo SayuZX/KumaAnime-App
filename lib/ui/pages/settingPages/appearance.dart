@@ -10,7 +10,6 @@ import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/themeTransition.dart';
-import 'package:kumaanime/ui/models/widgets/toggleItem.dart';
 import 'package:kumaanime/ui/pages/settingPages/common.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
