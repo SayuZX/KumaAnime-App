@@ -148,3 +148,116 @@ Widget optionTile({required String label, required bool selected, required VoidC
     ),
   );
 }
+
+Widget buildFluentSettingsSectionHeader(String title) {
+  return Padding(
+    padding: const EdgeInsets.only(left: 6, bottom: 8, top: 16),
+    child: Text(
+      title.toUpperCase(),
+      style: TextStyle(
+        color: appTheme.textSubColor.withValues(alpha: 0.6),
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.5,
+      ),
+    ),
+  );
+}
+
+Widget buildFluentSettingsCard({required List<Widget> children}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: appTheme.backgroundSubColor,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: (currentUserSettings?.darkMode ?? true ? Colors.white : Colors.black)
+            .withValues(alpha: 0.05),
+      ),
+    ),
+    child: ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: children.length,
+      separatorBuilder: (context, index) => Divider(
+        height: 1,
+        indent: 72,
+        endIndent: 16,
+        color: (currentUserSettings?.darkMode ?? true ? Colors.white : Colors.black)
+            .withValues(alpha: 0.06),
+      ),
+      itemBuilder: (context, index) => children[index],
+    ),
+  );
+}
+
+Widget buildFluentSettingsTile({
+  required BuildContext context,
+  required IconData icon,
+  required String title,
+  String? description,
+  Widget? trailing,
+  VoidCallback? onTap,
+}) {
+  final isLight = appTheme.backgroundColor.computeLuminance() > 0.5;
+  final iconColor = isLight
+      ? Color.alphaBlend(Colors.black.withValues(alpha: 0.42), appTheme.accentColor)
+      : appTheme.accentColor;
+
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: appTheme.accentColor.withValues(alpha: isLight ? 0.22 : 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: appTheme.textMainColor,
+                    ),
+                  ),
+                  if (description != null && description.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: appTheme.textSubColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) trailing,
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
