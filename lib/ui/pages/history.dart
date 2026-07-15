@@ -9,7 +9,8 @@ import 'package:kumaanime/ui/models/widgets/cards.dart';
 import 'package:kumaanime/ui/models/widgets/loader.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
+  final bool isTab;
+  const HistoryPage({super.key, this.isTab = false});
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -57,18 +58,20 @@ class _HistoryPageState extends State<HistoryPage> {
                   bottom: bottomPad,
                 ),
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      loc.libHistory,
-                      style: TextStyle(
-                        color: appTheme.textMainColor,
-                        fontSize: 34,
-                        fontWeight: FontWeight.bold,
+                  if (!widget.isTab) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        loc.libHistory,
+                        style: TextStyle(
+                          color: appTheme.textMainColor,
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                  ],
                   if (_history.isEmpty)
                     _emptyState(loc)
                   else
