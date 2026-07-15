@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/types.dart';
@@ -79,6 +80,7 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final s = currentUserSettings;
+
     return Scaffold(
       backgroundColor: appTheme.backgroundColor,
       body: SingleChildScrollView(
@@ -88,125 +90,226 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               settingPagesTitleHeader(context, loc.pbPlayback),
-              ToggleItem(
-                label: loc.pbHardwareAcceleration,
-                description: loc.pbHardwareAccelerationDesc,
-                value: s?.hardwareAcceleration ?? true,
-                onTapFunction: () => _write(SettingsModal(hardwareAcceleration: !(s?.hardwareAcceleration ?? true))),
+
+              buildFluentSettingsSectionHeader(loc.pbPlayback),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
+                  children: [
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.bolt_rounded,
+                      title: loc.pbHardwareAcceleration,
+                      description: loc.pbHardwareAccelerationDesc,
+                      trailing: Switch(
+                        value: s?.hardwareAcceleration ?? true,
+                        onChanged: (val) => _write(SettingsModal(hardwareAcceleration: val)),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.history_rounded,
+                      title: loc.pbResumePlayback,
+                      description: loc.pbResumePlaybackDesc,
+                      trailing: Switch(
+                        value: s?.resumePlayback ?? true,
+                        onChanged: (val) => _write(SettingsModal(resumePlayback: val)),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.play_arrow_rounded,
+                      title: loc.pbAutoPlayNext,
+                      trailing: Switch(
+                        value: s?.autoPlayNext ?? true,
+                        onChanged: (val) => _write(SettingsModal(autoPlayNext: val)),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.timer_rounded,
+                      title: "${loc.pbAutoPlayCountdown}: ${(s?.autoPlayCountdown ?? 10)}s",
+                      trailing: SizedBox(
+                        width: 140,
+                        child: _slider(
+                          value: (s?.autoPlayCountdown ?? 10).toDouble(),
+                          min: 3,
+                          max: 30,
+                          unit: "s",
+                          onChanged: (v) => _write(SettingsModal(autoPlayCountdown: v.round())),
+                        ),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.speed_rounded,
+                      title: "${loc.pbBufferSize}: ${((s?.bufferSizeMs ?? 120000) / 1000).round()}s",
+                      trailing: SizedBox(
+                        width: 140,
+                        child: _slider(
+                          value: ((s?.bufferSizeMs ?? 120000) / 1000),
+                          min: 30,
+                          max: 300,
+                          unit: "s",
+                          onChanged: (v) => _write(SettingsModal(bufferSizeMs: (v * 1000).round())),
+                        ),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.screen_rotation_rounded,
+                      title: loc.pbScreenOrientation,
+                      description: (s?.playerOrientation ?? 'auto').toUpperCase(),
+                      trailing: Icon(Icons.arrow_drop_down, color: appTheme.textSubColor),
+                      onTap: () => _showOrientationSheet(s?.playerOrientation ?? 'auto'),
+                    ),
+                  ],
+                ),
               ),
-              ToggleItem(
-                label: loc.pbResumePlayback,
-                description: loc.pbResumePlaybackDesc,
-                value: s?.resumePlayback ?? true,
-                onTapFunction: () => _write(SettingsModal(resumePlayback: !(s?.resumePlayback ?? true))),
+
+              buildFluentSettingsSectionHeader(loc.plrPlayer),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
+                  children: [
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.subtitles_rounded,
+                      title: loc.plrSubtitleSettings,
+                      description: loc.plrCustomizeSubtitles,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubtitleSettingPage()));
+                      },
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.linear_scale_rounded,
+                      title: loc.plrSeekbarStyle,
+                      description: _seekbarStyles[currentUserSettings?.seekbarStyle ?? 'standard'] ?? 'Standard',
+                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: appTheme.textSubColor),
+                      onTap: () {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) _showSeekbarStyleDialog(loc, currentUserSettings?.seekbarStyle ?? 'standard');
+                        });
+                      },
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.skip_next_rounded,
+                      title: loc.plrAutoOpEdSkip,
+                      description: loc.plrAutoOpEdSkipDesc,
+                      trailing: Switch(
+                        value: s?.autoOpEdSkip ?? false,
+                        onChanged: (val) => _write(SettingsModal(autoOpEdSkip: val)),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.double_arrow_rounded,
+                      title: loc.plrShowSkipButton,
+                      description: loc.plrShowSkipButtonDesc(s?.megaSkipDuration ?? 85),
+                      trailing: Switch(
+                        value: s?.enableMegaSkip ?? true,
+                        onChanged: (val) => _write(SettingsModal(enableMegaSkip: val)),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.forward_10_rounded,
+                      title: "${loc.plrSkipDuration}: ${(s?.skipDuration ?? 15)}s",
+                      trailing: SizedBox(
+                        width: 140,
+                        child: _slider(
+                          value: (s?.skipDuration ?? 15).toDouble(),
+                          min: 5,
+                          max: 50,
+                          unit: "s",
+                          onChanged: (v) => _write(SettingsModal(skipDuration: v.round())),
+                        ),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.forward_30_rounded,
+                      title: "${loc.plrMegaSkipDuration}: ${(s?.megaSkipDuration ?? 85)}s",
+                      trailing: SizedBox(
+                        width: 140,
+                        child: _slider(
+                          value: (s?.megaSkipDuration ?? 85).toDouble(),
+                          min: 20,
+                          max: 150,
+                          unit: "s",
+                          onChanged: (v) => _write(SettingsModal(megaSkipDuration: v.round())),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              ToggleItem(
-                label: loc.pbAutoPlayNext,
-                value: s?.autoPlayNext ?? true,
-                onTapFunction: () => _write(SettingsModal(autoPlayNext: !(s?.autoPlayNext ?? true))),
+
+              buildFluentSettingsSectionHeader("Controls & Gestures"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: buildFluentSettingsCard(
+                  children: [
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.touch_app_rounded,
+                      title: loc.plrHoldToSpeedUp,
+                      description: loc.plrHoldToSpeedUpDesc,
+                      trailing: Switch(
+                        value: s?.enableHoldToSpeedUp ?? true,
+                        onChanged: (val) => _write(SettingsModal(enableHoldToSpeedUp: val)),
+                      ),
+                    ),
+                    if (Platform.isAndroid || Platform.isIOS) ...[
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.gesture_rounded,
+                        title: loc.plrPlayerGestures,
+                        description: loc.plrPlayerGesturesDesc,
+                        trailing: Switch(
+                          value: s?.enablePlayerGestures ?? false,
+                          onChanged: (val) => _write(SettingsModal(enablePlayerGestures: val)),
+                        ),
+                      ),
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.ads_click_rounded,
+                        title: loc.plrDoubleTapToSeek,
+                        description: loc.plrDoubleTapToSeekDesc(s?.skipDuration ?? 10),
+                        trailing: Switch(
+                          value: s?.doubleTapToSkip ?? true,
+                          onChanged: (val) => _write(SettingsModal(doubleTapToSkip: val)),
+                        ),
+                      ),
+                    ],
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.fast_forward_rounded,
+                      title: loc.plrEnableSuperSpeeds,
+                      description: loc.plrEnableSuperSpeedsDesc,
+                      trailing: Switch(
+                        value: s?.enableSuperSpeeds ?? false,
+                        onChanged: (val) => _write(SettingsModal(enableSuperSpeeds: val)),
+                      ),
+                    ),
+                    buildFluentSettingsTile(
+                      context: context,
+                      icon: Icons.picture_in_picture_alt_rounded,
+                      title: loc.plrAutoPip,
+                      description: loc.plrAutoPipDesc,
+                      trailing: Switch(
+                        value: s?.enablePipOnMinimize ?? false,
+                        onChanged: (val) => _write(SettingsModal(enablePipOnMinimize: val)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              _sectionLabel(loc.pbAutoPlayCountdown),
-              _slider(
-                value: (s?.autoPlayCountdown ?? 10).toDouble(),
-                min: 3,
-                max: 30,
-                unit: "s",
-                onChanged: (v) => _write(SettingsModal(autoPlayCountdown: v.round())),
-              ),
-              _sectionLabel(loc.pbBufferSize),
-              _slider(
-                value: ((s?.bufferSizeMs ?? 120000) / 1000),
-                min: 30,
-                max: 300,
-                unit: "s",
-                onChanged: (v) => _write(SettingsModal(bufferSizeMs: (v * 1000).round())),
-              ),
-              ClickableItem(
-                onTap: () => _showOrientationSheet(s?.playerOrientation ?? 'auto'),
-                label: loc.pbScreenOrientation,
-                description: (s?.playerOrientation ?? 'auto').toUpperCase(),
-                suffixIcon: Icon(Icons.arrow_drop_down, color: appTheme.textMainColor),
-              ),
-              _sectionLabel(loc.plrPlayer),
-              _sectionLabel(loc.plrSkipDuration),
-              _slider(
-                value: (s?.skipDuration ?? 15).toDouble(),
-                min: 5,
-                max: 50,
-                unit: "s",
-                onChanged: (v) => _write(SettingsModal(skipDuration: v.round())),
-              ),
-              _sectionLabel(loc.plrMegaSkipDuration),
-              _slider(
-                value: (s?.megaSkipDuration ?? 85).toDouble(),
-                min: 20,
-                max: 150,
-                unit: "s",
-                onChanged: (v) => _write(SettingsModal(megaSkipDuration: v.round())),
-              ),
-              ToggleItem(
-                label: loc.plrShowSkipButton,
-                description: loc.plrShowSkipButtonDesc(s?.megaSkipDuration ?? 85),
-                value: s?.enableMegaSkip ?? true,
-                onTapFunction: () => _write(SettingsModal(enableMegaSkip: !(s?.enableMegaSkip ?? true))),
-              ),
-              ClickableItem(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubtitleSettingPage()));
-                },
-                label: loc.plrSubtitleSettings,
-                description: loc.plrCustomizeSubtitles,
-                suffixIcon: Icon(Icons.arrow_forward_ios_rounded, size: 18, color: appTheme.textSubColor),
-              ),
-              ClickableItem(
-                onTap: () {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) _showSeekbarStyleDialog(loc, currentUserSettings?.seekbarStyle ?? 'standard');
-                  });
-                },
-                label: loc.plrSeekbarStyle,
-                description: _seekbarStyles[currentUserSettings?.seekbarStyle ?? 'standard'] ?? 'Standard',
-                suffixIcon: Icon(Icons.arrow_forward_ios_rounded, size: 18, color: appTheme.textSubColor),
-              ),
-              ToggleItem(
-                label: loc.plrEnableSuperSpeeds,
-                description: loc.plrEnableSuperSpeedsDesc,
-                value: s?.enableSuperSpeeds ?? false,
-                onTapFunction: () => _write(SettingsModal(enableSuperSpeeds: !(s?.enableSuperSpeeds ?? false))),
-              ),
-              ToggleItem(
-                label: loc.plrDoubleTapToSeek,
-                description: loc.plrDoubleTapToSeekDesc(s?.skipDuration ?? 10),
-                value: s?.doubleTapToSkip ?? true,
-                mobileOnly: true,
-                onTapFunction: () => _write(SettingsModal(doubleTapToSkip: !(s?.doubleTapToSkip ?? true))),
-              ),
-              ToggleItem(
-                label: loc.plrAutoPip,
-                description: loc.plrAutoPipDesc,
-                value: s?.enablePipOnMinimize ?? false,
-                onTapFunction: () => _write(SettingsModal(enablePipOnMinimize: !(s?.enablePipOnMinimize ?? false))),
-              ),
-              ToggleItem(
-                label: loc.plrAutoOpEdSkip,
-                description: loc.plrAutoOpEdSkipDesc,
-                value: s?.autoOpEdSkip ?? false,
-                onTapFunction: () => _write(SettingsModal(autoOpEdSkip: !(s?.autoOpEdSkip ?? false))),
-              ),
-              ToggleItem(
-                label: loc.plrHoldToSpeedUp,
-                description: loc.plrHoldToSpeedUpDesc,
-                value: s?.enableHoldToSpeedUp ?? true,
-                onTapFunction: () => _write(SettingsModal(enableHoldToSpeedUp: !(s?.enableHoldToSpeedUp ?? true))),
-              ),
-              ToggleItem(
-                label: loc.plrPlayerGestures,
-                description: loc.plrPlayerGesturesDesc,
-                value: s?.enablePlayerGestures ?? false,
-                mobileOnly: true,
-                onTapFunction: () => _write(SettingsModal(enablePlayerGestures: !(s?.enablePlayerGestures ?? false))),
-              ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 24),
               resetCategoryButton(context, loc.pbResetPlayback, () async {
                 await Settings().resetKeys(_keys);
                 if (mounted) setState(() {});
@@ -217,14 +320,6 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _sectionLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 18, bottom: 4),
-      child: Text(text,
-          style: TextStyle(color: appTheme.textMainColor, fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
