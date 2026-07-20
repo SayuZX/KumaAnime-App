@@ -598,5 +598,22 @@
   "sortTrending": "Tren",
   "sortPopularity": "Popularitas",
   "sortScore": "Nilai Rata-rata",
-  "sortNewest": "Rilis Terbaru"
+  "sortNewest": "Rilis Terbaru",
+  "comingSoonTitle": "Segera Hadir",
+  "comingSoonBadge": "Segera Hadir",
+  "comingSoonMangaDescription": "Fitur Manga masih dalam tahap pengembangan dan akan tersedia pada pembaruan berikutnya. Pantau terus!",
+  "comingSoonMangaSnackBar": "Fitur Manga segera hadir. Pantau terus pembaruan berikutnya!",
+  "audioSettingsTitle": "Pengaturan Output Audio",
+  "audioDevice": "Perangkat Output Audio",
+  "audioDeviceDefault": "Speaker Default",
+  "audioDeviceFollowWindows": "Ikuti Perangkat Default Windows",
+  "audioVolume": "Volume",
+  "audioMute": "Bisu Audio",
+  "audioSync": "Delay Sinkronisasi Audio",
+  "audioResetDefault": "Reset ke Perangkat Default",
+  "audioNoDevices": "Tidak ada perangkat audio terdeteksi",
+  "audioStatusDefault": "Default",
+  "audioStatusConnected": "Terhubung",
+  "audioStatusDisconnected": "Terputus",
+  "audioToolTip": "Pengaturan Audio"
 }
