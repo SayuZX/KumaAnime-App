@@ -648,5 +648,22 @@
   "sortTrending": "Trending",
   "sortPopularity": "Popularity",
   "sortScore": "Average Score",
-  "sortNewest": "Newest Release"
+  "sortNewest": "Newest Release",
+  "comingSoonTitle": "Coming Soon",
+  "comingSoonBadge": "Coming Soon",
+  "comingSoonMangaDescription": "The Manga feature is still under development and will be available in a future update. Stay tuned!",
+  "comingSoonMangaSnackBar": "Manga feature is coming soon. Stay tuned for the next update!",
+  "audioSettingsTitle": "Audio Output Settings",
+  "audioDevice": "Audio Output Device",
+  "audioDeviceDefault": "Default Speaker",
+  "audioDeviceFollowWindows": "Follow Windows Default Device",
+  "audioVolume": "Volume",
+  "audioMute": "Mute Audio",
+  "audioSync": "Audio Sync Delay",
+  "audioResetDefault": "Reset to Default Device",
+  "audioNoDevices": "No audio output devices found",
+  "audioStatusDefault": "Default",
+  "audioStatusConnected": "Connected",
+  "audioStatusDisconnected": "Disconnected",
+  "audioToolTip": "Audio Settings"
 }
