@@ -115,6 +115,12 @@ class SettingsModal {
   final bool? watchHistoryEnabled;
   final bool? appLockEnabled;
   final bool? screenshotProtection;
+  final double? playerLayoutScale;
+  final String? audioOutputDevice;
+  final double? audioVolume;
+  final bool? isMuted;
+  final int? audioSyncDelay;
+  final bool? autoFollowDefaultAudioDevice;
 
   SettingsModal({
     this.megaSkipDuration,
@@ -172,6 +178,12 @@ class SettingsModal {
     this.watchHistoryEnabled,
     this.appLockEnabled,
     this.screenshotProtection,
+    this.playerLayoutScale,
+    this.audioOutputDevice,
+    this.audioVolume,
+    this.isMuted,
+    this.audioSyncDelay,
+    this.autoFollowDefaultAudioDevice,
   });
 
   factory SettingsModal.fromMap(Map<dynamic, dynamic> map) {
@@ -231,11 +243,23 @@ class SettingsModal {
       watchHistoryEnabled: map['watchHistoryEnabled'] ?? true,
       appLockEnabled: map['appLockEnabled'] ?? false,
       screenshotProtection: map['screenshotProtection'] ?? false,
+      playerLayoutScale: (map['playerLayoutScale'] as num?)?.toDouble() ?? 1.0,
+      audioOutputDevice: map['audioOutputDevice'] ?? 'default',
+      audioVolume: (map['audioVolume'] as num?)?.toDouble() ?? 1.0,
+      isMuted: map['isMuted'] ?? false,
+      audioSyncDelay: (map['audioSyncDelay'] as num?)?.toInt() ?? 0,
+      autoFollowDefaultAudioDevice: map['autoFollowDefaultAudioDevice'] ?? true,
     );
   }
 
   Map<dynamic, dynamic> toMap() {
     return {
+      'playerLayoutScale': playerLayoutScale,
+      'audioOutputDevice': audioOutputDevice,
+      'audioVolume': audioVolume,
+      'isMuted': isMuted,
+      'audioSyncDelay': audioSyncDelay,
+      'autoFollowDefaultAudioDevice': autoFollowDefaultAudioDevice,
       'skipDuration': skipDuration,
       'megaSkipDuration': megaSkipDuration,
       'enableMegaSkip': enableMegaSkip,
