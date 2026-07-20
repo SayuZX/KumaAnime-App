@@ -105,14 +105,10 @@ class FvpWrapper implements VideoController {
       controller.setProperty("audio-delay", "$sec");
     }
 
-    try {
-      final audioTracks = controller.getActiveAudioTracks();
-      if (audioTracks == null || audioTracks.isEmpty) {
-        controller.setAudioTracks([0]);
-      }
-    } catch (_) {}
+    controller.setProperty("audio-track", "0");
 
     await controller.play();
+    await controller.setVolume(_isMuted ? 0.0 : (_currentVolume <= 0 ? 1.0 : _currentVolume));
   }
 
   @override
