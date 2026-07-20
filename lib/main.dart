@@ -33,6 +33,7 @@ import 'package:kumaanime/ui/models/notification.dart';
 import 'package:kumaanime/ui/models/widgets/kumaSecureWidget.dart';
 import 'package:kumaanime/ui/models/widgets/themeTransition.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
+import 'package:kumaanime/ui/models/providers/audio_provider.dart';
 import 'package:kumaanime/ui/models/providers/mainNavProvider.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/sources.dart';
@@ -93,13 +94,22 @@ void main(List<String> args) async {
     }
 
     if (!Platform.isAndroid) {
-      fvp.registerWith();
+      fvp.registerWith(options: {
+        'platforms': ['windows', 'linux', 'macos'],
+        'video.decoders': ['MFT:d3d=11', 'D3D11', 'DXVA', 'CUDA', 'FFmpeg', 'dav1d'],
+        'audio.decoders': ['FFmpeg', 'dav1d', 'auto'],
+        'player': {
+          'audio.backends': 'WASAPI,DSound,XAudio2',
+        },
+      });
     }
 
     if (Platform.isWindows || Platform.isLinux) {
       await windowManager.ensureInitialized();
-      await windowManager.setTitleBarStyle(TitleBarStyle.hidden,
-          windowButtonVisibility: false);
+      await windowManager.setTitleBarStyle(
+        TitleBarStyle.hidden,
+        windowButtonVisibility: false,
+      );
 
       // No frameless for now!
       // if (currentUserSettings?.useFramelessWindow ?? true) await windowManager.setAsFrameless();
@@ -109,7 +119,7 @@ void main(List<String> args) async {
 
     AnimeOnsen().checkAndUpdateToken();
 
-    NotificationService().init();
+    await NotificationService().init();
 
     /// Load sources. we adding inbuilt sources till migrated
     final sm = SourceManager.instance;
@@ -148,6 +158,7 @@ void main(List<String> args) async {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => AppProvider()),
+          ChangeNotifierProvider(create: (context) => AudioProvider()),
           if (authProvider != null)
             ChangeNotifierProvider.value(value: authProvider),
         ],
@@ -238,15 +249,17 @@ class _KumaAnimeState extends State<KumaAnime> with WidgetsBindingObserver {
   void initState() {
     listenDeepLinkCall();
 
-    AwesomeNotifications().setListeners(
-      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-      onNotificationCreatedMethod:
-          NotificationController.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod:
-          NotificationController.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod:
-          NotificationController.onDismissActionReceivedMethod,
-    );
+    if (Platform.isAndroid) {
+      AwesomeNotifications().setListeners(
+        onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+        onNotificationCreatedMethod:
+            NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:
+            NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:
+            NotificationController.onDismissActionReceivedMethod,
+      );
+    }
 
     // Monitor security status in production
     if (Platform.isAndroid && !kDebugMode) {
