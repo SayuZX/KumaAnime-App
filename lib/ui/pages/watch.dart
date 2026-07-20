@@ -30,6 +30,14 @@ import 'package:kumaanime/ui/models/providers/playerProvider.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/ui/models/playerControllers/videoController.dart';
 import 'package:screen_brightness/screen_brightness.dart';
+import 'package:kumaanime/core/database/handler/handler.dart';
+import 'package:kumaanime/ui/models/widgets/cards.dart';
+import 'package:kumaanime/ui/models/sources.dart';
+import 'package:kumaanime/core/database/types.dart';
+import 'package:kumaanime/core/anime/providers/types.dart';
+import 'package:collection/collection.dart';
+import 'package:kumaanime/core/commons/extractQuality.dart';
+import 'package:kumaanime/ui/models/widgets/loader.dart';
 
 class Watch extends StatefulWidget {
   final VideoController controller;
@@ -52,10 +60,31 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
 
   int? _countedEpIndex;
 
+  DatabaseInfo? _animeInfo;
+  int _currentPageIndex = 0;
+  bool _currentPageIndexInited = false;
+
+  Future<void> _fetchAnimeInfo() async {
+    try {
+      final dp = context.read<PlayerDataProvider>();
+      final id = dp.showId;
+      if (id > 0) {
+        final handler = DatabaseHandler();
+        final info = await handler.getAnimeInfo(id);
+        if (mounted) {
+          setState(() {
+            _animeInfo = info;
+          });
+        }
+      }
+    } catch (_) {}
+  }
+
   @override
   void initState() {
     super.initState();
     setWatchMode();
+    _fetchAnimeInfo();
 
     controller = widget.controller;
     _subController = SubtitleController();
@@ -642,7 +671,7 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
               child: Stack(
                 children: [
                   Player(controller),
-                  if (playerProvider.state.showSubs)
+                  if (playerProvider.state.showSubs && _subController.parsedSubtitles.isNotEmpty)
                     ListenableBuilder(
                       listenable: _subController,
                       builder: (context, _) {
@@ -722,7 +751,14 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
   double _minimizeDrag = 0;
   bool _minimizeDragging = false;
 
+  String _episodeSearchQuery = '';
+
   Widget _layoutBody(bool youtube, PlayerDataProvider dataProvider, Widget player) {
+    final isFullScreen = context.watch<AppProvider>().isFullScreen;
+    if (isDesktop && !isFullScreen) {
+      return _buildDesktopLayout(dataProvider, player);
+    }
+
     if (!youtube) {
       return Padding(
         padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
@@ -781,11 +817,16 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
   void _downloadCurrent() {
     final dp = context.read<PlayerDataProvider>();
     final stream = dp.state.currentStream;
+    final epNumStr = "EP ${(dp.state.currentEpIndex + 1).toString().padLeft(2, '0')}";
     DownloadManager().addDownloadTask(
       stream.url,
-      "${dp.showTitle} - Ep ${dp.state.currentEpIndex + 1}",
+      "${dp.showTitle} $epNumStr",
       subtitleUrl: stream.subtitle,
       customHeaders: stream.customHeaders ?? const {},
+      animeName: dp.showTitle,
+      episodeTitle: epNumStr,
+      resolution: stream.quality,
+      serverName: stream.server,
     );
     floatingSnackBar(AppLocalizations.of(context).watchDownloadingEpisode);
   }
@@ -858,7 +899,6 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
         activeTrackColor: Colors.transparent,
         inactiveTrackColor: Colors.transparent,
         thumbColor: appTheme.accentColor,
-        year2023: false,
       ),
       child: Slider(
         value: speed.clamp(2, playbackSpeeds.last),
@@ -938,6 +978,518 @@ class _WatchState extends State<Watch> with WidgetsBindingObserver {
           ),
         ),
       ),
+    );
+  }
+
+  bool _loadingEpisode = false;
+
+  Future<void> _changeEpisode(int index) async {
+    if (_loadingEpisode) return;
+    final dp = context.read<PlayerDataProvider>();
+    if (index < 0 || index >= dp.epLinks.length) return;
+
+    setState(() {
+      _loadingEpisode = true;
+    });
+
+    final epLink = dp.epLinks[index];
+    final List<VideoStream> resolvedStreams = [];
+
+    try {
+      await SourceManager.instance.getStreams(
+        dp.selectedSource,
+        epLink.episodeLink,
+        (streams, finished) async {
+          resolvedStreams.addAll(streams);
+          if (finished) {
+            if (resolvedStreams.isEmpty) {
+              floatingSnackBar("No streams found for this episode");
+              setState(() => _loadingEpisode = false);
+              return;
+            }
+
+            dp.update(dp.state.copyWith(
+              streams: resolvedStreams,
+              currentStream: resolvedStreams.first,
+              currentEpIndex: index,
+            ));
+
+            await dp.extractCurrentStreamQualities();
+            final q = dp.getPreferredQualityStreamFromQualities();
+            dp.updateCurrentQuality(q);
+
+            await controller.initiateVideo(resolvedStreams.first.url, headers: resolvedStreams.first.customHeaders);
+            controller.setQuality(q);
+            dp.getSkipTimesForCurrentEpisode(videoDuration: (controller.duration ?? 0).toDouble());
+
+            if (dp.state.audioTracks.isNotEmpty) {
+              dp.updateCurrentAudioTrack(dp.state.audioTracks.first);
+              controller.setAudioTrack(dp.state.currentAudioTrack);
+            }
+
+            setState(() {
+              _loadingEpisode = false;
+            });
+          }
+        },
+        dub: dp.preferDubs,
+      );
+    } catch (e) {
+      floatingSnackBar("Failed to load episode: $e");
+      setState(() {
+        _loadingEpisode = false;
+      });
+    }
+  }
+
+  Future<void> _loadNewStream(VideoStream stream) async {
+    final dp = context.read<PlayerDataProvider>();
+    final currentPos = controller.position ?? 0;
+
+    dp.updateCurrentStream(stream);
+
+    setState(() {
+      _loadingEpisode = true;
+    });
+
+    try {
+      await dp.extractCurrentStreamQualities();
+      final q = dp.getPreferredQualityStreamFromQualities();
+      dp.updateCurrentQuality(q);
+
+      await controller.initiateVideo(stream.url, headers: stream.customHeaders);
+      controller.setQuality(q);
+
+      await controller.seekTo(Duration(milliseconds: currentPos));
+
+      if (dp.state.audioTracks.isNotEmpty) {
+        dp.updateCurrentAudioTrack(dp.state.audioTracks.first);
+        controller.setAudioTrack(dp.state.currentAudioTrack);
+      }
+    } catch (_) {
+      floatingSnackBar("Failed to load stream");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loadingEpisode = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadNewQuality(QualityStream quality) async {
+    final dp = context.read<PlayerDataProvider>();
+    dp.updateCurrentQuality(quality);
+    controller.setQuality(quality);
+    floatingSnackBar("Quality switched to ${quality.resolution}");
+  }
+
+  List<List<Map<String, dynamic>>> _getVisibleEpList(PlayerDataProvider dp) {
+    final list = <List<Map<String, dynamic>>>[];
+    final filteredList = <Map<String, dynamic>>[];
+    for (int i = 0; i < dp.epLinks.length; i++) {
+      final hasDub = dp.epLinks[i].hasDub ?? false;
+      if (!dp.preferDubs || hasDub) {
+        filteredList.add({'realIndex': i, 'epLink': dp.epLinks[i]});
+      }
+    }
+    for (int i = 0; i < filteredList.length; i += 24) {
+      int end = (i + 24 < filteredList.length) ? i + 24 : filteredList.length;
+      list.add(filteredList.sublist(i, end));
+    }
+    if (list.isEmpty) {
+      list.add([]);
+    }
+    return list;
+  }
+
+  Widget _buildDesktopLayout(PlayerDataProvider dataProvider, Widget player) {
+    final isWatchedListNotEmpty = dataProvider.epLinks.isNotEmpty;
+    final visibleEpList = _getVisibleEpList(dataProvider);
+
+    if (!_currentPageIndexInited && visibleEpList.isNotEmpty) {
+      _currentPageIndex = (dataProvider.state.currentEpIndex ~/ 24).clamp(0, visibleEpList.length - 1);
+      _currentPageIndexInited = true;
+    }
+
+    // Filter episodes based on search query
+    final visibleEpisodes = (isWatchedListNotEmpty && visibleEpList.isNotEmpty) ? visibleEpList[_currentPageIndex] : [];
+    final filteredEpisodes = visibleEpisodes.where((ep) {
+      final epNum = ep['realIndex'] + 1;
+      return epNum.toString().contains(_episodeSearchQuery) ||
+          "Episode $epNum".toLowerCase().contains(_episodeSearchQuery.toLowerCase());
+    }).toList();
+
+    final cardScale = (currentUserSettings?.cardScale ?? 1.0).clamp(0.85, 1.15);
+    final layoutScale = (currentUserSettings?.playerLayoutScale ?? 1.0).clamp(0.8, 1.3);
+    final double cardBoxHeight = (Platform.isWindows || Platform.isLinux ? 220.0 : 170.0) * cardScale;
+    final double sidebarWidth = (360.0 * layoutScale).clamp(300.0, 440.0);
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Left Player + Description + Comments Column (Scrollable)
+          Expanded(
+            flex: 3,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: (MediaQuery.of(context).size.height * 0.52 * layoutScale).clamp(320.0, 540.0),
+                      ),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Stack(
+                          children: [
+                            player,
+                            if (_loadingEpisode)
+                              Container(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                child: Center(
+                                  child: KumaAnimeLoading(color: appTheme.accentColor, size: 40),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Dropdowns (Resolusi + Stream Link)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: appTheme.backgroundSubColor.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: appTheme.backgroundSubColor,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<QualityStream>(
+                                isExpanded: true,
+                                value: dataProvider.state.qualities.firstWhereOrNull(
+                                  (q) => q.resolution == dataProvider.state.currentQuality.resolution,
+                                ),
+                                dropdownColor: appTheme.backgroundSubColor,
+                                hint: Text("Resolusi", style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
+                                items: dataProvider.state.qualities.map((q) {
+                                  return DropdownMenuItem<QualityStream>(
+                                    value: q,
+                                    child: Text(
+                                      q.resolution,
+                                      style: TextStyle(color: appTheme.textMainColor, fontSize: 13),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (q) {
+                                  if (q != null) _loadNewQuality(q);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: appTheme.backgroundSubColor,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<VideoStream>(
+                                isExpanded: true,
+                                value: dataProvider.state.streams.firstWhereOrNull(
+                                  (s) => s.url == dataProvider.state.currentStream.url,
+                                ),
+                                dropdownColor: appTheme.backgroundSubColor,
+                                hint: Text("Link Stream", style: TextStyle(color: appTheme.textSubColor, fontSize: 13)),
+                                items: dataProvider.state.streams.map((s) {
+                                  return DropdownMenuItem<VideoStream>(
+                                    value: s,
+                                    child: Text(
+                                      s.server,
+                                      style: TextStyle(color: appTheme.textMainColor, fontSize: 13),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (s) {
+                                  if (s != null) _loadNewStream(s);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Watch Social Panel (Title, Description, Actions, Comments)
+                  Container(
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
+                      color: appTheme.backgroundSubColor.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    ),
+                    child: SizedBox(
+                      height: 480,
+                      child: WatchSocialPanel(
+                        animeId: dataProvider.showId,
+                        title: dataProvider.showTitle,
+                        onDownload: _downloadCurrent,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Right Sidebar Column (Episodes, Related, Recommendation)
+          SizedBox(
+            width: sidebarWidth,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: appTheme.backgroundSubColor.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            if (visibleEpList.isNotEmpty)
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    color: appTheme.backgroundSubColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<int>(
+                                      isExpanded: true,
+                                      value: _currentPageIndex.clamp(0, visibleEpList.length - 1),
+                                      dropdownColor: appTheme.backgroundSubColor,
+                                      items: List.generate(visibleEpList.length, (i) {
+                                        final first = visibleEpList[i].first['realIndex'] + 1;
+                                        final last = visibleEpList[i].last['realIndex'] + 1;
+                                        return DropdownMenuItem<int>(
+                                          value: i,
+                                          child: Text(
+                                            "Ep $first - $last",
+                                            style: TextStyle(color: appTheme.textMainColor, fontSize: 13, fontWeight: FontWeight.bold),
+                                          ),
+                                        );
+                                      }),
+                                      onChanged: (index) {
+                                        if (index != null) {
+                                          setState(() {
+                                            _currentPageIndex = index;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              flex: 4,
+                              child: TextField(
+                                onChanged: (val) => setState(() => _episodeSearchQuery = val),
+                                style: TextStyle(color: appTheme.textMainColor, fontSize: 13),
+                                decoration: InputDecoration(
+                                  hintText: "Filter Episodes",
+                                  hintStyle: TextStyle(color: appTheme.textSubColor, fontSize: 13),
+                                  prefixIcon: Icon(Icons.search, color: appTheme.textSubColor, size: 16),
+                                  filled: true,
+                                  fillColor: appTheme.backgroundSubColor,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: filteredEpisodes.length,
+                            separatorBuilder: (_, __) => const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
+                              final ep = filteredEpisodes[index];
+                              final epNum = ep['realIndex'] + 1;
+                              final isActive = ep['realIndex'] == dataProvider.state.currentEpIndex;
+
+                              return GestureDetector(
+                                onTap: () => _changeEpisode(ep['realIndex']),
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: isActive
+                                        ? appTheme.accentColor.withValues(alpha: 0.15)
+                                        : appTheme.backgroundSubColor.withValues(alpha: 0.4),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: isActive ? appTheme.accentColor : Colors.white.withValues(alpha: 0.04),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Episode $epNum",
+                                              style: TextStyle(
+                                                color: isActive ? appTheme.accentColor : appTheme.textMainColor,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if ((_animeInfo != null && _animeInfo!.related.isNotEmpty) || (_animeInfo != null && _animeInfo!.recommended.isNotEmpty)) ...[
+                  const SizedBox(height: 14),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: appTheme.backgroundSubColor.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (_animeInfo != null && _animeInfo!.related.isNotEmpty) ...[
+                              _buildFluentHeader("RELATED"),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                height: cardBoxHeight,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _animeInfo!.related.length,
+                                  itemBuilder: (context, index) {
+                                    final r = _animeInfo!.related[index];
+                                    return Cards.animeCard(
+                                      r.id,
+                                      r.title['english'] ?? r.title['romaji'] ?? '',
+                                      r.cover,
+                                      isMobile: true,
+                                      rating: r.rating,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                            if (_animeInfo != null && _animeInfo!.recommended.isNotEmpty) ...[
+                              const SizedBox(height: 16),
+                              _buildFluentHeader("RECOMMENDATION"),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                height: cardBoxHeight,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _animeInfo!.recommended.length,
+                                  itemBuilder: (context, index) {
+                                    final r = _animeInfo!.recommended[index];
+                                    return Cards.animeCard(
+                                      r.id,
+                                      r.title['english'] ?? r.title['romaji'] ?? '',
+                                      r.cover,
+                                      isMobile: true,
+                                      rating: r.rating,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFluentHeader(String title) {
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 14,
+          margin: const EdgeInsets.only(right: 8),
+          decoration: BoxDecoration(
+            color: appTheme.accentColor,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        Text(
+          title,
+          style: TextStyle(
+            color: appTheme.textMainColor,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
