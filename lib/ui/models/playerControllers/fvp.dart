@@ -45,7 +45,7 @@ class FvpWrapper implements VideoController {
     _activeAudioDevice = deviceIdOrName;
     if (controllerInitialized) {
       if (deviceIdOrName == 'default' || deviceIdOrName.isEmpty) {
-        controller.setProperty("audio.device", "wasapi");
+        controller.setProperty("audio.device", "");
       } else {
         controller.setProperty("audio.device", deviceIdOrName);
       }
@@ -95,8 +95,10 @@ class FvpWrapper implements VideoController {
 
     await controller.setVolume(_isMuted ? 0.0 : _currentVolume);
 
-    if (_activeAudioDevice != null && _activeAudioDevice != 'default') {
+    if (_activeAudioDevice != null && _activeAudioDevice != 'default' && _activeAudioDevice!.isNotEmpty) {
       controller.setProperty("audio.device", _activeAudioDevice!);
+    } else {
+      controller.setProperty("audio.device", "");
     }
     if (_audioSyncDelayMs != 0) {
       final sec = _audioSyncDelayMs / 1000.0;
