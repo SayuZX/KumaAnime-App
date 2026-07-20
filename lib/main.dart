@@ -89,9 +89,9 @@ void main(List<String> args) async {
       final authRepository = AuthRepositoryImpl(auth0Service, userRepository);
       authProvider = AuthProvider(authRepository);
       await authProvider.initialize();
-
-      await SocialService.instance.init();
     }
+
+    await SocialService.instance.init();
 
     if (!Platform.isAndroid) {
       fvp.registerWith(options: {
