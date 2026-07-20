@@ -32,15 +32,17 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
     final info = await PackageInfo.fromPlatform();
     _version = info.version;
     _buildNumber = info.buildNumber;
-    _buildTime = _timestampFromVersion(info.version);
+    _buildTime = _getBuildDate(info.buildNumber);
     if (mounted) setState(() {});
   }
 
-  String _timestampFromVersion(String version) {
-    final match = RegExp(r'(\d{12})$').firstMatch(version);
-    if (match == null) return '-';
-    final s = match.group(1)!;
-    return "${s.substring(0, 4)}-${s.substring(4, 6)}-${s.substring(6, 8)} ${s.substring(8, 10)}:${s.substring(10, 12)}";
+  String _getBuildDate(String buildNum) {
+    if (buildNum.length >= 8 && RegExp(r'^\d{8}').hasMatch(buildNum)) {
+      final s = buildNum.substring(0, 8);
+      return "${s.substring(0, 4)}-${s.substring(4, 6)}-${s.substring(6, 8)}";
+    }
+    final now = DateTime.now();
+    return "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
   }
 
   void _open(String url) {
@@ -161,7 +163,7 @@ class _AppInfoSettingState extends State<AppInfoSetting> {
             alignment: WrapAlignment.center,
             children: [
               _chip("v$_version", filled: true),
-              if (_buildNumber.isNotEmpty) _chip("build $_buildNumber"),
+              _chip("Build Date: $_buildTime"),
             ],
           ),
         ],
