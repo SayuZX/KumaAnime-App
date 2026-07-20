@@ -1,6 +1,12 @@
 import 'dart:math';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
+import 'package:kumaanime/core/database/anilist/login.dart';
+import 'package:kumaanime/core/database/anilist/queries.dart';
+import 'package:kumaanime/core/database/handler/syncHandler.dart';
+import 'package:kumaanime/core/commons/enums.dart';
+import 'package:kumaanime/core/data/watching.dart';
 import 'package:kumaanime/ui/models/bottomSheets/customControlsSheet.dart';
 import 'package:kumaanime/ui/models/providers/playerDataProvider.dart';
 import 'package:kumaanime/ui/models/providers/playerProvider.dart';
@@ -9,6 +15,9 @@ import 'package:kumaanime/ui/models/widgets/player/desktopControls/pipMode.dart'
 import 'package:kumaanime/ui/models/widgets/slider.dart';
 import 'package:kumaanime/ui/models/providers/appProvider.dart';
 import 'package:kumaanime/controllers/subtitle_controller.dart';
+import 'package:kumaanime/ui/models/bottomSheets/audioOutputSheet.dart';
+import 'package:kumaanime/ui/models/playerControllers/fvp.dart';
+import 'package:kumaanime/ui/models/providers/audio_provider.dart';
 import 'package:kumaanime/ui/models/bottomSheets/subtitleSelectorSheet.dart';
 import 'package:kumaanime/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +34,68 @@ class DesktopControls extends StatefulWidget {
 }
 
 class _DesktopControlsState extends State<DesktopControls> {
+  bool _isBookmarked = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkBookmarkStatus();
+    });
+  }
+
+  Future<void> _checkBookmarkStatus() async {
+    try {
+      final dp = context.read<PlayerDataProvider>();
+      final id = dp.showId;
+      final loggedIn = await AniListLogin().isAnilistLoggedIn();
+      if (loggedIn) {
+        final username = storedUserData?.name;
+        if (username != null) {
+          final list = await AnilistQueries().getUserAnimeList(username, status: MediaStatus.PLANNING);
+          if (list.isNotEmpty) {
+            final exists = list[0].list.any((item) => item.id == id);
+            if (mounted) setState(() => _isBookmarked = exists);
+          }
+        }
+      } else {
+        final exists = await isLocalBookmarked(id);
+        if (mounted) setState(() => _isBookmarked = exists);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _toggleBookmark() async {
+    try {
+      final dp = context.read<PlayerDataProvider>();
+      final id = dp.showId;
+      final title = dp.showTitle;
+      final cover = dp.coverImageUrl ?? '';
+      final totalEpisodes = dp.epLinks.length;
+
+      final loggedIn = await AniListLogin().isAnilistLoggedIn();
+      if (loggedIn) {
+        final newStatus = _isBookmarked ? null : MediaStatus.PLANNING;
+        await SyncHandler().mutateAnimeList(
+          id: id,
+          status: newStatus,
+          otherIds: dp.altDatabases,
+        );
+        if (mounted) {
+          setState(() => _isBookmarked = !_isBookmarked);
+          floatingSnackBar(_isBookmarked ? "Added to watchlist (AniList)" : "Removed from watchlist (AniList)");
+        }
+      } else {
+        await toggleLocalBookmark(id, title, cover, totalEpisodes: totalEpisodes);
+        final exists = await isLocalBookmarked(id);
+        if (mounted) {
+          setState(() => _isBookmarked = exists);
+          floatingSnackBar(_isBookmarked ? "Added to local bookmarks" : "Removed from local bookmarks");
+        }
+      }
+    } catch (_) {
+      floatingSnackBar("Failed to update watchlist");
+    }
   }
 
   late PlayerProvider provider;
@@ -101,6 +169,9 @@ class _DesktopControlsState extends State<DesktopControls> {
   Widget build(BuildContext context) {
     provider = context.watch<PlayerProvider>();
     dataProvider = context.watch<PlayerDataProvider>();
+    if (provider.controller is FvpWrapper) {
+      context.read<AudioProvider>().attachPlayer(provider.controller as FvpWrapper);
+    }
     final loc = AppLocalizations.of(context);
 
     if (provider.state.pip) {
@@ -124,7 +195,14 @@ class _DesktopControlsState extends State<DesktopControls> {
                   //top left
                   Row(
                     children: [
-                      IconButton(onPressed: () => Navigator.pop(context), icon: makeIcon(Icons.arrow_back)),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(
+                          HugeIcons.strokeRoundedArrowLeft01,
+                          color: Colors.white,
+                          size: 35,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 20),
                         child: Column(
@@ -148,6 +226,17 @@ class _DesktopControlsState extends State<DesktopControls> {
                   //top right
                   Row(
                     children: [
+                      IconButton(
+                        onPressed: _toggleBookmark,
+                        icon: Icon(
+                          _isBookmarked
+                              ? HugeIcons.strokeRoundedBookmarkCheck01
+                              : HugeIcons.strokeRoundedBookmarkAdd01,
+                          color: _isBookmarked ? appTheme.accentColor : Colors.white,
+                          size: 35,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
                       IconButton(
                           onPressed: () {
                             showDialog(
@@ -359,6 +448,13 @@ class _DesktopControlsState extends State<DesktopControls> {
                                   );
                                 },
                                 icon: makeIcon(provider.state.showSubs ? Icons.subtitles : Icons.subtitles_outlined)),
+                            IconButton(
+                              tooltip: loc.audioToolTip,
+                              onPressed: () {
+                                AudioOutputSheet.show(context);
+                              },
+                              icon: makeIcon(Icons.speaker_group_outlined),
+                            ),
                             // IconButton(
                             //   onPressed: () {
 
