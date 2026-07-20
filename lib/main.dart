@@ -98,9 +98,6 @@ void main(List<String> args) async {
         'platforms': ['windows', 'linux', 'macos'],
         'video.decoders': ['MFT:d3d=11', 'D3D11', 'DXVA', 'CUDA', 'FFmpeg', 'dav1d'],
         'audio.decoders': ['FFmpeg', 'dav1d', 'auto'],
-        'player': {
-          'audio.backends': 'WASAPI,DSound,XAudio2',
-        },
       });
     }
 
