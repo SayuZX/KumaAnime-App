@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:kumaanime/core/app/runtimeDatas.dart';
 import 'package:kumaanime/core/data/settings.dart';
 import 'package:kumaanime/core/data/types.dart';
+import 'package:kumaanime/ui/models/bottomSheets/audioOutputSheet.dart';
 import 'package:kumaanime/ui/models/snackBar.dart';
 import 'package:kumaanime/ui/models/widgets/player/playerUtils.dart';
 import 'package:kumaanime/ui/models/widgets/player/squigglySlider.dart';
@@ -95,6 +96,13 @@ class _PlaybackSettingState extends State<PlaybackSetting> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: buildFluentSettingsCard(
                     children: [
+                      buildFluentSettingsTile(
+                        context: context,
+                        icon: Icons.volume_up_rounded,
+                        title: loc.audioSettingsTitle,
+                        description: loc.audioDevice,
+                        onTap: () => AudioOutputSheet.show(context),
+                      ),
                       buildFluentSettingsTile(
                         context: context,
                         icon: Icons.bolt_rounded,
